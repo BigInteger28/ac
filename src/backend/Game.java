@@ -29,16 +29,16 @@ public class Game {
         score = new int[]{0, 0};
     }
 
-    private void doMove(int player, int move) {
+    private void doMove(int move) {
         //controle op legaliteit zal in de frontend gebeuren. Maar je moet ergens beginnen eh!
-        if (elementsLeft[player][move] > 0) {
-            elementsLeft[player][move]--;
-            moves[player][currentMove] = move;
+        if (elementsLeft[currentPlayer][move] > 0) {
+            elementsLeft[currentPlayer][move]--;
+            moves[currentPlayer][currentMove] = move;
         }
-        if (player == 1) currentMove++;
+        if (currentPlayer == 1) currentMove++;
         currentPlayer = (currentPlayer + 1) % 2;
     }
-
+    
     private int result(int firstplayerElement, int secondplayerElement) {
         int[][] result = {
             {0, 0, 0, 0, 0},//Defense
