@@ -18,10 +18,10 @@ public class Controller {
     private int result(int firstplayerElement, int secondplayerElement) {
         int[][] result = {
             {0, 0, 0, 0, 0},//Defense
-            {0, 0, 1, 0, -1},//Air
-            {0, -1, 0, 1, 0},//Earth
-            {0, 0, -1, 0, 1},//Fire
-            {0, 1, 0, -1, 0}//Water
+            {0, 0, -1, 0, 1},//Air
+            {0, 1, 0, -1, 0},//Earth
+            {0, 0, 1, 0, -1},//Fire
+            {0, -1, 0, 1, 0}//Water
         };
         return result[firstplayerElement][secondplayerElement];
         //©Robin
