@@ -43,8 +43,8 @@ public class Game {
             secondplayerElement = move;
             doScore();
             currentMove++;
-            currentPlayer = (currentPlayer + 1) % 2;
         }
+        currentPlayer = (currentPlayer + 1) % 2;
     }
 
     private void doScore() {
