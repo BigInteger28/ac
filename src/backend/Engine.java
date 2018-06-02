@@ -10,6 +10,8 @@ public class Engine {
     }
 
     public int getMove(int playermove) {
-        return (playermove + DEPTHS[currentmove]) % 4;
+        int move = (playermove + DEPTHS[currentmove]) % 4;
+        currentmove++;
+        return move;
     }
 }
