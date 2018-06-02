@@ -12,8 +12,8 @@ public class Game {
     private int currentMove;
     private int[][] elementsLeft;
     private int[] score;
-    int firstplayerElement;
-    int secondplayerElement;
+    private int firstplayerElement;
+    private int secondplayerElement;
 
     public Game() {
         STANDARDELEMENTS = new String[]{"Defense", "Air", "Earth", "Fire", "Water"};
