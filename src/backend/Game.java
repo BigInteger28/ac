@@ -20,9 +20,19 @@ public class Game {
         currentMove = 0;
     }
 
+    private boolean isMoveLegal(int player, int move) {
+        boolean isLegal = true;
+        int[] elementsLeft = new int[]{1, 2, 2, 2, 2};
+
+        for (int i = 0; i < currentMove; i++) {
+            elementsLeft[moves[player][i]]--;
+            if(elementsLeft[moves[player][i]] < 1) break;
+        }
+        return isLegal;
+    }
+
     private void doMove(int player, int move) {
-        //controleren als die zet kan
-        moves[player][currentMove] = move;
+        if(isMoveLegal(player, move)) moves[player][currentMove] = move;
     }
 
     private int result(int firstplayerElement, int secondplayerElement) {
