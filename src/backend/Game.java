@@ -6,30 +6,37 @@ public class Game {
     private String secondplayerName;
     private int secondplayerStars;
 
-    private String[] standardElements;
+    private final String[] STANDARDELEMENTS;
     private int[][] moves;
+    private int currentPlayer;
     private int currentMove;
     private int[][] elementsLeft;
+    private int[] score;
 
     public Game() {
-        standardElements = new String[]{"Defense", "Air", "Earth", "Fire", "Water"};
+        STANDARDELEMENTS = new String[]{"Defense", "Air", "Earth", "Fire", "Water"};
         startNewGame();
     }
 
     private void startNewGame() {
         moves = new int[2][9];
+        currentPlayer = 0;
         currentMove = 0;
         elementsLeft = new int[][]{
             {1, 2, 2, 2, 2},
             {1, 2, 2, 2, 2}
         };
+        score = new int[]{0, 0};
     }
 
     private void doMove(int player, int move) {
+        //controle op legaliteit zal in de frontend gebeuren. Maar je moet ergens beginnen eh!
         if (elementsLeft[player][move] > 0) {
             elementsLeft[player][move]--;
             moves[player][currentMove] = move;
         }
+        if (player == 1) currentMove++;
+        currentPlayer = (currentPlayer + 1) % 2;
     }
 
     private int result(int firstplayerElement, int secondplayerElement) {
