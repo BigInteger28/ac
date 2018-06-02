@@ -25,8 +25,8 @@ public class Game {
         currentPlayer = 0;
         currentMove = 0;
         elementsLeft = new int[][]{
-            {1, 2, 2, 2, 2},
-            {1, 2, 2, 2, 2}
+            {2, 2, 2, 2, 1},
+            {2, 2, 2, 2, 1}
         };
         score = new int[]{0, 0};
     }
