@@ -16,7 +16,7 @@ public class Game {
     private int secondplayerElement;
 
     public Game() {
-        STANDARDELEMENTS = new String[]{"Defense", "Air", "Earth", "Fire", "Water"};
+        STANDARDELEMENTS = new String[]{"Air", "Earth", "Fire", "Water", "Defense"};
         startNewGame();
     }
 
@@ -54,11 +54,11 @@ public class Game {
 
     private int result() {
         int[][] result = {
+            {0, -1, 0, 1, 0},//Air
+            {1, 0, -1, 0, 0},//Earth
+            {0, 1, 0, -1, 0},//Fire
+            {-1, 0, 1, 0, 0},//Water
             {0, 0, 0, 0, 0},//Defense
-            {0, 0, -1, 0, 1},//Air
-            {0, 1, 0, -1, 0},//Earth
-            {0, 0, 1, 0, -1},//Fire
-            {0, -1, 0, 1, 0}//Water
         };
         return result[firstplayerElement][secondplayerElement];
     }
