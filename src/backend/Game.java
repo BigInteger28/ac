@@ -35,6 +35,7 @@ public class Game {
         int move = imove;
         while (elementsLeft[currentPlayer][move] < 1) {
             move = (move + 1) % 5;
+            if (move == 4) move = 0;
         }
 
         elementsLeft[currentPlayer][move]--;
