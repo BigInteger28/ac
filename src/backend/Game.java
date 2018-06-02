@@ -26,7 +26,10 @@ public class Game {
 
         for (int i = 0; i < currentMove; i++) {
             elementsLeft[moves[player][i]]--;
-            if(elementsLeft[moves[player][i]] < 1) break;
+            if(elementsLeft[moves[player][i]] < 1) {
+                isLegal = false;
+                break;
+            }
         }
         return isLegal;
     }
