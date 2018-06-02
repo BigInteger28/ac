@@ -9,6 +9,7 @@ public class Game {
     private String[] standardElements;
     private int[][] moves;
     private int currentMove;
+    private int[][] elementsLeft;
 
     public Game() {
         standardElements = new String[]{"Defense", "Air", "Earth", "Fire", "Water"};
@@ -18,24 +19,17 @@ public class Game {
     private void startNewGame() {
         moves = new int[2][9];
         currentMove = 0;
-    }
-
-    private boolean isMoveLegal(int player, int move) {
-        boolean isLegal = true;
-        int[] elementsLeft = new int[]{1, 2, 2, 2, 2};
-
-        for (int i = 0; i < currentMove; i++) {
-            elementsLeft[moves[player][i]]--;
-            if(elementsLeft[moves[player][i]] < 1) {
-                isLegal = false;
-                break;
-            }
-        }
-        return isLegal;
+        elementsLeft = new int[][]{
+            {1, 2, 2, 2, 2},
+            {1, 2, 2, 2, 2}
+        };
     }
 
     private void doMove(int player, int move) {
-        if(isMoveLegal(player, move)) moves[player][currentMove] = move;
+        if (elementsLeft[player][move] > 0) {
+            elementsLeft[player][move]--;
+            moves[player][currentMove] = move;
+        }
     }
 
     private int result(int firstplayerElement, int secondplayerElement) {
