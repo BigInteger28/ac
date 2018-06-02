@@ -12,6 +12,8 @@ public class Game {
     private int currentMove;
     private int[][] elementsLeft;
     private int[] score;
+    int firstplayerElement;
+    int secondplayerElement;
 
     public Game() {
         STANDARDELEMENTS = new String[]{"Defense", "Air", "Earth", "Fire", "Water"};
@@ -35,11 +37,22 @@ public class Game {
             elementsLeft[currentPlayer][move]--;
             moves[currentPlayer][currentMove] = move;
         }
-        if (currentPlayer == 1) currentMove++;
-        currentPlayer = (currentPlayer + 1) % 2;
+        if (currentPlayer == 0) {
+            firstplayerElement = move;
+        } else {
+            secondplayerElement = move;
+            doScore();
+            currentMove++;
+            currentPlayer = (currentPlayer + 1) % 2;
+        }
     }
-    
-    private int result(int firstplayerElement, int secondplayerElement) {
+
+    private void doScore() {
+        if (result() == 1) score[0]++;
+        if (result() == -1) score[1]++;
+    }
+
+    private int result() {
         int[][] result = {
             {0, 0, 0, 0, 0},//Defense
             {0, 0, -1, 0, 1},//Air
