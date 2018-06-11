@@ -5,7 +5,7 @@ public class Controller {
     private int[] game;
 
     public Controller() {
-        elements = new String[]{"Defense", "Air", "Earth", "Fire", "Water"};
+        elements = new String[]{"Air", "Earth", "Fire", "Water", "Defense"};
         game = new int[9];
     }
 

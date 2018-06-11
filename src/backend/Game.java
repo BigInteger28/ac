@@ -65,4 +65,18 @@ public class Game {
         };
         return result[firstplayerElement][secondplayerElement];
     }
+
+    private void prevMove() {
+        elementsLeft[0][moves[0][currentMove]]++;
+        elementsLeft[1][moves[1][currentMove]]++;
+        moves[0][currentMove] = 0;
+        moves[1][currentMove] = 0;
+        currentPlayer = 0;
+        currentMove -= 1; //controle gebeurt in front-end
+    }
+
+    private String moveToString(int move) {
+        String[] moves = new String[] {"Air", "Earth", "Fire", "Water", "Defense"};
+        return moves[move];
+    }
 }
