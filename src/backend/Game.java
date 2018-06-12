@@ -1,10 +1,8 @@
 package backend;
 
 public class Game {
-    private String firstplayerName;
-    private int firstplayerStars;//Aantal sterren wordt omgezet naar rank en kleur
-    private String secondplayerName;
-    private int secondplayerStars;
+    private String[] playerNames;
+    private int[] playerStars;//Aantal sterren zal met een formule worden omgezet naar rank en kleur. Zie joris.basdon.net/avatarcarto
 
     private final String[] STANDARDELEMENTS;
     private final char[] CHARELEMENTS;
@@ -16,9 +14,15 @@ public class Game {
     private int firstplayerElement;
     private int secondplayerElement;
 
-    public Game() {
+    public Game(String[] playerNames, int[] playerStars) {
         STANDARDELEMENTS = new String[]{"Air", "Earth", "Fire", "Water", "Defense"};
         CHARELEMENTS = new char[] {'A', 'E', 'F', 'W', 'D'};
+        this.playerNames = new String[playerNames.length];
+        this.playerStars = new int[playerStars.length];
+        for(int i = 0; i < playerNames.length; i++) {
+            this.playerNames[i] = playerNames[i];
+            this.playerStars[i] = playerStars[i];
+        }
         startNewGame();
     }
 
