@@ -7,6 +7,7 @@ public class Game {
     private int secondplayerStars;
 
     private final String[] STANDARDELEMENTS;
+    private final char[] CHARELEMENTS;
     private int[][] moves;
     private int currentPlayer;
     private int currentMove;
@@ -17,6 +18,7 @@ public class Game {
 
     public Game() {
         STANDARDELEMENTS = new String[]{"Air", "Earth", "Fire", "Water", "Defense"};
+        CHARELEMENTS = new char[] {'A', 'E', 'F', 'W', 'D'};
         startNewGame();
     }
 
@@ -76,7 +78,10 @@ public class Game {
     }
 
     private String moveToString(int move) {
-        String[] moves = new String[] {"Air", "Earth", "Fire", "Water", "Defense"};
-        return moves[move];
+        return STANDARDELEMENTS[move];
+    }
+
+    private char moveToChar(int move) {
+        return CHARELEMENTS[move];
     }
 }
