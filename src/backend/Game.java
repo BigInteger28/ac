@@ -1,11 +1,11 @@
 package backend;
 
+import static common.Constants.*;
+
 public class Game {
     private String[] playerNames;
     private int[] playerStars;//Aantal sterren zal met een formule worden omgezet naar rank en kleur. Zie joris.basdon.net/avatarcarto
 
-    private final String[] STANDARDELEMENTS;
-    private final char[] CHARELEMENTS;
     private int[][] moves;
     private int currentPlayer;
     private int currentMove;
@@ -15,8 +15,6 @@ public class Game {
     private int secondplayerElement;
 
     public Game(String[] playerNames, int[] playerStars) {
-        STANDARDELEMENTS = new String[]{"Air", "Earth", "Fire", "Water", "Defense"};
-        CHARELEMENTS = new char[] {'A', 'E', 'F', 'W', 'D'};
         this.playerNames = new String[playerNames.length];
         this.playerStars = new int[playerStars.length];
         for(int i = 0; i < playerNames.length; i++) {
@@ -40,16 +38,16 @@ public class Game {
     public void doMove(char hmove) {
         int convertedmove;
         switch (hmove) {
-            case 'w':
+            case 'a':
                 convertedmove = 0;
                 break;
-            case 'f':
+            case 'e':
                 convertedmove = 1;
                 break;
-            case 'e':
+            case 'f':
                 convertedmove = 2;
                 break;
-            case 'a':
+            case 'w':
                 convertedmove = 3;
                 break;
             default:
