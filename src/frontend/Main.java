@@ -1,19 +1,20 @@
 package frontend;
 
+import backend.Engine;
+import backend.Game;
 import common.Constants;
 import frontend.components.GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static common.Constants.*;
-
 public class Main {
 
     public static Font monospaceFont;
 
     private final GamePanel gamePanel;
-
+    private final Game game;
+    private final Engine engine;
     public static void main(String[] args) {
         //AFBLIJVEN, ROBIN WAAKT HIER!!!
 
@@ -36,12 +37,42 @@ public class Main {
         frame.setMinimumSize(frame.getSize());
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
+        //Joris tryout
+        String[] players = new String[] {"Joris", "Stockfish"};
+        int[] stars = new int[] {42, 112};
+        game = new Game(players, stars);
+        int[] stockfishSoftware = new int[] {4, 17, 36, 12, 94, 28, 147, 12, 7};
+        engine = new Engine(stockfishSoftware);
+
+        //Speler drukt op NEW GAME (tegen engine stockfish in ons geval)
+        game.startNewGame();
     }
 
     private void onElementChosen(int playerNumber, int element) {
         System.out.printf("player %d chose element %d (%s)%n", playerNumber, element, Constants.STANDARDELEMENTS[element]);
-        this.gamePanel.getMovesPanel().setMove(1, 3, WATER);
-        this.gamePanel.getScorePanel().setScore(5, 7);
+        //this.gamePanel.getMovesPanel().setMove(1, 3, WATER);
+        //this.gamePanel.getScorePanel().setScore(5, 7);
+
+        if (playerNumber != 0) {
+            return;
+        }
+
+        //Joris tryout
+        domove(element);
+        int move = game.getCurrentMove();
+        int playerPreviousElement = 0;
+        if (move > 0) {
+            playerPreviousElement = game.getMove(0, move - 1);
+        }
+        domove(engine.getElement(move, playerPreviousElement));
+    }
+
+    public void domove(int element) {
+        int move = game.getCurrentMove();
+        game.doMove(element);
+        int player = game.getPreviousPlayer();
+        this.gamePanel.getMovesPanel().setMove(player, move, game.getMove(player, move));
     }
 
 }

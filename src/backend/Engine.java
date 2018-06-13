@@ -2,16 +2,18 @@ package backend;
 
 public class Engine {
     private final int[] DEPTHS;
-    private int currentmove;
 
-    public Engine() {
-        DEPTHS = new int[]{0, 17, 36, 12, 94, 28, 147, 12, 7}; //TODO: depths uit een file laden
-        currentmove = 0;
+    public Engine(int[] depths) {
+        DEPTHS = new int[9];
+        for (int i = 0; i < depths.length; i++) {
+            DEPTHS[i] = depths[i];
+        }
     }
 
-    public int getMove(int playermove) {
-        int move = DEPTHS[currentmove] % 5;
-        currentmove++;
-        return move;
+    public int getElement(int move, int playerelement) {
+        if (move == 0) {
+            return DEPTHS[0] % 5;
+        }
+        return (playerelement + DEPTHS[move]) % 5;
     }
 }

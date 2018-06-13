@@ -24,7 +24,7 @@ public class Game {
         startNewGame();
     }
 
-    private void startNewGame() {
+    public void startNewGame() {
         moves = new int[2][9];
         currentPlayer = 0;
         currentMove = 0;
@@ -33,28 +33,6 @@ public class Game {
             {2, 2, 2, 2, 1}
         };
         score = new int[]{0, 0};
-    }
-
-    public void doMove(char hmove) {
-        int convertedmove;
-        switch (hmove) {
-            case 'a':
-                convertedmove = 0;
-                break;
-            case 'e':
-                convertedmove = 1;
-                break;
-            case 'f':
-                convertedmove = 2;
-                break;
-            case 'w':
-                convertedmove = 3;
-                break;
-            default:
-                convertedmove = 4;
-                break;
-        }
-        doMove(convertedmove);
     }
 
     public void doMove(int imove) {
@@ -101,22 +79,29 @@ public class Game {
         currentMove -= 1; //controle gebeurt in front-end
     }
 
-    private String moveToString(int move) {
-        return STANDARDELEMENTS[move];
-    }
-
     private char moveToChar(int move) {
         return CHARELEMENTS[move];
     }
 
-    public String getMove(int player, int move) {
-        if (player == 0) {
-            return moveToString(moves[0][move]);
-        }
-        return moveToString(moves[1][move]);
+    public int getMove(int player, int move) {
+        return moves[player][move];
     }
 
     public int getScore(int player) {
         return score[player];
     }
+
+    public int getPreviousPlayer() {
+        //return currentPlayer ^ 1;
+        return (currentPlayer + 1) % 2; //Soms is het gevaarlijk om negatieve modulos te nemen. Bad practice
+        /*
+        0 ^ 1 = 1
+        1 ^ 1 = 0
+         */
+    }
+
+    public int getCurrentMove() {
+        return currentMove;
+    }
+
 }
