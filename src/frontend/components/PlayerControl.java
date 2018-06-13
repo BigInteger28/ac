@@ -13,6 +13,7 @@ import static common.Constants.STANDARDELEMENTS;
 public class PlayerControl extends JPanel {
 
     private final TitledBorder titleBorder;
+    private static final int[] BUTTONCOLORS = { 0xFFFF00, 0x008000, 0xFF0000, 0x0000FF, 0x808080 };
 
     public PlayerControl(String name, int playerNumber, BiConsumer<Integer, Integer> elementChooseListener) {
         this.setLayout(new GridLayout(0, 5, 5, 0));
@@ -22,6 +23,8 @@ public class PlayerControl extends JPanel {
 
         for (int i = 0; i < 5; i++) {
             final JButton button = new JButton(STANDARDELEMENTS[i]);
+            button.setBackground(new Color(BUTTONCOLORS[i]));
+            button.setFocusable(false);
             this.add(button);
             final int element = i;
             button.addActionListener(e -> elementChooseListener.accept(playerNumber, element));
