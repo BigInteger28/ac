@@ -104,4 +104,8 @@ public class Game {
         return currentMove;
     }
 
+    public int[][] getElementsLeft() {
+        return elementsLeft;
+    }
+
 }
