@@ -37,7 +37,29 @@ public class Game {
         score = new int[]{0, 0};
     }
 
-    private void doMove(int imove) {
+    public void doMove(char hmove) {
+        int convertedmove;
+        switch (hmove) {
+            case 'w':
+                convertedmove = 0;
+                break;
+            case 'f':
+                convertedmove = 1;
+                break;
+            case 'e':
+                convertedmove = 2;
+                break;
+            case 'a':
+                convertedmove = 3;
+                break;
+            default:
+                convertedmove = 4;
+                break;
+        }
+        doMove(convertedmove);
+    }
+
+    public void doMove(int imove) {
         int move = imove;
         while (elementsLeft[currentPlayer][move] < 1) {
             move = (move + 1) % 4;
@@ -87,5 +109,16 @@ public class Game {
 
     private char moveToChar(int move) {
         return CHARELEMENTS[move];
+    }
+
+    public String getMove(int player, int move) {
+        if (player == 0) {
+            return moveToString(moves[0][move]);
+        }
+        return moveToString(moves[1][move]);
+    }
+
+    public int getScore(int player) {
+        return score[player];
     }
 }
