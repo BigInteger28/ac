@@ -12,8 +12,8 @@ public class Constants {
     public static final int DEFENSE = 4;
 
     static {
-        STANDARDELEMENTS = new String[] { "Air", "Earth", "Fire", "Water", "Defense" };
-        CHARELEMENTS = new char[] { 'A', 'E', 'F', 'W', 'D' };
+        STANDARDELEMENTS = new String[] { "Lucht", "Aarde", "Vuur", "Water", "Defensie" }; //voorlopig in het nederlands gezet
+        CHARELEMENTS = new char[] { 'L', 'A', 'V', 'W', 'D' };//voorlopig in het nederlands
     }
 
 }
