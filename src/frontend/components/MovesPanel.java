@@ -48,7 +48,16 @@ public class MovesPanel extends JPanel {
     }
 
     public void setMove(int playerNumber, int zet, int element) {
-        this.playerLabels[playerNumber][zet].setText(String.valueOf(Constants.CHARELEMENTS[element]));
+        final String elementstr = String.valueOf(Constants.CHARELEMENTS[element]);
+        this.playerLabels[playerNumber][zet].setText(elementstr);
+    }
+    
+    public void resetMoves() {
+        for (int a = 0; a < 2; a++) {
+            for (int b = 0; b < 9; b++) {
+                this.playerLabels[a][b].setText("?");
+            }
+        }
     }
 
 }

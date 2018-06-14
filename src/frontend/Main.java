@@ -46,7 +46,12 @@ public class Main {
         engine = new Engine(stockfishSoftware);
 
         //Speler drukt op NEW GAME (tegen engine stockfish in ons geval)
-        game.startNewGame();
+        this.startNewGame();
+    }
+    
+    private void startNewGame() {
+        this.game.startNewGame();
+        this.gamePanel.getMovesPanel().resetMoves();
     }
 
     private void onElementChosen(int playerNumber, int element) {
