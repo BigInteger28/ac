@@ -55,11 +55,12 @@ public class Game {
     }
 
     private void doScore() {
-        if (result() == 1) score[0]++;
-        if (result() == -1) score[1]++;
+        final int result = this.getMoveResult(this.currentMove);
+        if (result == 1) score[0]++;
+        if (result == -1) score[1]++;
     }
 
-    private int result() {
+    public int getMoveResult(int move) {
         int[][] result = {
             {0, -1, 0, 1, 0},//Air
             {1, 0, -1, 0, 0},//Earth
@@ -67,6 +68,8 @@ public class Game {
             {-1, 0, 1, 0, 0},//Water
             {0, 0, 0, 0, 0},//Defense
         };
+        final int firstplayerElement = this.moves[0][move];
+        final int secondplayerElement = this.moves[1][move];
         return result[firstplayerElement][secondplayerElement];
     }
 

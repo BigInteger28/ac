@@ -11,6 +11,9 @@ import java.awt.*;
 public class MovesPanel extends JPanel {
 
     private final JLabel[][] playerLabels;
+    private static final Color[] RESULTCOLORS = {
+        new Color(0x800000), new Color(0x0), new Color(0x008000)
+    };
 
     public MovesPanel() {
         this.setLayout(new BorderLayout());
@@ -52,10 +55,16 @@ public class MovesPanel extends JPanel {
         this.playerLabels[playerNumber][zet].setText(elementstr);
     }
     
+    public void setMoveScore(int move, int score) {
+        this.playerLabels[0][move].setForeground(RESULTCOLORS[score + 1]);
+        this.playerLabels[1][move].setForeground(RESULTCOLORS[score * -1 + 1]);
+    }
+    
     public void resetMoves() {
         for (int a = 0; a < 2; a++) {
             for (int b = 0; b < 9; b++) {
                 this.playerLabels[a][b].setText("?");
+                this.playerLabels[a][b].setForeground(RESULTCOLORS[1]);
             }
         }
     }

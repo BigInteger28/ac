@@ -85,6 +85,7 @@ public class Main {
         for (int player = 0; player < 2; player++) {
             movesDisplay.setMove(player, lastMove, this.game.getMove(player, lastMove));
         }
+        movesDisplay.setMoveScore(lastMove, this.game.getMoveResult(lastMove));
         final int p1score = this.game.getScore(0);
         final int p2score = this.game.getScore(1);
         this.gamePanel.getScorePanel().setScore(p1score, p2score);
