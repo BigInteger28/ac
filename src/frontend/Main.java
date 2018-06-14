@@ -53,6 +53,7 @@ public class Main {
     private void startNewGame() {
         this.game.startNewGame();
         this.gamePanel.getMovesPanel().resetMoves();
+        this.updateDisplay();
     }
 
     private void onElementChosen(int playerNumber, int element) {
@@ -73,11 +74,11 @@ public class Main {
         }
         this.game.doMove(this.engine.getElement(move, playerPreviousElement));
         
-        this.updateMovesDisplay();
-        this.gamePanel.setElementsLeft(this.game.getElementsLeft());
+        this.updateDisplay();
     }
 
-    private void updateMovesDisplay() {
+    private void updateDisplay() {
+        this.gamePanel.setElementsLeft(this.game.getElementsLeft());
         final int lastMove = this.game.getCurrentMove() - 1;
         if (lastMove < 0) {
             return;
