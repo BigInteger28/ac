@@ -74,6 +74,7 @@ public class Main {
         this.game.doMove(this.engine.getElement(move, playerPreviousElement));
         
         this.updateMovesDisplay();
+        this.gamePanel.setElementsLeft(this.game.getElementsLeft());
     }
 
     private void updateMovesDisplay() {
