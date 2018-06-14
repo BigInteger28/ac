@@ -11,8 +11,6 @@ public class Game {
     private int currentMove;
     private int[][] elementsLeft;
     private int[] score;
-    private int firstplayerElement;
-    private int secondplayerElement;
 
     public Game(String[] playerNames, int[] playerStars) {
         this.playerNames = new String[playerNames.length];
@@ -44,10 +42,7 @@ public class Game {
         elementsLeft[currentPlayer][move]--;
         moves[currentPlayer][currentMove] = move;
 
-        if (currentPlayer == 0) {
-            firstplayerElement = move;
-        } else {
-            secondplayerElement = move;
+        if (currentPlayer == 1) {
             doScore();
             currentMove++;
         }
