@@ -4,6 +4,7 @@ import backend.Engine;
 import backend.Game;
 import common.Constants;
 import frontend.components.GamePanel;
+import frontend.components.MovesPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,20 +65,26 @@ public class Main {
         }
 
         //Joris tryout
-        domove(element);
+        this.game.doMove(element);
         int move = game.getCurrentMove();
         int playerPreviousElement = 0;
         if (move > 0) {
             playerPreviousElement = game.getMove(0, move - 1);
         }
-        domove(engine.getElement(move, playerPreviousElement));
+        this.game.doMove(this.engine.getElement(move, playerPreviousElement));
+        
+        this.updateMovesDisplay();
     }
 
-    public void domove(int element) {
-        int move = game.getCurrentMove();
-        game.doMove(element);
-        int player = game.getPreviousPlayer();
-        this.gamePanel.getMovesPanel().setMove(player, move, game.getMove(player, move));
+    private void updateMovesDisplay() {
+        final int lastMove = this.game.getCurrentMove() - 1;
+        if (lastMove < 0) {
+            return;
+        }
+        final MovesPanel movesDisplay = this.gamePanel.getMovesPanel();
+        for (int player = 0; player < 2; player++) {
+            movesDisplay.setMove(player, lastMove, this.game.getMove(player, lastMove));
+        }
     }
 
 }
