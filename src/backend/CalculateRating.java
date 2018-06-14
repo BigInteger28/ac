@@ -23,7 +23,7 @@ public class CalculateRating {
         this.lowestRatLose = lowestRatLose;
     }
 
-    private float getPrestigeRating() {
+    public float getPrestigeRating() {
         float rating = (((sumTotRat / matches) + ((highestRatWon + lowestRatLose) / 2)) / 2) + ((score - (matches / 2)) * ((highestRatPlayed - lowestRatPlayed) / matches));
         return round(rating);
     }
@@ -32,6 +32,7 @@ public class CalculateRating {
 
     private float getNewRating(float currentRating) {
         //Dit is nog niet correct. De negatieve waarden kloppen niet en de berekening is nog niet op punt
+        /*
         float difference = getPrestigeRating() - currentRating;
         float maxIncrease = matches * 2;
         if (difference <= maxIncrease) {
@@ -39,5 +40,7 @@ public class CalculateRating {
         } else {
             return currentRating + maxIncrease;
         }
+        */
+        return 0;
     }
 }
