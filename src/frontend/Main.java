@@ -10,7 +10,7 @@ import frontend.components.Ribbon;
 import javax.swing.*;
 import java.awt.*;
 
-public class Main implements GameController
+public class Main implements FrontendController
 {
 
     public static Font monospaceFont;

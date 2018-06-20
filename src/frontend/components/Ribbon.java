@@ -6,7 +6,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SpringLayout;
 
-import frontend.GameController;
+import frontend.FrontendController;
 
 import static javax.swing.SpringLayout.*;
 
@@ -14,14 +14,14 @@ public class Ribbon
 {
     private static final int PADDING = 5;
     
-    public JComponent createComponent(GameController gameController)
+    public JComponent createComponent(FrontendController gameController)
     {
         final JTabbedPane c = new JTabbedPane();
         c.addTab("Game", this.createGameMenu(gameController));
         return c;
     }
     
-    private JPanel createGameMenu(GameController gameController)
+    private JPanel createGameMenu(FrontendController gameController)
     {
         final SpringLayout layout = new SpringLayout();
         final JPanel pnl = new JPanel(layout);

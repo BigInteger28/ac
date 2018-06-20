@@ -1,6 +1,6 @@
 package frontend;
 
-public interface GameController
+public interface FrontendController
 {
     void startNewGame();
 }
