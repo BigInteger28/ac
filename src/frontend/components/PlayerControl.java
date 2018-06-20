@@ -5,18 +5,31 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+
+import frontend.FrontendController;
+import frontend.GameChangeListener;
+import frontend.GameState;
+
 import java.awt.*;
-import java.util.function.BiConsumer;
 
 import static common.Constants.STANDARDELEMENTS;
 
-public class PlayerControl extends JPanel {
+class PlayerControl extends JPanel implements GameChangeListener
+{
+    private static final int[] BUTTONCOLORS = {
+        0xFFFF00, 0x008000, 0xFF0000, 0x0000FF, 0x808080
+    };
 
     private final TitledBorder titleBorder;
     private final JButton[] buttons;
-    private static final int[] BUTTONCOLORS = { 0xFFFF00, 0x008000, 0xFF0000, 0x0000FF, 0x808080 };
+    private final int player;
 
-    public PlayerControl(String name, int playerNumber, BiConsumer<Integer, Integer> elementChooseListener) {
+    PlayerControl(
+        String name,
+        int player,
+        FrontendController controller)
+    {
+        this.player = player;
         this.setLayout(new GridLayout(0, 5, 5, 0));
         this.titleBorder = new DefaultTitledBorder(name);
         final Border innerBorder = new EmptyBorder(2, 4, 4, 4);
@@ -29,20 +42,25 @@ public class PlayerControl extends JPanel {
             button.setFocusable(false);
             this.add(button);
             final int element = i;
-            button.addActionListener(e -> elementChooseListener.accept(playerNumber, element));
+            button.addActionListener(e -> controller.chooseElement(player, element));
             this.buttons[i] = button;
         }
-    }
-    
-    public void setElementsLeft(int[] elementsLeft) {
-        for (int i = 0; i < 5; i++) {
-           this.buttons[i].setText(STANDARDELEMENTS[i] + " (" + elementsLeft[i] + ")");
-           this.buttons[i].setEnabled(elementsLeft[i] > 0);
-        }
+
+        controller.addGameChangeListener(this);
     }
 
     public void setPlayerName(String name) {
         this.titleBorder.setTitle(name);
+    }
+
+    @Override
+    public void onGameChanged(GameState newState)
+    {
+        for (int i = 0; i < 5; i++) {
+            final int[] elementsLeft = newState.elementsLeft[this.player];
+            this.buttons[i].setText(STANDARDELEMENTS[i] + " (" + elementsLeft[i] + ")");
+            this.buttons[i].setEnabled(elementsLeft[i] > 0);
+        }
     }
 
 }

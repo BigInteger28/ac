@@ -2,13 +2,15 @@ package frontend;
 
 import backend.Engine;
 import backend.Game;
-import common.Constants;
 import frontend.components.GamePanel;
-import frontend.components.MovesPanel;
 import frontend.components.Ribbon;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static common.Constants.*;
 
 public class Main implements FrontendController
 {
@@ -32,9 +34,11 @@ public class Main implements FrontendController
     private final Ribbon ribbon;
     private final Game game;
     private final Engine engine;
+    private final List<GameChangeListener> listeners;
 
     public Main() {
-        this.gamePanel = new GamePanel(this::onElementChosen);
+        this.listeners = new ArrayList<>(10);
+        this.gamePanel = new GamePanel(this);
         this.ribbon = new Ribbon();
         final JPanel content = new JPanel(new BorderLayout());
         content.add(this.ribbon.createComponent(this), BorderLayout.NORTH);
@@ -46,6 +50,8 @@ public class Main implements FrontendController
         frame.setMinimumSize(frame.getSize());
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
+        this.updateGameState(new GameState());
 
         //Joris tryout
         String[] players = new String[] {"Joris", "Stockfish"};
@@ -62,19 +68,27 @@ public class Main implements FrontendController
     public void startNewGame()
     {
         this.game.startNewGame();
-        this.gamePanel.getMovesPanel().resetMoves();
-        this.updateDisplay();
+        this.updateGameState(new GameState(this.game));
     }
 
-    private void onElementChosen(int playerNumber, int element) {
-        System.out.printf("player %d chose element %d (%s)%n", playerNumber, element, Constants.STANDARDELEMENTS[element]);
-        //this.gamePanel.getMovesPanel().setMove(1, 3, WATER);
-        //this.gamePanel.getScorePanel().setScore(5, 7);
+    @Override
+    public void addGameChangeListener(GameChangeListener listener)
+    {
+        this.listeners.add(listener);
+    }
 
-        if (playerNumber != 0) {
-            return;
-        }
 
+    @Override
+    public void chooseElement(int player, int element)
+    {
+        System.out.printf(
+            "player %d chose element %d (%s)%n",
+            player,
+            element,
+            STANDARDELEMENTS[element]
+        );
+
+        /*
         //Joris tryout
         this.game.doMove(element);
         int move = game.getCurrentMove();
@@ -83,24 +97,16 @@ public class Main implements FrontendController
             playerPreviousElement = game.getMove(0, move - 1);
         }
         this.game.doMove(this.engine.getElement(move, playerPreviousElement));
+        */
         
-        this.updateDisplay();
+        this.updateGameState(new GameState(this.game));
     }
-
-    private void updateDisplay() {
-        this.gamePanel.setElementsLeft(this.game.getElementsLeft());
-        final int lastMove = this.game.getCurrentMove() - 1;
-        if (lastMove < 0) {
-            return;
+    
+    private void updateGameState(GameState newState)
+    {
+        for (GameChangeListener listener : this.listeners) {
+            listener.onGameChanged(newState);
         }
-        final MovesPanel movesDisplay = this.gamePanel.getMovesPanel();
-        for (int player = 0; player < 2; player++) {
-            movesDisplay.setMove(player, lastMove, this.game.getMove(player, lastMove));
-        }
-        movesDisplay.setMoveScore(lastMove, this.game.getMoveResult(lastMove));
-        final int p1score = this.game.getScore(0);
-        final int p2score = this.game.getScore(1);
-        this.gamePanel.getScorePanel().setScore(p1score, p2score);
     }
 
 }

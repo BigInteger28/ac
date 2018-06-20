@@ -1,5 +1,8 @@
 package frontend.components;
 
+import frontend.FrontendController;
+import frontend.GameChangeListener;
+import frontend.GameState;
 import frontend.Main;
 
 import javax.swing.*;
@@ -8,12 +11,13 @@ import javax.swing.border.EmptyBorder;
 
 import java.awt.*;
 
-public class ScorePanel extends JPanel {
-
+class ScorePanel extends JPanel implements GameChangeListener
+{
     private final JLabel label1;
     private final JLabel label2;
 
-    public ScorePanel() {
+    ScorePanel(FrontendController controller)
+    {
         this.setLayout(new GridLayout(2, 0, 0, 5));
         final Border titleBorder = new DefaultTitledBorder("Score");
         final Border outerBorder = new EmptyBorder(5, 5, 5, 0);
@@ -25,12 +29,15 @@ public class ScorePanel extends JPanel {
         label2.setFont(Main.monospaceFont);
         this.add(label1);
         this.add(label2);
-        this.setScore(0, 0);
+        
+        controller.addGameChangeListener(this);
     }
 
-    public void setScore(int p1, int p2) {
-        this.label1.setText("Player 1:   " + p1);
-        this.label2.setText("Player 2:   " + p2);
+    @Override
+    public void onGameChanged(GameState newState)
+    {
+        this.label1.setText("Player 1:   " + newState.score[0]);
+        this.label2.setText("Player 2:   " + newState.score[1]);
     }
 
 }
