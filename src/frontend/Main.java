@@ -10,7 +10,8 @@ import frontend.components.Ribbon;
 import javax.swing.*;
 import java.awt.*;
 
-public class Main {
+public class Main implements GameController
+{
 
     public static Font monospaceFont;
 
@@ -36,7 +37,7 @@ public class Main {
         this.gamePanel = new GamePanel(this::onElementChosen);
         this.ribbon = new Ribbon();
         final JPanel content = new JPanel(new BorderLayout());
-        content.add(this.ribbon.createComponent(), BorderLayout.NORTH);
+        content.add(this.ribbon.createComponent(this), BorderLayout.NORTH);
         content.add(this.gamePanel);
         final JFrame frame = new JFrame("Avatar Carto Java Edition");
         frame.setContentPane(content);
@@ -57,7 +58,9 @@ public class Main {
         this.startNewGame();
     }
     
-    private void startNewGame() {
+    @Override
+    public void startNewGame()
+    {
         this.game.startNewGame();
         this.gamePanel.getMovesPanel().resetMoves();
         this.updateDisplay();
