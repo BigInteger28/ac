@@ -5,6 +5,7 @@ import backend.Game;
 import common.Constants;
 import frontend.components.GamePanel;
 import frontend.components.MovesPanel;
+import frontend.components.Ribbon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,9 +14,6 @@ public class Main {
 
     public static Font monospaceFont;
 
-    private final GamePanel gamePanel;
-    private final Game game;
-    private final Engine engine;
     public static void main(String[] args) {
         //AFBLIJVEN, ROBIN WAAKT HIER!!!
 
@@ -29,10 +27,19 @@ public class Main {
         SwingUtilities.invokeLater(Main::new);
     }
 
+    private final GamePanel gamePanel;
+    private final Ribbon ribbon;
+    private final Game game;
+    private final Engine engine;
+
     public Main() {
         this.gamePanel = new GamePanel(this::onElementChosen);
+        this.ribbon = new Ribbon();
+        final JPanel content = new JPanel(new BorderLayout());
+        content.add(this.ribbon.createComponent(), BorderLayout.NORTH);
+        content.add(this.gamePanel);
         final JFrame frame = new JFrame("Avatar Carto Java Edition");
-        frame.setContentPane(this.gamePanel);
+        frame.setContentPane(content);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setMinimumSize(frame.getSize());
