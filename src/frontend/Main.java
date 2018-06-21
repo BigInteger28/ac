@@ -1,7 +1,8 @@
 package frontend;
 
-import backend.Engine;
 import backend.Game;
+import backend.Game.Data;
+import backend.Player;
 import frontend.components.GamePanel;
 import frontend.components.Ribbon;
 
@@ -33,7 +34,7 @@ public class Main implements FrontendController
     private final GamePanel gamePanel;
     private final Ribbon ribbon;
     private final Game game;
-    private final Engine engine;
+    private final HumanPlayer[] humanPlayers;
     private final List<GameChangeListener> listeners;
 
     public Main() {
@@ -51,8 +52,12 @@ public class Main implements FrontendController
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
-        this.updateGameState(new GameState());
-
+        this.game = new Game();
+        this.humanPlayers = new HumanPlayer[] {
+            new HumanPlayer(1), new HumanPlayer(2)
+        };
+        
+        /*
         //Joris tryout
         String[] players = new String[] {"Joris", "Stockfish"};
         int[] stars = new int[] {42, 112};
@@ -62,13 +67,14 @@ public class Main implements FrontendController
 
         //Speler drukt op NEW GAME (tegen engine stockfish in ons geval)
         this.startNewGame();
+        */
     }
     
     @Override
     public void startNewGame()
     {
-        this.game.startNewGame();
-        this.updateGameState(new GameState(this.game));
+        this.game.startNewGame(this.humanPlayers[0], this.humanPlayers[1]);
+        this.notifyGameListeners();
     }
 
     @Override
@@ -76,7 +82,6 @@ public class Main implements FrontendController
     {
         this.listeners.add(listener);
     }
-
 
     @Override
     public void chooseElement(int player, int element)
@@ -88,24 +93,45 @@ public class Main implements FrontendController
             STANDARDELEMENTS[element]
         );
 
-        /*
-        //Joris tryout
-        this.game.doMove(element);
-        int move = game.getCurrentMove();
-        int playerPreviousElement = 0;
-        if (move > 0) {
-            playerPreviousElement = game.getMove(0, move - 1);
-        }
-        this.game.doMove(this.engine.getElement(move, playerPreviousElement));
-        */
-        
-        this.updateGameState(new GameState(this.game));
+        this.humanPlayers[player].chosenElement = element;
+        this.game.update();
+        this.notifyGameListeners();
     }
     
-    private void updateGameState(GameState newState)
+    private void notifyGameListeners()
     {
         for (GameChangeListener listener : this.listeners) {
-            listener.onGameChanged(newState);
+            listener.onGameChanged(this.game.getData());
+        }
+    }
+    
+    private class HumanPlayer implements Player
+    {
+        private final int p;
+        private int chosenElement;
+        public HumanPlayer(int p)
+        {
+            this.p = p;
+        }
+        @Override
+        public String getName()
+        {
+            return "Human " + this.p;
+        }
+        @Override
+        public int doMove(Data gamedata)
+        {
+            return this.chosenElement;
+        }
+        @Override
+        public void onNewGame(String otherPlayerName)
+        {
+            this.chosenElement = -1;
+        }
+        @Override
+        public void onMoveDone(int yourMove, int otherMove, int score)
+        {
+            this.chosenElement = -1;
         }
     }
 

@@ -2,108 +2,133 @@ package backend;
 
 import static common.Constants.*;
 
-public class Game {
-    private String[] playerNames;
-    private int[] playerStars;//Aantal sterren zal met een formule worden omgezet naar rank en kleur. Zie joris.basdon.net/avatarcarto
+import java.util.Arrays;
 
-    private int[][] moves;
-    private int currentPlayer;
-    private int currentMove;
-    private int[][] elementsLeft;
-    private int[] score;
+public class Game
+{
+    private Data data;
+    
+    private Player[] players = { null, null };
+    private int chosenElement[] = { -1, -1 };
 
-    public Game(String[] playerNames, int[] playerStars) {
-        this.playerNames = new String[playerNames.length];
-        this.playerStars = new int[playerStars.length];
-        for(int i = 0; i < playerNames.length; i++) {
-            this.playerNames[i] = playerNames[i];
-            this.playerStars[i] = playerStars[i];
+    public void startNewGame(Player p1, Player p2)
+    {
+        this.players[0] = p1;
+        this.players[1] = p2;
+        final String p1name = p1.getName();
+        final String p2name = p2.getName();
+        this.data = new Data(new String[] { p1name, p2name });
+        Arrays.fill(this.chosenElement, -1);
+        p1.onNewGame(p2name);
+        p2.onNewGame(p1name);
+    }
+
+    public void update()
+    {
+        for (;;) {
+            if (this.data.currentMove > 8) {
+                return;
+            }
+            
+            int e0 = this.askPlayerMove(0);
+            int e1 = this.askPlayerMove(1);
+
+            if (e0 == -1 || e1 == -1) {
+                this.chosenElement[0] = e0;
+                this.chosenElement[1] = e1;
+                return;
+            }
+            
+            this.data.elementsLeft[0][e0]--;
+            this.data.elementsLeft[1][e1]--;
+            Arrays.fill(this.chosenElement, -1);
+            final int result = RESULTMATRIX[e0][e1];
+            final int c = this.data.currentMove++;
+            this.data.moveScores[c] = result;
+            this.data.moves[0][c] = e0;
+            this.data.moves[1][c] = e1;
+            final int[] dscore = { 0, 0, 1 };
+            this.data.score[0] += dscore[result + 1];
+            this.data.score[1] += dscore[result * -1 + 1];
+            
+            this.players[0].onMoveDone(e0, e1, result);
+            this.players[1].onMoveDone(e1, e0, -result);
         }
-        startNewGame();
     }
-
-    public void startNewGame() {
-        moves = new int[2][9];
-        currentPlayer = 0;
-        currentMove = 0;
-        elementsLeft = new int[][]{
-            {2, 2, 2, 2, 1},
-            {2, 2, 2, 2, 1}
-        };
-        score = new int[]{0, 0};
+    
+    private int askPlayerMove(int p)
+    {
+        if (this.chosenElement[p] != -1) {
+            return this.chosenElement[p];
+        }
+        
+        int element = this.players[p].doMove(this.data);
+        if (element == -1) {
+            return -1;
+        }
+        
+        for (int i = 0; i < 5; i++) {
+            if (data.elementsLeft[p][element] != 0) {
+                return element;
+            }
+            element = (element + 1) % 5;
+        }
+        
+        return element;
     }
+    
+    public Data getData()
+    {
+        return this.data;
+    }
+    
+    public static class Data
+    {
+        public final String[] playerNames;
+        private final int[][] moves;
+        private final int[] moveScores;
+        private int currentMove;
+        private final int[][] elementsLeft;
+        private final int[] score;
 
-    public void doMove(int imove) {
-        int move = imove;
-        while (elementsLeft[currentPlayer][move] < 1) {
-            move = (move + 1) % 4;
+        Data(String[] playerNames)
+        {
+            this.playerNames = playerNames;
+            this.moves = new int[][] { new int[9], new int[9] };
+            this.moveScores = new int[9];
+            this.elementsLeft = new int[][] { new int[5], new int[5] };
+            Arrays.fill(this.elementsLeft[0], 2);
+            Arrays.fill(this.elementsLeft[1], 2);
+            this.elementsLeft[0][DEFENSE] = 1;
+            this.elementsLeft[1][DEFENSE] = 1;
+            this.score = new int[] { 0, 0 };
+        }
+        
+        public int getMove(int p, int move)
+        {
+            return this.moves[p][move];
+        }
+        
+        public int getMoveScore(int move)
+        {
+            return this.moveScores[move];
+        }
+        
+        public int getElementsLeft(int p, int element)
+        {
+            return this.elementsLeft[p][element];
+        }
+        
+        public int getCurrentMove()
+        {
+            return this.currentMove;
+        }
+        
+        public int getScore(int p)
+        {
+            return this.score[p];
         }
 
-        elementsLeft[currentPlayer][move]--;
-        moves[currentPlayer][currentMove] = move;
-
-        if (currentPlayer == 1) {
-            doScore();
-            currentMove++;
-        }
-        currentPlayer = (currentPlayer + 1) % 2;
-    }
-
-    private void doScore() {
-        final int result = this.getMoveResult(this.currentMove);
-        if (result == 1) score[0]++;
-        if (result == -1) score[1]++;
-    }
-
-    public int getMoveResult(int move) {
-        int[][] result = {
-            {0, -1, 0, 1, 0},//Air
-            {1, 0, -1, 0, 0},//Earth
-            {0, 1, 0, -1, 0},//Fire
-            {-1, 0, 1, 0, 0},//Water
-            {0, 0, 0, 0, 0},//Defense
-        };
-        final int firstplayerElement = this.moves[0][move];
-        final int secondplayerElement = this.moves[1][move];
-        return result[firstplayerElement][secondplayerElement];
-    }
-
-    private void prevMove() {
-        elementsLeft[0][moves[0][currentMove]]++;
-        elementsLeft[1][moves[1][currentMove]]++;
-        moves[0][currentMove] = 0;
-        moves[1][currentMove] = 0;
-        currentPlayer = 0;
-        currentMove -= 1; //controle gebeurt in front-end
-    }
-
-    private char moveToChar(int move) {
-        return CHARELEMENTS[move];
-    }
-
-    public int getMove(int player, int move) {
-        return moves[player][move];
-    }
-
-    public int getScore(int player) {
-        return score[player];
-    }
-
-    public int getPreviousPlayer() {
-        //return currentPlayer ^ 1;
-        return (currentPlayer + 1) % 2; //Soms is het gevaarlijk om negatieve modulos te nemen. Bad practice
-        /*
-        0 ^ 1 = 1
-        1 ^ 1 = 0
-         */
-    }
-
-    public int getCurrentMove() {
-        return currentMove;
-    }
-
-    public int[][] getElementsLeft() {
-        return elementsLeft;
     }
 
 }

@@ -1,6 +1,8 @@
 package frontend;
 
+import backend.Game;
+
 public interface GameChangeListener
 {
-    void onGameChanged(GameState newState);
+    void onGameChanged(Game.Data data);
 }

@@ -6,9 +6,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import backend.Game;
 import frontend.FrontendController;
 import frontend.GameChangeListener;
-import frontend.GameState;
 
 import java.awt.*;
 
@@ -43,6 +43,8 @@ class PlayerControl extends JPanel implements GameChangeListener
             this.add(button);
             final int element = i;
             button.addActionListener(e -> controller.chooseElement(player, element));
+            button.setText(STANDARDELEMENTS[i] + " (0)");
+            button.setEnabled(false);
             this.buttons[i] = button;
         }
 
@@ -54,12 +56,12 @@ class PlayerControl extends JPanel implements GameChangeListener
     }
 
     @Override
-    public void onGameChanged(GameState newState)
+    public void onGameChanged(Game.Data data)
     {
         for (int i = 0; i < 5; i++) {
-            final int[] elementsLeft = newState.elementsLeft[this.player];
-            this.buttons[i].setText(STANDARDELEMENTS[i] + " (" + elementsLeft[i] + ")");
-            this.buttons[i].setEnabled(elementsLeft[i] > 0);
+            final int elementsLeft = data.getElementsLeft(this.player, i);
+            this.buttons[i].setText(STANDARDELEMENTS[i] + " (" + elementsLeft + ")");
+            this.buttons[i].setEnabled(elementsLeft > 0);
         }
     }
 

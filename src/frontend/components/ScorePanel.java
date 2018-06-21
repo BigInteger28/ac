@@ -2,12 +2,13 @@ package frontend.components;
 
 import frontend.FrontendController;
 import frontend.GameChangeListener;
-import frontend.GameState;
 import frontend.Main;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+
+import backend.Game;
 
 import java.awt.*;
 
@@ -34,10 +35,10 @@ class ScorePanel extends JPanel implements GameChangeListener
     }
 
     @Override
-    public void onGameChanged(GameState newState)
+    public void onGameChanged(Game.Data data)
     {
-        this.label1.setText("Player 1:   " + newState.score[0]);
-        this.label2.setText("Player 2:   " + newState.score[1]);
+        this.label1.setText("Player 1:   " + data.getScore(0));
+        this.label2.setText("Player 2:   " + data.getScore(1));
     }
 
 }

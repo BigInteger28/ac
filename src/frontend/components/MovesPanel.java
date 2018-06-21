@@ -2,11 +2,12 @@ package frontend.components;
 
 import frontend.FrontendController;
 import frontend.GameChangeListener;
-import frontend.GameState;
 import frontend.Main;
 
 import javax.swing.*;
 import javax.swing.border.*;
+
+import backend.Game;
 
 import java.awt.*;
 
@@ -58,20 +59,20 @@ class MovesPanel extends JPanel implements GameChangeListener
     }
 
     @Override
-    public void onGameChanged(GameState newState)
+    public void onGameChanged(Game.Data data)
     {
         for (int i = 0; i < 9; i++) {
-            final int moveResult = newState.moveScores[i];
+            final int moveResult = data.getMoveScore(i);
             for (int p = 0; p < 2; p++) {
                 final JLabel l = this.playerLabels[p][i];
-                if (newState.currentMove <= i) {
+                if (data.getCurrentMove() <= i) {
                     l.setText("?");
                     l.setForeground(RESULTCOLORS[1]);
-                    return;
+                    continue;
                 }
 
-                l.setText(String.valueOf(CHARELEMENTS[newState.moves[p][i]]));
-                l.setForeground(RESULTCOLORS[moveResult * (p | 1) + 1]);
+                l.setText(String.valueOf(CHARELEMENTS[data.getMove(p, i)]));
+                l.setForeground(RESULTCOLORS[moveResult * ((p * -1) | 1) + 1]);
             }
         }
     }

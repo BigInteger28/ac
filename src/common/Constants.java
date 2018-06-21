@@ -11,6 +11,14 @@ public class Constants {
     public static final int FIRE = 2;
     public static final int WATER = 3;
     public static final int DEFENSE = 4;
+    
+    public static final int[][] RESULTMATRIX = {
+        {0, -1, 0, 1, 0}, //Air
+        {1, 0, -1, 0, 0}, //Earth
+        {0, 1, 0, -1, 0}, //Fire
+        {-1, 0, 1, 0, 0}, //Water
+        {0, 0, 0, 0, 0}, //Defense
+    };
 
     static {
         STANDARDELEMENTS = new String[] { "Lucht", "Aarde", "Vuur", "Water", "Defensie" }; //voorlopig in het nederlands gezet
