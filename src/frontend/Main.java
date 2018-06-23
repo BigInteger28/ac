@@ -13,7 +13,7 @@ import java.util.List;
 
 import static common.Constants.*;
 
-public class Main implements FrontendController
+public class Main implements FrontendController, Game.Listener
 {
 
     public static Font monospaceFont;
@@ -52,7 +52,7 @@ public class Main implements FrontendController
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
-        this.game = new Game();
+        this.game = new Game(this);
         this.humanPlayers = new HumanPlayer[] {
             new HumanPlayer(1), new HumanPlayer(2)
         };
@@ -68,6 +68,17 @@ public class Main implements FrontendController
         //Speler drukt op NEW GAME (tegen engine stockfish in ons geval)
         this.startNewGame();
         */
+    }
+
+    @Override
+    public void onMoveDone(int[] playerElements, int result)
+    {
+        this.notifyGameListeners();
+    }
+
+    @Override
+    public void onGameEnd()
+    {
     }
     
     @Override
@@ -95,7 +106,6 @@ public class Main implements FrontendController
 
         this.humanPlayers[player].chosenElement = element;
         this.game.update();
-        this.notifyGameListeners();
     }
     
     private void notifyGameListeners()

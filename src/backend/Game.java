@@ -6,10 +6,17 @@ import java.util.Arrays;
 
 public class Game
 {
+    private final Listener listener;
+
     private Data data;
     
     private Player[] players = { null, null };
     private int chosenElement[] = { -1, -1 };
+    
+    public Game(Listener listener)
+    {
+        this.listener = listener;
+    }
 
     public void startNewGame(Player p1, Player p2)
     {
@@ -41,7 +48,6 @@ public class Game
             
             this.data.elementsLeft[0][e0]--;
             this.data.elementsLeft[1][e1]--;
-            Arrays.fill(this.chosenElement, -1);
             final int result = RESULTMATRIX[e0][e1];
             final int c = this.data.currentMove++;
             this.data.moveScores[c] = result;
@@ -53,6 +59,14 @@ public class Game
             
             this.players[0].onMoveDone(e0, e1, result);
             this.players[1].onMoveDone(e1, e0, -result);
+            
+            this.listener.onMoveDone(this.chosenElement, result);
+            Arrays.fill(this.chosenElement, -1);
+
+            if (this.data.currentMove > 8) {
+                this.listener.onGameEnd();
+                return;
+            }
         }
     }
     
@@ -134,6 +148,12 @@ public class Game
             return this.score[p];
         }
 
+    }
+    
+    public interface Listener
+    {
+        void onMoveDone(int[] playerElements, int result);
+        void onGameEnd();
     }
 
 }
