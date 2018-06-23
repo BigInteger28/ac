@@ -15,6 +15,8 @@ import backend.Player;
 import resources.PlayerResource;
 import frontend.util.SwingUtil;
 
+import static javax.swing.JScrollPane.*;
+
 public class ChoosePlayerDialog extends JDialog
 {
     public static Player show(
@@ -34,7 +36,6 @@ public class ChoosePlayerDialog extends JDialog
         final PlayerResource[] result = { null };
         final JList<PlayerResource> list = new JList<>();
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setPreferredSize(new Dimension(350, 300));
         list.setModel(new ListModel<PlayerResource>() {
             @Override
             public int getSize()
@@ -72,6 +73,10 @@ public class ChoosePlayerDialog extends JDialog
             }
         });
         list.setSelectedIndex(0);
+        final JScrollPane scrollpane = new JScrollPane(list);
+        scrollpane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollpane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollpane.setPreferredSize(new Dimension(550, 300));
         SwingUtilities.invokeLater(() -> list.requestFocusInWindow());
         
         final JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -87,7 +92,7 @@ public class ChoosePlayerDialog extends JDialog
 
         dialog.getContentPane().setLayout(new BorderLayout());
         dialog.add(lbl, BorderLayout.NORTH);
-        dialog.add(list);
+        dialog.add(scrollpane);
         dialog.add(pnlButtons, BorderLayout.SOUTH);
         dialog.setTitle(title);
         dialog.setModal(true);

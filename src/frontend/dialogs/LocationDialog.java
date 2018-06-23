@@ -1,28 +1,18 @@
 package frontend.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListModel;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
+import javax.swing.*;
+import javax.swing.event.*;
 
 import frontend.FrontendController;
 import frontend.util.SwingUtil;
 import resources.EngineSourceManager;
+
+import static javax.swing.JScrollPane.*;
 
 public class LocationDialog
 {
@@ -34,7 +24,6 @@ public class LocationDialog
         final List<ListDataListener> listDataListeners = new ArrayList<>();
 
         final JList<File> list = new JList<>();
-        list.setPreferredSize(new Dimension(550, 300));
         list.setModel(new ListModel<File>() {
             @Override
             public int getSize()
@@ -58,6 +47,10 @@ public class LocationDialog
             }
         });
         list.setCellRenderer(new DefaultListCellRenderer());
+        final JScrollPane scrollpane = new JScrollPane(list);
+        scrollpane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollpane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollpane.setPreferredSize(new Dimension(550, 300));
         final GridBagConstraints c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 1;
@@ -110,7 +103,7 @@ public class LocationDialog
         pnlListControl.add(new JLabel(), c);
         final JPanel pnlMain = new JPanel(new BorderLayout());
         pnlMain.add(pnlListControl, BorderLayout.WEST);
-        pnlMain.add(list);
+        pnlMain.add(scrollpane);
 
         final JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton btnCancel = new JButton("Cancel");
