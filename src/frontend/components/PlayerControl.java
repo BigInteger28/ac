@@ -42,7 +42,12 @@ class PlayerControl extends JPanel implements GameChangeListener
             button.setFocusable(false);
             this.add(button);
             final int element = i;
-            button.addActionListener(e -> controller.chooseElement(player, element));
+            button.addActionListener(e -> {
+                for (JButton b : this.buttons) {
+                    b.setEnabled(false);
+                }
+                controller.chooseElement(player, element);
+            });
             button.setText(STANDARDELEMENTS[i] + " (0)");
             button.setEnabled(false);
             this.buttons[i] = button;
