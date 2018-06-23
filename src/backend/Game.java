@@ -17,13 +17,13 @@ public class Game
         this.listener = listener;
     }
 
-    public void startNewGame(Player p1, Player p2)
+    public void startNewGame(Player[] players)
     {
-        this.data = new Data(new Player[] { p1, p2 });
+        this.data = new Data(new Player[] { players[0], players[1] });
         Arrays.fill(this.chosenElement, -1);
         this.listener.onGameStart();
-        p1.onGameStart(this.data, 0);
-        p2.onGameStart(this.data, 1);
+        players[0].onGameStart(this.data, 0);
+        players[1].onGameStart(this.data, 1);
     }
 
     public void update()

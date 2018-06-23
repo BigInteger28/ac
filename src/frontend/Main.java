@@ -1,17 +1,15 @@
 package frontend;
 
 import backend.Game;
-import backend.Game.Data;
 import backend.Player;
 import frontend.components.GamePanel;
 import frontend.components.Ribbon;
+import frontend.dialogs.ChoosePlayerDialog;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static common.Constants.*;
 
 public class Main implements FrontendController, Game.Listener
 {
@@ -31,18 +29,17 @@ public class Main implements FrontendController, Game.Listener
         SwingUtilities.invokeLater(Main::new);
     }
 
+    private final JFrame frame;
     private final GamePanel gamePanel;
-    private final Ribbon ribbon;
     private final Game game;
-    private final HumanPlayer[] humanPlayers;
+    private final Player[] players;
     private final List<GameChangeListener> listeners;
 
     public Main() {
         this.listeners = new ArrayList<>(10);
         this.gamePanel = new GamePanel(this);
-        this.ribbon = new Ribbon();
         final JPanel content = new JPanel(new BorderLayout());
-        content.add(this.ribbon.createComponent(this), BorderLayout.NORTH);
+        content.add(new Ribbon(this).createComponent(), BorderLayout.NORTH);
         content.add(this.gamePanel);
         final JFrame frame = new JFrame("Avatar Carto Java Edition");
         frame.setContentPane(content);
@@ -51,11 +48,10 @@ public class Main implements FrontendController, Game.Listener
         frame.setMinimumSize(frame.getSize());
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        this.frame = frame;
 
         this.game = new Game(this);
-        this.humanPlayers = new HumanPlayer[] {
-            new HumanPlayer(1), new HumanPlayer(2)
-        };
+        this.players = new Player[2];
         
         /*
         //Joris tryout
@@ -97,7 +93,25 @@ public class Main implements FrontendController, Game.Listener
     @Override
     public void startNewGame()
     {
-        this.game.startNewGame(this.humanPlayers[0], this.humanPlayers[1]);
+        if (this.players[0] == null || this.players[1] == null) {
+            this.startNewGameAdv();
+            return;
+        }
+        this.game.startNewGame(this.players);
+    }
+    
+    @Override
+    public void startNewGameAdv()
+    {
+        for (int i = 0; i < 2; i++) {
+            final Player p = ChoosePlayerDialog.choosePlayer(this.frame, i + 1);
+            if (p == null) {
+                return;
+            }
+            this.players[i] = p;
+        }
+
+        this.startNewGame();
     }
 
     @Override
@@ -109,54 +123,10 @@ public class Main implements FrontendController, Game.Listener
     @Override
     public void chooseElement(int player, int element)
     {
-        System.out.printf(
-            "player %d chose element %d (%s)%n",
-            player,
-            element,
-            STANDARDELEMENTS[element]
-        );
-
-        this.humanPlayers[player].chosenElement = element;
-        this.game.update();
+        if (this.players[player] instanceof HumanPlayer) {
+            ((HumanPlayer) this.players[player]).setChosenElement(element);
+            this.game.update();
+        }
     }
     
-    private class HumanPlayer implements Player
-    {
-        private final int p;
-        private int chosenElement;
-        public HumanPlayer(int p)
-        {
-            this.p = p;
-        }
-        @Override
-        public String getName()
-        {
-            return "Human " + this.p;
-        }
-        @Override
-        public int doMove(Data gamedata)
-        {
-            return this.chosenElement;
-        }
-        @Override
-        public void onGameStart(Game.Data data, int yourPlayerNumber)
-        {
-            this.chosenElement = -1;
-        }
-        @Override
-        public void onMoveDone(int yourMove, int otherMove, int score)
-        {
-            this.chosenElement = -1;
-        }
-        @Override
-        public void onGameEnd(Game.Data data)
-        {
-        }
-        @Override
-        public boolean isHumanControlled()
-        {
-            return true;
-        }
-    }
-
 }
