@@ -4,6 +4,8 @@ import backend.Game;
 import backend.Player;
 import frontend.dialogs.ChoosePlayerDialog;
 import frontend.maincontent.MainContent;
+import resources.PlayerResource;
+import resources.EngineSourceManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -83,6 +85,12 @@ public class Main implements FrontendController, Game.Listener
             listener.onGameEnd(this.game.getData());
         }
     }
+
+    @Override
+    public Window getWindow()
+    {
+        return this.frame;
+    }
     
     @Override
     public void startNewGame()
@@ -97,8 +105,10 @@ public class Main implements FrontendController, Game.Listener
     @Override
     public void startNewGameAdv()
     {
+        final List<PlayerResource> playerList;
+        playerList = EngineSourceManager.collectResources(/*includeHuman*/ true);
         for (int i = 0; i < 2; i++) {
-            final Player p = ChoosePlayerDialog.choosePlayer(this.frame, i + 1);
+            final Player p = ChoosePlayerDialog.show(this.frame, i + 1, playerList);
             if (p == null) {
                 return;
             }

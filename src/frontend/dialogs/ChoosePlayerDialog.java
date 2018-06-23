@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Window;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,8 +17,10 @@ import frontend.util.SwingUtil;
 
 public class ChoosePlayerDialog extends JDialog
 {
-    
-    public static Player choosePlayer(Window parentWindow, int playerNumber)
+    public static Player show(
+        Window parentWindow,
+        int playerNumber,
+        List<PlayerResource> playerList)
     {
         final String title = "Select player " + playerNumber;
 
@@ -36,12 +39,12 @@ public class ChoosePlayerDialog extends JDialog
             @Override
             public int getSize()
             {
-                return 1;
+                return playerList.size();
             }
             @Override
             public PlayerResource getElementAt(int index)
             {
-                return new PlayerResource(null);
+                return playerList.get(index);
             }
             @Override
             public void addListDataListener(ListDataListener l)
@@ -64,7 +67,7 @@ public class ChoosePlayerDialog extends JDialog
                     setBackground(list.getBackground());
                     setForeground(list.getForeground());
                 }
-                this.setText("<Human player>");
+                this.setText(((PlayerResource) value).getName());
                 return this;
             }
         });
@@ -100,5 +103,4 @@ public class ChoosePlayerDialog extends JDialog
         
         return result[0].createPlayer(playerNumber);
     }
-
 }

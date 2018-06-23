@@ -6,6 +6,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SpringLayout;
 
 import frontend.FrontendController;
+import frontend.dialogs.LocationDialog;
 
 class Ribbon extends JTabbedPane
 {
@@ -21,6 +22,7 @@ class Ribbon extends JTabbedPane
     {
         this.controller = controller;
         this.addTab("Game", this.createGameMenu());
+        this.addTab("Settings", this.createSettingsMenu());
     }
     
     private JPanel createGameMenu()
@@ -47,4 +49,21 @@ class Ribbon extends JTabbedPane
         return pnl;
     }
 
+    private JPanel createSettingsMenu()
+    {
+        final SpringLayout layout = new SpringLayout();
+        final JPanel pnl = new JPanel(layout);
+
+        final JButton btnLocations = new JButton("Engine locations");
+        btnLocations.addActionListener(e -> LocationDialog.show(this.controller));
+        pnl.add(btnLocations);
+        
+        layout.putConstraint(W, btnLocations, PADDING, W, pnl);
+        layout.putConstraint(N, btnLocations, PADDING, N, pnl);
+        layout.putConstraint(S, pnl, PADDING, S, btnLocations);
+        layout.putConstraint(E, pnl, -PADDING, E, btnLocations);
+        
+        return pnl;
+    }
+    
 }
