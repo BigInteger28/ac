@@ -39,9 +39,7 @@ class PlayerControl extends JPanel implements GameChangeListener
 
         for (int i = 0; i < 5; i++) {
             final JButton button = new JButton(STANDARDELEMENTS[i] + " (?)");
-            button.setBackground(new Color(BUTTONCOLORS[i]));
             button.setFocusable(false);
-            this.add(button);
             final int element = i;
             button.addActionListener(e -> {
                 for (JButton b : this.buttons) {
@@ -52,6 +50,12 @@ class PlayerControl extends JPanel implements GameChangeListener
             button.setText(STANDARDELEMENTS[i] + " (0)");
             button.setEnabled(false);
             this.buttons[i] = button;
+
+            final JPanel btnowner = new JPanel(new BorderLayout());
+            btnowner.setBorder(new EmptyBorder(3, 3, 3, 3));
+            btnowner.setBackground(new Color(BUTTONCOLORS[i]));
+            btnowner.add(button);
+            this.add(btnowner);
         }
 
         controller.addGameChangeListener(this);
