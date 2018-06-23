@@ -84,7 +84,7 @@ public class Game
     
     public static class Data
     {
-        public final String[] playerNames;
+        private final String[] playerNames;
         private final int[][] moves;
         private final int[] moveScores;
         private int currentMove;
@@ -102,6 +102,11 @@ public class Game
             this.elementsLeft[0][DEFENSE] = 1;
             this.elementsLeft[1][DEFENSE] = 1;
             this.score = new int[] { 0, 0 };
+        }
+        
+        public String getPlayerName(int p)
+        {
+            return this.playerNames[p];
         }
         
         public int getMove(int p, int move)
