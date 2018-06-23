@@ -2,9 +2,8 @@ package frontend;
 
 import backend.Game;
 import backend.Player;
-import frontend.components.GamePanel;
-import frontend.components.Ribbon;
 import frontend.dialogs.ChoosePlayerDialog;
+import frontend.maincontent.MainContent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,19 +29,14 @@ public class Main implements FrontendController, Game.Listener
     }
 
     private final JFrame frame;
-    private final GamePanel gamePanel;
     private final Game game;
     private final Player[] players;
     private final List<GameChangeListener> listeners;
 
     public Main() {
         this.listeners = new ArrayList<>(10);
-        this.gamePanel = new GamePanel(this);
-        final JPanel content = new JPanel(new BorderLayout());
-        content.add(new Ribbon(this).createComponent(), BorderLayout.NORTH);
-        content.add(this.gamePanel);
         final JFrame frame = new JFrame("Avatar Carto Java Edition");
-        frame.setContentPane(content);
+        MainContent.addTo(frame.getContentPane(), this);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setMinimumSize(frame.getSize());

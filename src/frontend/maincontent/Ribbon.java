@@ -1,4 +1,4 @@
-package frontend.components;
+package frontend.maincontent;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -10,13 +10,13 @@ import frontend.FrontendController;
 
 import static javax.swing.SpringLayout.*;
 
-public class Ribbon
+class Ribbon
 {
     private static final int PADDING = 5;
     
     private final FrontendController controller;
     
-    public Ribbon(FrontendController controller)
+    Ribbon(FrontendController controller)
     {
         this.controller = controller;
     }

@@ -1,4 +1,4 @@
-package frontend.components;
+package frontend.maincontent;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -10,6 +10,7 @@ import backend.Game;
 import backend.Game.Data;
 import frontend.FrontendController;
 import frontend.GameChangeListener;
+import frontend.components.DefaultTitledBorder;
 
 import java.awt.*;
 

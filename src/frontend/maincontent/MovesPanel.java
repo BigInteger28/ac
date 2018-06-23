@@ -1,8 +1,10 @@
-package frontend.components;
+package frontend.maincontent;
 
 import frontend.FrontendController;
 import frontend.GameChangeListener;
 import frontend.Main;
+import frontend.components.DefaultTitledBorder;
+import frontend.components.TripleBorder;
 
 import javax.swing.*;
 import javax.swing.border.*;

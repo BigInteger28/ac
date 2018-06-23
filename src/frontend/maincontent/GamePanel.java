@@ -1,4 +1,4 @@
-package frontend.components;
+package frontend.maincontent;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -7,13 +7,13 @@ import frontend.FrontendController;
 
 import java.awt.*;
 
-public class GamePanel extends JPanel
+class GamePanel extends JPanel
 {
     private final MovesPanel movesPanel;
     private final ScorePanel scorePanel;
     private final PlayerControl[] playerControls;
 
-    public GamePanel(FrontendController controller)
+    GamePanel(FrontendController controller)
     {
         this.setLayout(new BorderLayout());
 
