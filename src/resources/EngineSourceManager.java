@@ -113,7 +113,7 @@ public class EngineSourceManager
             Files.write(
                 locationsfile.toPath(),
                 lines,
-                StandardOpenOption.CREATE_NEW,
+                StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING
             );
         } catch (IOException e) {
