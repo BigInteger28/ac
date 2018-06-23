@@ -10,7 +10,6 @@ public class Game
 
     private Data data;
     
-    private Player[] players = { null, null };
     private int chosenElement[] = { -1, -1 };
     
     public Game(Listener listener)
@@ -20,11 +19,9 @@ public class Game
 
     public void startNewGame(Player p1, Player p2)
     {
-        this.players[0] = p1;
-        this.players[1] = p2;
         final String p1name = p1.getName();
         final String p2name = p2.getName();
-        this.data = new Data(new String[] { p1name, p2name });
+        this.data = new Data(new Player[] { p1, p2 });
         Arrays.fill(this.chosenElement, -1);
         p1.onNewGame(p2name);
         p2.onNewGame(p1name);
@@ -57,8 +54,8 @@ public class Game
             this.data.score[0] += dscore[result + 1];
             this.data.score[1] += dscore[result * -1 + 1];
             
-            this.players[0].onMoveDone(e0, e1, result);
-            this.players[1].onMoveDone(e1, e0, -result);
+            this.data.players[0].onMoveDone(e0, e1, result);
+            this.data.players[1].onMoveDone(e1, e0, -result);
             
             this.listener.onMoveDone(this.chosenElement, result);
             Arrays.fill(this.chosenElement, -1);
@@ -76,7 +73,7 @@ public class Game
             return this.chosenElement[p];
         }
         
-        int element = this.players[p].doMove(this.data);
+        int element = this.data.players[p].doMove(this.data);
         if (element == -1) {
             return -1;
         }
@@ -98,16 +95,16 @@ public class Game
     
     public static class Data
     {
-        private final String[] playerNames;
+        private final Player[] players;
         private final int[][] moves;
         private final int[] moveScores;
         private int currentMove;
         private final int[][] elementsLeft;
         private final int[] score;
 
-        Data(String[] playerNames)
+        Data(Player[] players)
         {
-            this.playerNames = playerNames;
+            this.players = players;
             this.moves = new int[][] { new int[9], new int[9] };
             this.moveScores = new int[9];
             this.elementsLeft = new int[][] { new int[5], new int[5] };
@@ -118,9 +115,14 @@ public class Game
             this.score = new int[] { 0, 0 };
         }
         
+        public boolean isHumanControlled(int p)
+        {
+            return this.players[p].isHumanControlled();
+        }
+        
         public String getPlayerName(int p)
         {
-            return this.playerNames[p];
+            return this.players[p].getName();
         }
         
         public int getMove(int p, int move)

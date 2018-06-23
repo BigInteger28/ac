@@ -6,4 +6,5 @@ public interface Player
     int doMove(Game.Data gamedata);
     void onNewGame(String otherPlayerName);
     void onMoveDone(int yourMove, int otherMove, int score);
+    boolean isHumanControlled();
 }

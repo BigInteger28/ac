@@ -61,8 +61,9 @@ class PlayerControl extends JPanel implements GameChangeListener
     {
         for (int i = 0; i < 5; i++) {
             final int elementsLeft = data.getElementsLeft(this.player, i);
+            final boolean ishuman = data.isHumanControlled(this.player);
             this.buttons[i].setText(STANDARDELEMENTS[i] + " (" + elementsLeft + ")");
-            this.buttons[i].setEnabled(elementsLeft > 0);
+            this.buttons[i].setEnabled(ishuman && elementsLeft > 0);
             this.titleBorder.setTitle(data.getPlayerName(this.player));
             this.repaint(); // see bug JDK-4117141
         }

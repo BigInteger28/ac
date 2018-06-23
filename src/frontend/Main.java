@@ -143,6 +143,11 @@ public class Main implements FrontendController, Game.Listener
         {
             this.chosenElement = -1;
         }
+        @Override
+        public boolean isHumanControlled()
+        {
+            return true;
+        }
     }
 
 }
