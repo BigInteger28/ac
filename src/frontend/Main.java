@@ -73,18 +73,25 @@ public class Main implements FrontendController, Game.Listener
     @Override
     public void onGameStart()
     {
-        this.notifyGameListeners();
+        for (GameChangeListener listener : this.listeners) {
+            listener.onGameStart(this.game.getData());
+        }
     }
 
     @Override
     public void onMoveDone(int[] playerElements, int result)
     {
-        this.notifyGameListeners();
+        for (GameChangeListener listener : this.listeners) {
+            listener.onGameChange(this.game.getData());
+        }
     }
 
     @Override
     public void onGameEnd()
     {
+        for (GameChangeListener listener : this.listeners) {
+            listener.onGameEnd(this.game.getData());
+        }
     }
     
     @Override
@@ -111,13 +118,6 @@ public class Main implements FrontendController, Game.Listener
 
         this.humanPlayers[player].chosenElement = element;
         this.game.update();
-    }
-    
-    private void notifyGameListeners()
-    {
-        for (GameChangeListener listener : this.listeners) {
-            listener.onGameChanged(this.game.getData());
-        }
     }
     
     private class HumanPlayer implements Player

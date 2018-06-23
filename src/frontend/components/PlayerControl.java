@@ -7,6 +7,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import backend.Game;
+import backend.Game.Data;
 import frontend.FrontendController;
 import frontend.GameChangeListener;
 
@@ -55,18 +56,34 @@ class PlayerControl extends JPanel implements GameChangeListener
 
         controller.addGameChangeListener(this);
     }
-
-    @Override
-    public void onGameChanged(Game.Data data)
+    
+    private void updateButtons(Game.Data data)
     {
         for (int i = 0; i < 5; i++) {
             final int elementsLeft = data.getElementsLeft(this.player, i);
             final boolean ishuman = data.isHumanControlled(this.player);
             this.buttons[i].setText(STANDARDELEMENTS[i] + " (" + elementsLeft + ")");
             this.buttons[i].setEnabled(ishuman && elementsLeft > 0);
-            this.titleBorder.setTitle(data.getPlayerName(this.player));
-            this.repaint(); // see bug JDK-4117141
         }
+    }
+
+    @Override
+    public void onGameStart(Data data)
+    {
+        this.updateButtons(data);
+        this.titleBorder.setTitle(data.getPlayerName(this.player));
+        this.repaint(); // see bug JDK-4117141
+    }
+
+    @Override
+    public void onGameChange(Game.Data data)
+    {
+        this.updateButtons(data);
+    }
+
+    @Override
+    public void onGameEnd(Data data)
+    {
     }
 
 }

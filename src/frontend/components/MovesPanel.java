@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 import backend.Game;
+import backend.Game.Data;
 
 import java.awt.*;
 
@@ -59,7 +60,12 @@ class MovesPanel extends JPanel implements GameChangeListener
     }
 
     @Override
-    public void onGameChanged(Game.Data data)
+    public void onGameStart(Data data)
+    {
+    }
+
+    @Override
+    public void onGameChange(Game.Data data)
     {
         for (int i = 0; i < 9; i++) {
             final int moveResult = data.getMoveScore(i);
@@ -75,6 +81,11 @@ class MovesPanel extends JPanel implements GameChangeListener
                 l.setForeground(RESULTCOLORS[moveResult * ((p * -1) | 1) + 1]);
             }
         }
+    }
+
+    @Override
+    public void onGameEnd(Data data)
+    {
     }
 
 }

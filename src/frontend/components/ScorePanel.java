@@ -9,6 +9,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import backend.Game;
+import backend.Game.Data;
 
 import java.awt.*;
 
@@ -35,10 +36,20 @@ class ScorePanel extends JPanel implements GameChangeListener
     }
 
     @Override
-    public void onGameChanged(Game.Data data)
+    public void onGameStart(Data data)
+    {
+    }
+
+    @Override
+    public void onGameChange(Game.Data data)
     {
         this.label1.setText("Player 1:   " + data.getScore(0));
         this.label2.setText("Player 2:   " + data.getScore(1));
+    }
+
+    @Override
+    public void onGameEnd(Data data)
+    {
     }
 
 }
