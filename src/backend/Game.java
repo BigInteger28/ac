@@ -19,8 +19,6 @@ public class Game
 
     public void startNewGame(Player p1, Player p2)
     {
-        final String p1name = p1.getName();
-        final String p2name = p2.getName();
         this.data = new Data(new Player[] { p1, p2 });
         Arrays.fill(this.chosenElement, -1);
         this.listener.onGameStart();
