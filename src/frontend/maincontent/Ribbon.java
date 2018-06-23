@@ -1,17 +1,18 @@
 package frontend.maincontent;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SpringLayout;
 
 import frontend.FrontendController;
 
-import static javax.swing.SpringLayout.*;
-
-class Ribbon
+class Ribbon extends JTabbedPane
 {
+    private static final String N = SpringLayout.NORTH;
+    private static final String E = SpringLayout.EAST;
+    private static final String S = SpringLayout.SOUTH;
+    private static final String W = SpringLayout.WEST;
     private static final int PADDING = 5;
     
     private final FrontendController controller;
@@ -19,13 +20,7 @@ class Ribbon
     Ribbon(FrontendController controller)
     {
         this.controller = controller;
-    }
-    
-    public JComponent createComponent()
-    {
-        final JTabbedPane c = new JTabbedPane();
-        c.addTab("Game", this.createGameMenu());
-        return c;
+        this.addTab("Game", this.createGameMenu());
     }
     
     private JPanel createGameMenu()
@@ -41,13 +36,13 @@ class Ribbon
         btnAdvGame.addActionListener(e -> this.controller.startNewGameAdv());
         pnl.add(btnAdvGame);
         
-        layout.putConstraint(WEST, btnNewGame, PADDING, WEST, pnl);
-        layout.putConstraint(NORTH, btnNewGame, PADDING, NORTH, pnl);
-        layout.putConstraint(SOUTH, pnl, PADDING, SOUTH, btnNewGame);
+        layout.putConstraint(W, btnNewGame, PADDING, W, pnl);
+        layout.putConstraint(N, btnNewGame, PADDING, N, pnl);
+        layout.putConstraint(S, pnl, PADDING, S, btnNewGame);
 
-        layout.putConstraint(NORTH, btnAdvGame, 0, NORTH, btnNewGame);
-        layout.putConstraint(WEST, btnAdvGame, 0, EAST, btnNewGame);
-        layout.putConstraint(EAST, pnl, -PADDING, EAST, btnAdvGame);
+        layout.putConstraint(N, btnAdvGame, 0, N, btnNewGame);
+        layout.putConstraint(W, btnAdvGame, 0, E, btnNewGame);
+        layout.putConstraint(E, pnl, -PADDING, E, btnAdvGame);
         
         return pnl;
     }

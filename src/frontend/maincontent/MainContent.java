@@ -12,7 +12,7 @@ public class MainContent
         FrontendController controller)
     {
         container.setLayout(new BorderLayout());
-        container.add(new Ribbon(controller).createComponent(), BorderLayout.NORTH);
+        container.add(new Ribbon(controller), BorderLayout.NORTH);
         container.add(new GamePanel(controller));
     }
 }
