@@ -11,11 +11,15 @@ import javax.swing.event.*;
 import frontend.FrontendController;
 import frontend.util.SwingUtil;
 import resources.EngineSourceManager;
+import resources.Settings;
 
 import static javax.swing.JScrollPane.*;
+import static resources.Settings.settings;
 
 public class LocationDialog
 {
+    private static final String SETTING_LAST_ACCESSED_FOLDER = "locationdialog.laf";
+
     public static void show(FrontendController controller)
     {
         final JDialog dialog = new JDialog(controller.getWindow());
@@ -61,6 +65,10 @@ public class LocationDialog
         final JButton btnRemove = new JButton("-");
         btnAdd.addActionListener(e -> {
             final JFileChooser fc = new JFileChooser(); 
+            final String laf = settings.getProperty(SETTING_LAST_ACCESSED_FOLDER, null);
+            if (laf != null) {
+                fc.setCurrentDirectory(new File(laf));
+            }
             fc.setDialogTitle("Choose a directory");
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fc.setAcceptAllFileFilterUsed(false);
@@ -72,6 +80,14 @@ public class LocationDialog
                 return;
             }
             if (file.exists() && file.isDirectory()) {
+                final File pf = file.getParentFile();
+                if (pf != null) {
+                    settings.setProperty(
+                        SETTING_LAST_ACCESSED_FOLDER, 
+                        pf.getAbsolutePath()
+                    );
+                    Settings.save();
+                }
                 locationList.add(file);
                 for (ListDataListener l : listDataListeners) {
                     l.contentsChanged(new ListDataEvent(

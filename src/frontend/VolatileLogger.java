@@ -7,10 +7,14 @@ public class VolatileLogger
 {
     public static final List<LogEntry> exceptions = new ArrayList<>();
     
+    public static void log(Throwable exception, String message)
+    {
+        exceptions.add(new LogEntry(exception, message));
+    }
+
     public static void logf(Throwable exception, String message, Object... args)
     {
-        final String msg = String.format(message, args);
-        exceptions.add(new LogEntry(exception, msg));
+        log(exception, String.format(message, args));
     }
     
     public static class LogEntry
