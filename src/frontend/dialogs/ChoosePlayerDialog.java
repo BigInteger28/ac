@@ -11,7 +11,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataListener;
 
 import backend.Player;
-import frontend.resources.PlayerResource;
+import resources.PlayerResource;
 import frontend.util.SwingUtil;
 
 public class ChoosePlayerDialog extends JDialog

@@ -1,4 +1,4 @@
-package frontend.resources;
+package resources;
 
 import java.io.File;
 
