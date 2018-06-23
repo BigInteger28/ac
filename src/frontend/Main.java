@@ -71,6 +71,12 @@ public class Main implements FrontendController, Game.Listener
     }
 
     @Override
+    public void onGameStart()
+    {
+        this.notifyGameListeners();
+    }
+
+    @Override
     public void onMoveDone(int[] playerElements, int result)
     {
         this.notifyGameListeners();
@@ -85,7 +91,6 @@ public class Main implements FrontendController, Game.Listener
     public void startNewGame()
     {
         this.game.startNewGame(this.humanPlayers[0], this.humanPlayers[1]);
-        this.notifyGameListeners();
     }
 
     @Override
@@ -134,7 +139,7 @@ public class Main implements FrontendController, Game.Listener
             return this.chosenElement;
         }
         @Override
-        public void onNewGame(String otherPlayerName)
+        public void onGameStart(Game.Data data, int yourPlayerNumber)
         {
             this.chosenElement = -1;
         }
@@ -142,6 +147,10 @@ public class Main implements FrontendController, Game.Listener
         public void onMoveDone(int yourMove, int otherMove, int score)
         {
             this.chosenElement = -1;
+        }
+        @Override
+        public void onGameEnd(Game.Data data)
+        {
         }
         @Override
         public boolean isHumanControlled()

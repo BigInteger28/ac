@@ -23,8 +23,9 @@ public class Game
         final String p2name = p2.getName();
         this.data = new Data(new Player[] { p1, p2 });
         Arrays.fill(this.chosenElement, -1);
-        p1.onNewGame(p2name);
-        p2.onNewGame(p1name);
+        this.listener.onGameStart();
+        p1.onGameStart(this.data, 0);
+        p2.onGameStart(this.data, 1);
     }
 
     public void update()
@@ -54,14 +55,16 @@ public class Game
             this.data.score[0] += dscore[result + 1];
             this.data.score[1] += dscore[result * -1 + 1];
             
+            this.listener.onMoveDone(this.chosenElement, result);
             this.data.players[0].onMoveDone(e0, e1, result);
             this.data.players[1].onMoveDone(e1, e0, -result);
             
-            this.listener.onMoveDone(this.chosenElement, result);
             Arrays.fill(this.chosenElement, -1);
 
             if (this.data.currentMove > 8) {
                 this.listener.onGameEnd();
+                this.data.players[0].onGameEnd(this.data);
+                this.data.players[1].onGameEnd(this.data);
                 return;
             }
         }
@@ -154,6 +157,7 @@ public class Game
     
     public interface Listener
     {
+        void onGameStart();
         void onMoveDone(int[] playerElements, int result);
         void onGameEnd();
     }
