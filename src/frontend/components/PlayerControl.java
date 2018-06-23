@@ -18,7 +18,7 @@ import static common.Constants.STANDARDELEMENTS;
 class PlayerControl extends JPanel implements GameChangeListener
 {
     private static final int[] BUTTONCOLORS = {
-        0xFFFF00, 0x008000, 0xFF0000, 0x0000FF, 0x808080
+        0xFFFF50, 0x508050, 0xFF5050, 0x5050FF, 0x808080
     };
 
     private final TitledBorder titleBorder;
