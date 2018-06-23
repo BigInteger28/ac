@@ -51,10 +51,6 @@ class PlayerControl extends JPanel implements GameChangeListener
         controller.addGameChangeListener(this);
     }
 
-    public void setPlayerName(String name) {
-        this.titleBorder.setTitle(name);
-    }
-
     @Override
     public void onGameChanged(Game.Data data)
     {
@@ -62,6 +58,8 @@ class PlayerControl extends JPanel implements GameChangeListener
             final int elementsLeft = data.getElementsLeft(this.player, i);
             this.buttons[i].setText(STANDARDELEMENTS[i] + " (" + elementsLeft + ")");
             this.buttons[i].setEnabled(elementsLeft > 0);
+            this.titleBorder.setTitle(data.getPlayerName(this.player));
+            this.repaint(); // see bug JDK-4117141
         }
     }
 
