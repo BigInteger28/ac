@@ -173,7 +173,7 @@ public class FilterableList<T> extends JList<T>
                     ));
                 }
             }
-            final boolean wasChanged = prevsize != 0 && cursize != prevsize;
+            final boolean wasChanged = prevsize != 0 || cursize != prevsize;
             if (wasChanged) {
                 for (Consumer<List<T>> l : FilterableList.this.filterListeners) {
                     l.accept(this.filteredValues);
