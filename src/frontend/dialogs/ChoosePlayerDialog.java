@@ -13,6 +13,7 @@ import backend.Player;
 import resources.PlayerResource;
 import frontend.VolatileLogger;
 import frontend.components.PlayerList;
+import frontend.util.Callback;
 import frontend.util.SwingMsg;
 import frontend.util.SwingUtil;
 
@@ -37,15 +38,17 @@ public class ChoosePlayerDialog extends JDialog
         final PlayerList list = new PlayerList(playerList);
         list.setPreferredSize(new Dimension(550, 300));
         list.setSelectedPlayer(preselectedPlayer);
+        final Callback chooseListener = () -> {
+            result[0] = list.getSelectedPlayerResource();
+            SwingUtil.close(dialog);
+        };
+        list.addChooseListener(chooseListener);
         
         final JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton btnCancel = new JButton("Cancel");
         final JButton btnOk = new JButton("Ok");
         btnCancel.addActionListener(e -> SwingUtil.close(dialog));
-        btnOk.addActionListener(e -> {
-            result[0] = list.getSelectedPlayerResource();
-            SwingUtil.close(dialog);
-        });
+        btnOk.addActionListener(e -> chooseListener.invoke());
         pnlButtons.add(btnCancel);
         pnlButtons.add(btnOk);
 
