@@ -6,13 +6,13 @@ import javax.swing.border.MatteBorder;
 import javax.swing.event.ListDataListener;
 
 import frontend.util.Callback;
+import frontend.util.SimpleKeyListener;
 import resources.EngineSourceManager;
 import resources.PlayerResource;
 
 import static javax.swing.JScrollPane.*;
 
 import java.awt.*;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -70,18 +70,14 @@ public class PlayerList extends JPanel
                 }
             }
         });
-        this.list.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e)
+        this.list.addKeyListener(new SimpleKeyListener((e) -> {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER ||
+                e.getKeyChar() == '\n' ||
+                e.getKeyChar() == '\r')
             {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER ||
-                    e.getKeyChar() == '\n' ||
-                    e.getKeyChar() == '\r')
-                {
-                    listener.invoke();
-                }
+                listener.invoke();
             }
-        });
+        }));
     }
     
     public void setSelectedPlayer(String name)
