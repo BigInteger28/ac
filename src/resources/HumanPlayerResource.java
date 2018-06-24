@@ -10,6 +10,18 @@ public class HumanPlayerResource implements PlayerResource
     {
         return "<Human player>";
     }
+
+    @Override
+    public String getPath()
+    {
+        return null;
+    }
+
+    @Override
+    public int getTypeColor()
+    {
+        return 0x555555;
+    }
     
     @Override
     public Player createPlayer(int playerNumber)

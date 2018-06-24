@@ -21,6 +21,18 @@ public class FixedEngineResource implements PlayerResource
     {
         return this.resource.getName();
     }
+
+    @Override
+    public String getPath()
+    {
+        return this.resource.getParentFile().getAbsolutePath();
+    }
+
+    @Override
+    public int getTypeColor()
+    {
+        return 0xFFF494;
+    }
     
     @Override
     public Player createPlayer(int playerNumber) throws Exception

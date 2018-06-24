@@ -1,7 +1,6 @@
 package frontend.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Window;
@@ -9,15 +8,13 @@ import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListDataListener;
 
 import backend.Player;
 import resources.PlayerResource;
 import frontend.VolatileLogger;
+import frontend.components.PlayerList;
 import frontend.util.SwingMsg;
 import frontend.util.SwingUtil;
-
-import static javax.swing.JScrollPane.*;
 
 public class ChoosePlayerDialog extends JDialog
 {
@@ -36,57 +33,15 @@ public class ChoosePlayerDialog extends JDialog
         lbl.setBorder(new EmptyBorder(10, 0, 10, 0));
         
         final PlayerResource[] result = { null };
-        final JList<PlayerResource> list = new JList<>();
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setModel(new ListModel<PlayerResource>() {
-            @Override
-            public int getSize()
-            {
-                return playerList.size();
-            }
-            @Override
-            public PlayerResource getElementAt(int index)
-            {
-                return playerList.get(index);
-            }
-            @Override
-            public void addListDataListener(ListDataListener l)
-            {
-            }
-            @Override
-            public void removeListDataListener(ListDataListener l)
-            {
-            }
-        });
-        list.setCellRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value,
-                    int index, boolean isSelected, boolean cellHasFocus)
-            {
-                if (isSelected) {
-                    setBackground(list.getSelectionBackground());
-                    setForeground(list.getSelectionForeground());
-                } else {
-                    setBackground(list.getBackground());
-                    setForeground(list.getForeground());
-                }
-                this.setText(((PlayerResource) value).getName());
-                return this;
-            }
-        });
-        list.setSelectedIndex(0);
-        final JScrollPane scrollpane = new JScrollPane(list);
-        scrollpane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollpane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollpane.setPreferredSize(new Dimension(550, 300));
-        SwingUtilities.invokeLater(() -> list.requestFocusInWindow());
+        final PlayerList list = new PlayerList(playerList);
+        list.setPreferredSize(new Dimension(550, 300));
         
         final JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton btnCancel = new JButton("Cancel");
         final JButton btnOk = new JButton("Ok");
         btnCancel.addActionListener(e -> SwingUtil.close(dialog));
         btnOk.addActionListener(e -> {
-            result[0] = list.getSelectedValue();
+            result[0] = list.getSelectedPlayerResource();
             SwingUtil.close(dialog);
         });
         pnlButtons.add(btnCancel);
@@ -94,7 +49,7 @@ public class ChoosePlayerDialog extends JDialog
 
         dialog.getContentPane().setLayout(new BorderLayout());
         dialog.add(lbl, BorderLayout.NORTH);
-        dialog.add(scrollpane);
+        dialog.add(list);
         dialog.add(pnlButtons, BorderLayout.SOUTH);
         dialog.setTitle(title);
         dialog.setModal(true);

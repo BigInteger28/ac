@@ -19,6 +19,18 @@ public class DepthEngineResource implements PlayerResource
     {
         return this.resource.getName();
     }
+
+    @Override
+    public String getPath()
+    {
+        return this.resource.getParentFile().getAbsolutePath();
+    }
+
+    @Override
+    public int getTypeColor()
+    {
+        return 0xffcd85;
+    }
     
     @Override
     public Player createPlayer(int playerNumber) throws Exception
