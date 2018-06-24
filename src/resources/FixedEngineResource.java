@@ -51,6 +51,7 @@ public class FixedEngineResource extends PlayerResource
             case 'd' : move = DEFENSE; break;
             default: throw new Exception("invalid element: '" + (char) move + "'");
             }
+            moves[i] = move;
             elementsused[move]++;
         }
         
