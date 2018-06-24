@@ -5,16 +5,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
 import frontend.util.Callback;
-import frontend.util.SimpleKeyListener;
 import resources.EngineSourceManager;
 import resources.PlayerResource;
 
 import static javax.swing.JScrollPane.*;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -81,23 +77,7 @@ public class PlayerList extends JPanel
     
     public void addChooseListener(Callback listener)
     {
-        this.list.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if (e.getClickCount() > 1) {
-                    listener.invoke();
-                }
-            }
-        });
-        this.list.addKeyListener(new SimpleKeyListener((e) -> {
-            if (e.getKeyCode() == KeyEvent.VK_ENTER ||
-                e.getKeyChar() == '\n' ||
-                e.getKeyChar() == '\r')
-            {
-                listener.invoke();
-            }
-        }));
+        this.list.addChooseListener(listener);
     }
     
     public void setSelectedPlayer(String name)

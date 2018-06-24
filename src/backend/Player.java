@@ -1,5 +1,7 @@
 package backend;
 
+import engines.Database;
+
 public interface Player
 {
     String getName();
@@ -8,4 +10,5 @@ public interface Player
     void onMoveDone(int yourMove, int otherMove, int score);
     void onGameEnd(Game.Data gamedata);
     boolean isHumanControlled();
+    void useDatabase(Database db);
 }

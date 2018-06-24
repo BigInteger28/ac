@@ -5,6 +5,7 @@ import backend.Player;
 import frontend.dialogs.ChoosePlayerDialog;
 import frontend.maincontent.MainContent;
 import resources.PlayerResource;
+import resources.DatabaseResource;
 import resources.EngineSourceManager;
 
 import javax.swing.*;
@@ -106,13 +107,15 @@ public class Main implements FrontendController, Game.Listener
     public void startNewGameAdv()
     {
         final Player[] players = new Player[2];
-        final List<PlayerResource> playerList;
-        playerList = EngineSourceManager.collectResources(/*includeHuman*/ true);
+        final ArrayList<PlayerResource> playerList = new ArrayList<>();
+        final ArrayList<DatabaseResource> dbList = new ArrayList<>();
+        EngineSourceManager.collectResources(playerList, dbList, /*includeHuman*/ true);
         for (int i = 0; i < 2; i++) {
             final Player p = ChoosePlayerDialog.show(
                 this.frame,
                 i + 1,
                 playerList,
+                dbList,
                 this.players[i] == null ? null : this.players[i].getName()
             );
             if (p == null) {

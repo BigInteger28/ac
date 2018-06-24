@@ -26,9 +26,12 @@ public class EngineSourceManager
         readLocations();
     }
     
-    public static List<PlayerResource> collectResources(boolean includeHuman)
+    public static void collectResources(
+        ArrayList<PlayerResource> playerList,
+        ArrayList<DatabaseResource> dbList,
+        boolean includeHuman)
     {
-        final List<PlayerResource> resources = new ArrayList<>(lastAmountOfResources);
+        playerList.ensureCapacity(lastAmountOfResources);
         
         final Stack<File> walkerstack = new Stack<>();
         for (File loc : locations) {
@@ -57,23 +60,24 @@ public class EngineSourceManager
                     final String extension = name.substring(dotloc);
 
                     if (".ak".equals(extension)) {
-                        addResource(resources, new FixedEngineResource(child));
+                        addResource(playerList, new FixedEngineResource(child));
                     } else if (".akb".equals(extension)) {
-                        addResource(resources, new DepthEngineResource(child));
+                        addResource(playerList, new DepthEngineResource(child));
+                    } else if (".adb".equals(extension)) {
+                        addResource(dbList, new DatabaseResource(child));
                     }
                 }
             }
         }
         
         if (includeHuman) {
-            resources.add(0, new HumanPlayerResource());
+            playerList.add(0, new HumanPlayerResource());
         }
 
-        lastAmountOfResources = resources.size() + 20;
-        return resources;
+        lastAmountOfResources = playerList.size() + 20;
     }
     
-    private static void addResource(List<PlayerResource> list, PlayerResource resource)
+    private static <T extends Resource> void addResource(List<T> list, T resource)
     {
         if (list.isEmpty()) {
             list.add(resource);

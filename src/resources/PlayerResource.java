@@ -4,18 +4,14 @@ import java.awt.Color;
 
 import backend.Player;
 
-public abstract class PlayerResource
+public abstract class PlayerResource extends Resource
 {
+    @Override
     public abstract String getName();
+    @Override
     public abstract String getPath();
     public abstract Type getType();
     public abstract Player createPlayer(int playerNumber) throws Exception;
-
-    @Override
-    public String toString()
-    {
-        return this.getName();
-    }
     
     public static enum Type
     {

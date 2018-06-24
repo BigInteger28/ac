@@ -2,6 +2,7 @@ package frontend;
 
 import backend.Game;
 import backend.Player;
+import engines.Database;
 
 public class HumanPlayer implements Player
 {
@@ -54,4 +55,8 @@ public class HumanPlayer implements Player
         return true;
     }
 
+    @Override
+    public void useDatabase(Database db)
+    {
+    }
 }

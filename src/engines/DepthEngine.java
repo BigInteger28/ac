@@ -10,10 +10,12 @@ import static common.Constants.*;
 
 public class DepthEngine implements Player
 {
-    final String name;
-    final byte[] depths;
-    final int[] elementsLeft;
-    int otherplayerelement;
+    private final String name;
+    private final byte[] depths;
+    private final int[] elementsLeft;
+
+    private int otherplayerelement;
+    private Database db;
 
     public DepthEngine(String name, byte[] depths)
     {
@@ -80,4 +82,9 @@ public class DepthEngine implements Player
         return false;
     }
 
+    @Override
+    public void useDatabase(Database db)
+    {
+        this.db = db;
+    }
 }

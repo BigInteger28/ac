@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,9 @@ import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+
+import frontend.util.Callback;
+import frontend.util.SimpleKeyListener;
 
 public class FilterableList<T> extends JList<T>
 {
@@ -33,9 +38,40 @@ public class FilterableList<T> extends JList<T>
         this.setBackground(Color.WHITE);
     }
     
+    public void addChooseListener(Callback listener)
+    {
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if (e.getClickCount() > 1) {
+                    listener.invoke();
+                }
+            }
+        });
+        this.addKeyListener(new SimpleKeyListener((e) -> {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER ||
+                e.getKeyChar() == '\n' ||
+                e.getKeyChar() == '\r')
+            {
+                listener.invoke();
+            }
+        }));
+    }
+    
     public void addFilterListener(Consumer<List<T>> listener)
     {
         this.filterListeners.add(listener);
+    }
+    
+    public void filter(String filter)
+    {
+        if (filter == null) {
+            return;
+        }
+        this.model.filterText = filter.toLowerCase();
+        this.model.filterActive = !filter.isEmpty();
+        this.model.updateFilter();
     }
     
     @Override

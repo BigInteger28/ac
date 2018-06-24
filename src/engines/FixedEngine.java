@@ -5,8 +5,10 @@ import backend.Player;
 
 public class FixedEngine implements Player
 {
-    final String name;
-    final int moves[];
+    private final String name;
+    private final int moves[];
+    
+    private Database db;
 
     public FixedEngine(String name, int[] moves)
     {
@@ -47,4 +49,9 @@ public class FixedEngine implements Player
         return false;
     }
 
+    @Override
+    public void useDatabase(Database db)
+    {
+        this.db = db;
+    }
 }
