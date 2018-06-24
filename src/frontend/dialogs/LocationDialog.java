@@ -51,6 +51,9 @@ public class LocationDialog
             }
         });
         list.setCellRenderer(new DefaultListCellRenderer());
+        if (!locationList.isEmpty()) {
+            list.setSelectedIndex(0);
+        }
         final JScrollPane scrollpane = new JScrollPane(list);
         scrollpane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollpane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
