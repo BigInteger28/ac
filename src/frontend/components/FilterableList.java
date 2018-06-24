@@ -9,6 +9,7 @@ import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.swing.JList;
 import javax.swing.JViewport;
@@ -19,15 +20,22 @@ import javax.swing.event.ListDataListener;
 
 public class FilterableList<T> extends JList<T>
 {
+    private final List<Consumer<List<T>>> filterListeners;
     private final Model model;
 
     public FilterableList(List<T> values)
     {
+        this.filterListeners = new ArrayList<>();
         this.model = new Model(values);
         this.setModel(this.model);
         this.addKeyListener(this.model);
         this.setOpaque(false); // fixes painting the filter overlay
         this.setBackground(Color.WHITE);
+    }
+    
+    public void addFilterListener(Consumer<List<T>> listener)
+    {
+        this.filterListeners.add(listener);
     }
     
     @Override
@@ -166,6 +174,11 @@ public class FilterableList<T> extends JList<T>
                 }
             }
             final boolean wasChanged = prevsize != 0 && cursize != prevsize;
+            if (wasChanged) {
+                for (Consumer<List<T>> l : FilterableList.this.filterListeners) {
+                    l.accept(this.filteredValues);
+                }
+            }
             final int selectedIndex = newSelectedIndex;
             SwingUtilities.invokeLater(() -> {
                 if (this.filteredValues.size() != 0) {

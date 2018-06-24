@@ -29,9 +29,9 @@ public class FixedEngineResource extends PlayerResource
     }
 
     @Override
-    public int getTypeColor()
+    public Type getType()
     {
-        return 0xFFF494;
+        return Type.FIXED;
     }
     
     @Override

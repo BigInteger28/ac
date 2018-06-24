@@ -18,9 +18,9 @@ public class HumanPlayerResource extends PlayerResource
     }
 
     @Override
-    public int getTypeColor()
+    public Type getType()
     {
-        return 0x555555;
+        return Type.HUMAN;
     }
     
     @Override

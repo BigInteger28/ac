@@ -16,19 +16,46 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 public class PlayerList extends JPanel
 {
-    private final JList<PlayerResource> list;
+    private final FilterableList<PlayerResource> list;
     private final List<PlayerResource> playerList;
+    private final HashMap<PlayerResource.Type, JLabel> playerTypeLabels;
 
     public PlayerList(List<PlayerResource> playerList)
     {
+        this.playerTypeLabels = new HashMap<>();
+        final GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 1;
+        c.gridwidth = PlayerResource.Type.values().length;
+        c.fill = GridBagConstraints.NONE;
+        c.weightx = 0;
+        final JPanel statusBar = new JPanel(new GridBagLayout());
+        for (PlayerResource.Type t : PlayerResource.Type.values()) {
+            final JLabel label = new JLabel();
+            label.setBorder(new EmptyBorder(0, 10, 0, 10));
+            this.playerTypeLabels.put(t, label);
+            final JPanel pnlCol = new JPanel();
+            pnlCol.setPreferredSize(new Dimension(10, 5));
+            pnlCol.setBackground(t.color);
+            pnlCol.setOpaque(true);
+            final JPanel pnlSub = new JPanel(new BorderLayout());
+            pnlSub.add(pnlCol, BorderLayout.WEST);
+            pnlSub.add(label);
+            statusBar.add(pnlSub);
+            c.gridx++;
+        }
+
         this.playerList = playerList;
         this.list = new FilterableList<>(playerList);
         this.list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.list.setCellRenderer(new Renderer());
+        this.list.addFilterListener(this::updateStatusBar);
+        this.updateStatusBar(playerList);
         final JScrollPane scrollpane = new JScrollPane(this.list);
         scrollpane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollpane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -36,6 +63,20 @@ public class PlayerList extends JPanel
         
         this.setLayout(new BorderLayout());
         this.add(scrollpane);
+        this.add(statusBar, BorderLayout.SOUTH);
+    }
+    
+    private void updateStatusBar(List<PlayerResource> shownList)
+    {
+        final PlayerResource.Type[] vals = PlayerResource.Type.values();
+        final int[] count = new int[vals.length];
+        for (PlayerResource r : shownList) {
+            count[r.getType().ordinal()]++;
+        }
+        for (int i = 0; i < count.length; i++) {
+            final String text = String.format("%s (%d)", vals[i].name, count[i]);
+            this.playerTypeLabels.get(vals[i]).setText(text);
+        }
     }
     
     public void addChooseListener(Callback listener)
@@ -127,7 +168,7 @@ public class PlayerList extends JPanel
                 setBackground(list.getBackground());
                 setForeground(list.getForeground());
             }
-            this.pnlType.setBackground(new Color(value.getTypeColor()));
+            this.pnlType.setBackground(value.getType().color);
             this.lblName.setText(value.getName());
             final String path = value.getPath();
             this.lblLocation.setVisible(path != null);

@@ -27,9 +27,9 @@ public class DepthEngineResource extends PlayerResource
     }
 
     @Override
-    public int getTypeColor()
+    public Type getType()
     {
-        return 0xffcd85;
+        return Type.DEPTH;
     }
     
     @Override
