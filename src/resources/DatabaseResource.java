@@ -57,19 +57,19 @@ public class DatabaseResource extends Resource
                 in.read();
                 c = in.read();
             }
-            int currententry = this.ctoe(c);
+            int currententry = 0x77777777;
             boolean cleanexit = false;
             for (;;) {
                 if (c == '$') {
-                    if (currententry != 0) {
+                    if (currententry != 0x77777777) {
                         throw new Exception("unexpected NextDbEntry");
                     }
                 } else if (c == '§') {
-                    if (currententry == 0) {
+                    if (currententry == 0x77777777) {
                         throw new Exception("invalid, expected ElementSequence");
                     }
-                    db.add((currententry << 4) | ((this.ctoe(in.read()) + 1) & 0xF));
-                    currententry = 0;
+                    db.add((currententry << 4) | (this.ctoe(in.read()) & 0xF));
+                    currententry = 0x77777777;
                     cleanexit = true;
                 } else if (c == 0xC2) {
                     // ??  (legacy) all ElementSequences seem to end with this

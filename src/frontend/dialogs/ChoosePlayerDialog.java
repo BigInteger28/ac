@@ -27,7 +27,7 @@ public class ChoosePlayerDialog extends JDialog
         List<DatabaseResource> dbList,
         String preselectedPlayer)
     {
-        final String title = "Select player " + playerNumber;
+        final String title = "Select player " + (playerNumber + 1);
 
         final JDialog dialog = new JDialog(parentWindow);
         

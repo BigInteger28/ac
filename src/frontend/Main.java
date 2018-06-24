@@ -113,7 +113,7 @@ public class Main implements FrontendController, Game.Listener
         for (int i = 0; i < 2; i++) {
             final Player p = ChoosePlayerDialog.show(
                 this.frame,
-                i + 1,
+                i,
                 playerList,
                 dbList,
                 this.players[i] == null ? null : this.players[i].getName()

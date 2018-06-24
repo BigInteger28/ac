@@ -44,6 +44,6 @@ public class DepthEngineResource extends PlayerResource
             data[i] -= '0';
         }
         
-        return new DepthEngine(this.resource.getName(), data);
+        return new DepthEngine(playerNumber, this.resource.getName(), data);
     }
 }

@@ -64,6 +64,6 @@ public class FixedEngineResource extends PlayerResource
             throw new Exception("invalid element sequence (is not 2 2 2 2 1)");
         }
         
-        return new FixedEngine(this.resource.getName(), moves);
+        return new FixedEngine(playerNumber, this.resource.getName(), moves);
     }
 }

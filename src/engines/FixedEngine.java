@@ -5,13 +5,15 @@ import backend.Player;
 
 public class FixedEngine implements Player
 {
+    private final int playerNumber;
     private final String name;
     private final int moves[];
-    
+
     private Database db;
 
-    public FixedEngine(String name, int[] moves)
+    public FixedEngine(int playerNumber, String name, int[] moves)
     {
+        this.playerNumber = playerNumber;
         this.name = name;
         this.moves = moves;
     }
@@ -25,6 +27,10 @@ public class FixedEngine implements Player
     @Override
     public int doMove(Data gamedata)
     {
+        int dbres = db.findEntry(gamedata, this.playerNumber);
+        if (dbres != -1) {
+            return dbres;
+        }
         return this.moves[gamedata.getCurrentMove()];
     }
 
@@ -48,7 +54,7 @@ public class FixedEngine implements Player
     {
         return false;
     }
-
+    
     @Override
     public void useDatabase(Database db)
     {

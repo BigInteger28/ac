@@ -1,15 +1,15 @@
 package engines;
 
 import backend.Game.Data;
+import backend.Player;
 
 import java.util.Arrays;
-
-import backend.Player;
 
 import static common.Constants.*;
 
 public class DepthEngine implements Player
 {
+    private final int playerNumber;
     private final String name;
     private final byte[] depths;
     private final int[] elementsLeft;
@@ -17,8 +17,9 @@ public class DepthEngine implements Player
     private int otherplayerelement;
     private Database db;
 
-    public DepthEngine(String name, byte[] depths)
+    public DepthEngine(int playerNumber, String name, byte[] depths)
     {
+        this.playerNumber = playerNumber;
         this.name = name;
         this.depths = depths;
         this.elementsLeft = new int[5];
@@ -36,6 +37,12 @@ public class DepthEngine implements Player
         final int move = gamedata.getCurrentMove();
         if (move == 0) {
             return DEFENSE;
+        }
+        
+        int dbres = db.findEntry(gamedata, this.playerNumber);
+        if (dbres != -1) {
+            this.elementsLeft[dbres]--;
+            return dbres;
         }
         
         int element = this.otherplayerelement;
