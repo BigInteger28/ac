@@ -224,7 +224,7 @@ public class FilterableList<T> extends JList<T>
             final char c = e.getKeyChar();
             if (!(('0' <= c && c <= '9') ||
                   ('a' <= c && c <= 'z') ||
-                  ('A' <= c && c <= 'Z')))
+                  ('A' <= c && c <= 'Z') || c == ' ' || c == '_'))
             {
                 return;
             }
