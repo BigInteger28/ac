@@ -1,21 +1,19 @@
 package engines;
 
-import backend.Game.Data;
+import backend.Game;
 import backend.Player;
 
 import static common.Constants.*;
 
 public class DepthEngine implements Player
 {
-    private final int playerNumber;
     private final String name;
     private final byte[] depths;
 
     private Database db;
 
-    public DepthEngine(int playerNumber, String name, byte[] depths)
+    public DepthEngine(String name, byte[] depths)
     {
-        this.playerNumber = playerNumber;
         this.name = name;
         this.depths = depths;
     }
@@ -27,19 +25,19 @@ public class DepthEngine implements Player
     }
 
     @Override
-    public int doMove(Data data)
+    public int doMove(int p, Game.Data data)
     {
         final int move = data.getCurrentMove();
         if (move == 0) {
             return DEFENSE;
         }
         
-        int dbres = db.findEntry(data, this.playerNumber);
-        if (dbres != -1 && data.getElementsLeft(this.playerNumber, dbres) > 0) {
+        int dbres = db.findEntry(data, p);
+        if (dbres != -1 && data.getElementsLeft(p, dbres) > 0) {
             return dbres;
         }
         
-        int element = data.getMove(this.playerNumber ^ 1, move - 1);
+        int element = data.getMove(p ^ 1, move - 1);
         if (element == DEFENSE) {
             element = AIR; // see engine.vb:53
         }
@@ -51,7 +49,7 @@ public class DepthEngine implements Player
         onedepth[AIR] = EARTH;
         
         int i = (this.depths[move] + 4) % 4;
-        while (i-- > 0 || data.getElementsLeft(this.playerNumber, element) == 0) {
+        while (i-- > 0 || data.getElementsLeft(p, element) == 0) {
             element = onedepth[element];
         }
         
@@ -59,7 +57,7 @@ public class DepthEngine implements Player
     }
 
     @Override
-    public void onGameStart(Data gamedata, int yourPlayerNumber)
+    public void onGameStart(Game.Data gamedata, int yourPlayerNumber)
     {
     }
 
@@ -69,7 +67,7 @@ public class DepthEngine implements Player
     }
 
     @Override
-    public void onGameEnd(Data gamedata)
+    public void onGameEnd(Game.Data gamedata)
     {
     }
 

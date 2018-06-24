@@ -75,7 +75,7 @@ public class Game
             return this.chosenElement[p];
         }
         
-        int element = this.data.players[p].doMove(this.data);
+        int element = this.data.players[p].doMove(p, this.data);
         if (element == -1) {
             return -1;
         }

@@ -1,19 +1,17 @@
 package engines;
 
-import backend.Game.Data;
+import backend.Game;
 import backend.Player;
 
 public class FixedEngine implements Player
 {
-    private final int playerNumber;
     private final String name;
     private final int moves[];
 
     private Database db;
 
-    public FixedEngine(int playerNumber, String name, int[] moves)
+    public FixedEngine(String name, int[] moves)
     {
-        this.playerNumber = playerNumber;
         this.name = name;
         this.moves = moves;
     }
@@ -25,17 +23,17 @@ public class FixedEngine implements Player
     }
 
     @Override
-    public int doMove(Data gamedata)
+    public int doMove(int p, Game.Data data)
     {
-        int dbres = db.findEntry(gamedata, this.playerNumber);
-        if (dbres != -1 && gamedata.getElementsLeft(this.playerNumber, dbres) > 0) {
+        int dbres = db.findEntry(data, p);
+        if (dbres != -1 && data.getElementsLeft(p, dbres) > 0) {
             return dbres;
         }
-        return this.moves[gamedata.getCurrentMove()];
+        return this.moves[data.getCurrentMove()];
     }
 
     @Override
-    public void onGameStart(Data gamedata, int yourPlayerNumber)
+    public void onGameStart(Game.Data gamedata, int yourPlayerNumber)
     {
     }
 
@@ -45,7 +43,7 @@ public class FixedEngine implements Player
     }
 
     @Override
-    public void onGameEnd(Data gamedata)
+    public void onGameEnd(Game.Data gamedata)
     {
     }
 

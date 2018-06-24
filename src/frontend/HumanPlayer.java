@@ -27,7 +27,7 @@ public class HumanPlayer implements Player
     }
 
     @Override
-    public int doMove(Game.Data gamedata)
+    public int doMove(int p, Game.Data data)
     {
         return this.chosenElement;
     }

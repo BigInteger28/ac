@@ -26,6 +26,6 @@ public class HumanPlayerResource extends PlayerResource
     @Override
     public Player createPlayer(int playerNumber)
     {
-        return new HumanPlayer("Human " + playerNumber);
+        return new HumanPlayer("Human " + (playerNumber + 1));
     }
 }
