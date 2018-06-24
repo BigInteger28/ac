@@ -47,7 +47,7 @@ public class DepthEngine implements Player
         onedepth[EARTH] = FIRE;
         onedepth[AIR] = EARTH;
         
-        int i = ((this.depths[move] + 4) % 4) - 1;
+        int i = (this.depths[move] + 4) % 4;
         while (i-- > 0 || this.elementsLeft[element] == 0) {
             element = onedepth[element];
         }
