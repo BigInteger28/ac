@@ -86,7 +86,7 @@ public class Synergy2PROEngine extends DepthEngine
         db.add(createEntry(L, V, W, V, W, D, L, A));
         db.add(createEntry(V, L, A, W, D, A, W));
         db.add(createEntry(W, L, D, V, W, W));
-        super.useDatabase(new Database(db));
+        super.useDatabase(new Database(NAME + " db", db));
     }
     
     @Override

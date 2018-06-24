@@ -19,6 +19,9 @@ public class FixedEngine implements Player
     @Override
     public String getName()
     {
+        if (this.db != null) {
+            return this.name + " + " + this.db.getName();
+        }
         return this.name;
     }
 

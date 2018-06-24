@@ -97,7 +97,7 @@ public class DatabaseResource extends Resource
                 cleanexit = false;
             }
         }
-        return new Database(db);
+        return new Database(this.getName(), db);
     }
     
     private int ctoe(int in) throws Exception

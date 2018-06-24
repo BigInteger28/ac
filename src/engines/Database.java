@@ -1,17 +1,15 @@
 package engines;
 
-import java.util.Collections;
 import java.util.List;
 
 import backend.Game;
 
 public class Database
 {
-    public static final Database EMPTY_DB = new Database(Collections.emptyList());
-
+    private final String name;
     private final List<Integer> db;
     
-    public Database(List<Integer> db)
+    public Database(String name, List<Integer> db)
     {
         // db entries:
         // lowest 4 bits: result element
@@ -19,7 +17,13 @@ public class Database
         // next 4 bits: element 2
         // ...
         // unused nibbles: 0x77
+        this.name = name;
         this.db = db;
+    }
+    
+    public String getName()
+    {
+        return this.name;
     }
     
     public int findEntry(Game.Data data, int playerNumber)

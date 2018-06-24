@@ -21,6 +21,9 @@ public class DepthEngine implements Player
     @Override
     public String getName()
     {
+        if (this.db != null) {
+            return this.name + " + " + this.db.getName();
+        }
         return this.name;
     }
 
@@ -32,9 +35,11 @@ public class DepthEngine implements Player
             return DEFENSE;
         }
         
-        int dbres = db.findEntry(data, p);
-        if (dbres != -1 && data.getElementsLeft(p, dbres) > 0) {
-            return dbres;
+        if (this.db != null) {
+            int dbres = db.findEntry(data, p);
+            if (dbres != -1 && data.getElementsLeft(p, dbres) > 0) {
+                return dbres;
+            }
         }
         
         int element = data.getMove(p ^ 1, move - 1);

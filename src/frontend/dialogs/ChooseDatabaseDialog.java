@@ -71,7 +71,7 @@ public class ChooseDatabaseDialog extends JDialog
         dialog.dispose();
         
         if (result[0] == null) {
-            return Database.EMPTY_DB;
+            return null;
         }
         
         try {
