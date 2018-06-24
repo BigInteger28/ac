@@ -15,13 +15,13 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
-public class PlayerList extends JPanel
+public class ResourceList extends JPanel
 {
     private final FilterableList<PlayerResource> list;
     private final List<PlayerResource> playerList;
     private final HashMap<PlayerResource.Type, JLabel> playerTypeLabels;
 
-    public PlayerList(List<PlayerResource> playerList)
+    public ResourceList(List<PlayerResource> playerList)
     {
         this.playerTypeLabels = new HashMap<>();
         final GridBagConstraints c = new GridBagConstraints();

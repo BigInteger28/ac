@@ -13,7 +13,7 @@ import backend.Player;
 import resources.DatabaseResource;
 import resources.PlayerResource;
 import frontend.VolatileLogger;
-import frontend.components.PlayerList;
+import frontend.components.ResourceList;
 import frontend.util.Callback;
 import frontend.util.SwingMsg;
 import frontend.util.SwingUtil;
@@ -37,7 +37,7 @@ public class ChoosePlayerDialog extends JDialog
         lbl.setBorder(new EmptyBorder(10, 0, 10, 0));
         
         final PlayerResource[] result = { null };
-        final PlayerList list = new PlayerList(playerList);
+        final ResourceList list = new ResourceList(playerList);
         list.setPreferredSize(new Dimension(550, 300));
         list.setSelectedPlayer(preselectedPlayer);
         final Callback chooseListener = () -> {
