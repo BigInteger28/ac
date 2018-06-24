@@ -20,7 +20,7 @@ class MovesPanel extends JPanel implements GameChangeListener
 {
     private final JLabel[][] playerLabels;
     private static final Color[] RESULTCOLORS = {
-        new Color(0x800000), new Color(0x0), new Color(0x008000)
+        new Color(0xFF0000), new Color(0x0), new Color(0x008000)
     };
 
     MovesPanel(FrontendController controller)
