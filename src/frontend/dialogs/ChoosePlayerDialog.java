@@ -12,7 +12,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataListener;
 
 import backend.Player;
-import resources.PlayerResource;
+import resources.HumanPlayerResource;
 import frontend.util.SwingUtil;
 
 import static javax.swing.JScrollPane.*;
@@ -22,7 +22,7 @@ public class ChoosePlayerDialog extends JDialog
     public static Player show(
         Window parentWindow,
         int playerNumber,
-        List<PlayerResource> playerList)
+        List<HumanPlayerResource> playerList)
     {
         final String title = "Select player " + playerNumber;
 
@@ -33,17 +33,17 @@ public class ChoosePlayerDialog extends JDialog
         lbl.setFont(SwingUtil.deriveFont(lbl.getFont(), true, 1.2f));
         lbl.setBorder(new EmptyBorder(10, 0, 10, 0));
         
-        final PlayerResource[] result = { null };
-        final JList<PlayerResource> list = new JList<>();
+        final HumanPlayerResource[] result = { null };
+        final JList<HumanPlayerResource> list = new JList<>();
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setModel(new ListModel<PlayerResource>() {
+        list.setModel(new ListModel<HumanPlayerResource>() {
             @Override
             public int getSize()
             {
                 return playerList.size();
             }
             @Override
-            public PlayerResource getElementAt(int index)
+            public HumanPlayerResource getElementAt(int index)
             {
                 return playerList.get(index);
             }
@@ -68,7 +68,7 @@ public class ChoosePlayerDialog extends JDialog
                     setBackground(list.getBackground());
                     setForeground(list.getForeground());
                 }
-                this.setText(((PlayerResource) value).getName());
+                this.setText(((HumanPlayerResource) value).getName());
                 return this;
             }
         });

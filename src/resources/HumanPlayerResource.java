@@ -5,7 +5,7 @@ import java.io.File;
 import backend.Player;
 import frontend.HumanPlayer;
 
-public class PlayerResource
+public class HumanPlayerResource
 {
     public static final int HUMAN = 0;
     public static final int SAVED = 1;
@@ -16,7 +16,7 @@ public class PlayerResource
     
     private final String name;
 
-    public PlayerResource(File file, int type)
+    public HumanPlayerResource(File file, int type)
     {
         this.file = file;
         this.type = type;
