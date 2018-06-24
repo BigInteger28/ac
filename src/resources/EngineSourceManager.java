@@ -91,13 +91,9 @@ public class EngineSourceManager
             if (name.compareTo(othername) >= 0) {
                 min = pos + 1;
             } else {
-                max = pos - 1;
-                if (max < 0) {
-                    pos = 0;
-                    break;
-                }
+                max = pos;
             }
-            if (min >= max) {
+            if (max - min < 1) {
                 pos = max;
                 break;
             }
