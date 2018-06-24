@@ -24,6 +24,7 @@ public class Game
         this.listener.onGameStart();
         players[0].onGameStart(this.data, 0);
         players[1].onGameStart(this.data, 1);
+        this.update();
     }
 
     public void update()
