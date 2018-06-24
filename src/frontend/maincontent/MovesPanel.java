@@ -64,6 +64,13 @@ class MovesPanel extends JPanel implements GameChangeListener
     @Override
     public void onGameStart(Data data)
     {
+        for (int i = 0; i < 9; i++) {
+            for (int p = 0; p < 2; p++) {
+                final JLabel l = this.playerLabels[p][i];
+                l.setText("?");
+                l.setForeground(RESULTCOLORS[1]);
+            }
+        }
     }
 
     @Override

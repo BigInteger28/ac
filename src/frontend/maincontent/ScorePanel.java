@@ -36,17 +36,23 @@ class ScorePanel extends JPanel implements GameChangeListener
         
         controller.addGameChangeListener(this);
     }
+    
+    private void updateLabels(int score1, int score2)
+    {
+        this.label1.setText("Player 1:   " + score1);
+        this.label2.setText("Player 2:   " + score2);
+    }
 
     @Override
     public void onGameStart(Data data)
     {
+        this.updateLabels(0, 0);
     }
 
     @Override
     public void onGameChange(Game.Data data)
     {
-        this.label1.setText("Player 1:   " + data.getScore(0));
-        this.label2.setText("Player 2:   " + data.getScore(1));
+        this.updateLabels(data.getScore(0), data.getScore(1));
     }
 
     @Override
