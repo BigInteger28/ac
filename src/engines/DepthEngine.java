@@ -19,7 +19,7 @@ public class DepthEngine implements Player
     {
         this.name = name;
         this.depths = depths;
-        this.elementsLeft = new int[9];
+        this.elementsLeft = new int[5];
     }
 
     @Override
@@ -48,9 +48,10 @@ public class DepthEngine implements Player
         onedepth[AIR] = EARTH;
         
         int i = ((this.depths[move] + 4) % 4) - 1;
-        while (i-- != 0 || elementsLeft[element] == 0) {
+        while (i-- > 0 || this.elementsLeft[element] == 0) {
             element = onedepth[element];
         }
+        this.elementsLeft[element]--;
         
         return element;
     }
