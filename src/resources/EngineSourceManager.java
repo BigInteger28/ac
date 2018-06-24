@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import engines.Synergy2PROEngine;
 import frontend.VolatileLogger;
 
 public class EngineSourceManager
@@ -27,7 +28,7 @@ public class EngineSourceManager
         readLocations();
         BUILTINENGINES = new ArrayList<>();
         BUILTINENGINES.add(bi("sYnergY 1", 6, 6, 6, 6, 6, 6, 6, 6));
-        BUILTINENGINES.add(bi("sYnergY 2 PRO", 8, 8, 9, 9, 9, 6, 7, 8));
+        BUILTINENGINES.add(new Synergy2PROEngine.Resource());
         BUILTINENGINES.add(bi("sYnergY 3", 9, 6, 9, 8, 7, 6, 7, 8));
         BUILTINENGINES.add(bi("Junior", 9, 8, 7, 6, 9, 6, 7, 8));
         BUILTINENGINES.add(bi("GreenFrog", 8, 8, 8, 8, 6, 8, 9, 9));

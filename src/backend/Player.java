@@ -10,5 +10,6 @@ public interface Player
     void onMoveDone(int yourMove, int otherMove, int score);
     void onGameEnd(Game.Data gamedata);
     boolean isHumanControlled();
+    boolean canUseDatabase();
     void useDatabase(Database db);
 }

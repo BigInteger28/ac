@@ -54,6 +54,12 @@ public class HumanPlayer implements Player
     {
         return true;
     }
+    
+    @Override
+    public boolean canUseDatabase()
+    {
+        return false;
+    }
 
     @Override
     public void useDatabase(Database db)

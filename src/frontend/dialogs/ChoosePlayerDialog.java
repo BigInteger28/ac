@@ -83,7 +83,7 @@ public class ChoosePlayerDialog extends JDialog
             return show(parentWindow, playerNumber, playerList, dbList, name);
         }
         
-        if (player.isHumanControlled()) {
+        if (!player.canUseDatabase()) {
             return player;
         }
         

@@ -76,6 +76,12 @@ public class DepthEngine implements Player
     {
         return false;
     }
+    
+    @Override
+    public boolean canUseDatabase()
+    {
+        return true;
+    }
 
     @Override
     public void useDatabase(Database db)

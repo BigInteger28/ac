@@ -54,6 +54,12 @@ public class FixedEngine implements Player
     }
     
     @Override
+    public boolean canUseDatabase()
+    {
+        return true;
+    }
+    
+    @Override
     public void useDatabase(Database db)
     {
         this.db = db;
