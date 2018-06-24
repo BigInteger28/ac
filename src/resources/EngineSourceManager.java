@@ -30,10 +30,6 @@ public class EngineSourceManager
     {
         final List<PlayerResource> resources = new ArrayList<>(lastAmountOfResources);
         
-        if (includeHuman) {
-            resources.add(new PlayerResource(null, PlayerResource.HUMAN));
-        }
-        
         final Stack<File> walkerstack = new Stack<>();
         for (File loc : locations) {
             walkerstack.push(loc);
@@ -61,16 +57,58 @@ public class EngineSourceManager
                     final String extension = name.substring(dotloc);
 
                     if (".ak".equals(extension)) {
-                        resources.add(new PlayerResource(child, PlayerResource.SAVED));
+                        addResource(resources, new PlayerResource(child, PlayerResource.SAVED));
                     } else if (".akb".equals(extension)) {
-                        resources.add(new PlayerResource(child, PlayerResource.ENGINE));
+                        addResource(resources, new PlayerResource(child, PlayerResource.ENGINE));
                     }
                 }
             }
         }
+        
+        if (includeHuman) {
+            resources.add(0, new PlayerResource(null, PlayerResource.HUMAN));
+        }
 
         lastAmountOfResources = resources.size() + 20;
         return resources;
+    }
+    
+    private static void addResource(List<PlayerResource> list, PlayerResource resource)
+    {
+        if (list.isEmpty()) {
+            list.add(resource);
+            return;
+        }
+
+        final String name = resource.getName().toLowerCase();
+
+        int min = 0;
+        int max = list.size();
+        int pos = max / 2;
+        
+        for (;;) {
+            final String othername = list.get(pos).getName().toLowerCase();
+            if (name.compareTo(othername) >= 0) {
+                min = pos + 1;
+            } else {
+                max = pos - 1;
+                if (max < 0) {
+                    pos = 0;
+                    break;
+                }
+            }
+            if (min >= max) {
+                pos = max;
+                break;
+            }
+            pos = (max + min) / 2;
+            if (pos >= list.size()) {
+                break;
+            }
+            continue;
+        }
+        
+        list.add(pos, resource);
     }
 
     private static void readLocations()
