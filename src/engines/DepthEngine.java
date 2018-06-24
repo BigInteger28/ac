@@ -40,7 +40,7 @@ public class DepthEngine implements Player
         }
         
         int dbres = db.findEntry(gamedata, this.playerNumber);
-        if (dbres != -1) {
+        if (dbres != -1 && this.elementsLeft[dbres] > 0) {
             this.elementsLeft[dbres]--;
             return dbres;
         }

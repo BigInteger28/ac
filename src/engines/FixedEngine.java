@@ -28,7 +28,7 @@ public class FixedEngine implements Player
     public int doMove(Data gamedata)
     {
         int dbres = db.findEntry(gamedata, this.playerNumber);
-        if (dbres != -1) {
+        if (dbres != -1 && gamedata.getElementsLeft(this.playerNumber, dbres) > 0) {
             return dbres;
         }
         return this.moves[gamedata.getCurrentMove()];
