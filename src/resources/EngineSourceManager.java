@@ -57,16 +57,16 @@ public class EngineSourceManager
                     final String extension = name.substring(dotloc);
 
                     if (".ak".equals(extension)) {
-                        addResource(resources, new PlayerResource(child, PlayerResource.SAVED));
+                        addResource(resources, new FixedEngineResource(child));
                     } else if (".akb".equals(extension)) {
-                        addResource(resources, new PlayerResource(child, PlayerResource.ENGINE));
+                        addResource(resources, new DepthEngineResource(child));
                     }
                 }
             }
         }
         
         if (includeHuman) {
-            resources.add(0, new PlayerResource(null, PlayerResource.HUMAN));
+            resources.add(0, new HumanPlayerResource());
         }
 
         lastAmountOfResources = resources.size() + 20;

@@ -4,7 +4,7 @@ import backend.Game;
 import backend.Player;
 import frontend.dialogs.ChoosePlayerDialog;
 import frontend.maincontent.MainContent;
-import resources.HumanPlayerResource;
+import resources.PlayerResource;
 import resources.EngineSourceManager;
 
 import javax.swing.*;
@@ -105,7 +105,7 @@ public class Main implements FrontendController, Game.Listener
     @Override
     public void startNewGameAdv()
     {
-        final List<HumanPlayerResource> playerList;
+        final List<PlayerResource> playerList;
         playerList = EngineSourceManager.collectResources(/*includeHuman*/ true);
         for (int i = 0; i < 2; i++) {
             final Player p = ChoosePlayerDialog.show(this.frame, i + 1, playerList);

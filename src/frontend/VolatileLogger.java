@@ -10,6 +10,8 @@ public class VolatileLogger
     public static void log(Throwable exception, String message)
     {
         exceptions.add(new LogEntry(exception, message));
+        System.out.println("error while " + message);
+        exception.printStackTrace();
     }
 
     public static void logf(Throwable exception, String message, Object... args)

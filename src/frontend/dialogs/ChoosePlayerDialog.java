@@ -12,7 +12,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataListener;
 
 import backend.Player;
-import resources.HumanPlayerResource;
+import resources.PlayerResource;
+import frontend.VolatileLogger;
+import frontend.util.SwingMsg;
 import frontend.util.SwingUtil;
 
 import static javax.swing.JScrollPane.*;
@@ -22,7 +24,7 @@ public class ChoosePlayerDialog extends JDialog
     public static Player show(
         Window parentWindow,
         int playerNumber,
-        List<HumanPlayerResource> playerList)
+        List<PlayerResource> playerList)
     {
         final String title = "Select player " + playerNumber;
 
@@ -33,17 +35,17 @@ public class ChoosePlayerDialog extends JDialog
         lbl.setFont(SwingUtil.deriveFont(lbl.getFont(), true, 1.2f));
         lbl.setBorder(new EmptyBorder(10, 0, 10, 0));
         
-        final HumanPlayerResource[] result = { null };
-        final JList<HumanPlayerResource> list = new JList<>();
+        final PlayerResource[] result = { null };
+        final JList<PlayerResource> list = new JList<>();
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setModel(new ListModel<HumanPlayerResource>() {
+        list.setModel(new ListModel<PlayerResource>() {
             @Override
             public int getSize()
             {
                 return playerList.size();
             }
             @Override
-            public HumanPlayerResource getElementAt(int index)
+            public PlayerResource getElementAt(int index)
             {
                 return playerList.get(index);
             }
@@ -68,7 +70,7 @@ public class ChoosePlayerDialog extends JDialog
                     setBackground(list.getBackground());
                     setForeground(list.getForeground());
                 }
-                this.setText(((HumanPlayerResource) value).getName());
+                this.setText(((PlayerResource) value).getName());
                 return this;
             }
         });
@@ -106,6 +108,14 @@ public class ChoosePlayerDialog extends JDialog
             return null;
         }
         
-        return result[0].createPlayer(playerNumber);
+        try {
+            return result[0].createPlayer(playerNumber);
+        } catch (Exception e) {
+            VolatileLogger.logf(e, "creating player '%s'", result[0].getName());
+            final String _message = SwingMsg.format(e);
+            final String _title = "Could not create player";
+            SwingMsg.err_ok(parentWindow, _title, _message);
+            return show(parentWindow, playerNumber, playerList);
+        }
     }
 }
