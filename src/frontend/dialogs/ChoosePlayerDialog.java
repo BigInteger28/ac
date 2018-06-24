@@ -37,11 +37,12 @@ public class ChoosePlayerDialog extends JDialog
         lbl.setBorder(new EmptyBorder(10, 0, 10, 0));
         
         final PlayerResource[] result = { null };
-        final ResourceList list = new ResourceList(playerList);
+        final ResourceList<PlayerResource> list;
+        list = new ResourceList<>(playerList, PlayerResource.TYPES);
         list.setPreferredSize(new Dimension(550, 300));
-        list.setSelectedPlayer(preselectedPlayer);
+        list.setSelectedResource(preselectedPlayer);
         final Callback chooseListener = () -> {
-            result[0] = list.getSelectedPlayerResource();
+            result[0] = list.getSelectedResource();
             SwingUtil.close(dialog);
         };
         list.addChooseListener(chooseListener);

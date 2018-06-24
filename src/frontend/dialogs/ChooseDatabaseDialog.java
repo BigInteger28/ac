@@ -12,7 +12,7 @@ import javax.swing.border.EmptyBorder;
 import engines.Database;
 import resources.DatabaseResource;
 import frontend.VolatileLogger;
-import frontend.components.FilterableList;
+import frontend.components.ResourceList;
 import frontend.util.Callback;
 import frontend.util.SwingMsg;
 import frontend.util.SwingUtil;
@@ -35,11 +35,12 @@ public class ChooseDatabaseDialog extends JDialog
         lbl.setBorder(new EmptyBorder(10, 0, 10, 0));
         
         final DatabaseResource[] result = { null };
-        final FilterableList<DatabaseResource> list = new FilterableList<>(dbList);
+        final ResourceList<DatabaseResource> list;
+        list = new ResourceList<>(dbList, DatabaseResource.TYPES);
         list.setPreferredSize(new Dimension(550, 300));
         list.setSelectedIndex(0);
         final Callback chooseListener = () -> {
-            result[0] = list.getSelectedValue();
+            result[0] = list.getSelectedResource();
             SwingUtil.close(dialog);
         };
         list.addChooseListener(chooseListener);

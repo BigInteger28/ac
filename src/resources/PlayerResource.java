@@ -1,30 +1,17 @@
 package resources;
 
-import java.awt.Color;
-
 import backend.Player;
 
 public abstract class PlayerResource extends Resource
 {
-    @Override
-    public abstract String getName();
-    @Override
-    public abstract String getPath();
-    public abstract Type getType();
-    public abstract Player createPlayer(int playerNumber) throws Exception;
-    
-    public static enum Type
-    {
-        HUMAN(0x555555, "Human"),
-        FIXED(0xFFF494, "Fixed engine"),
-        DEPTH(0xffcd85, "Depth engine");
-        
-        public final Color color;
-        public final String name;
+    public static final int TYPE_HUMAN = 0;
+    public static final int TYPE_FIXED = 1;
+    public static final int TYPE_DEPTH = 2;
+    public static final Type[] TYPES = {
+        new Type("Human", 0x555555),
+        new Type("Fixed engine", 0xFFF494),
+        new Type("Depth engine", 0xFFCD85),
+    };
 
-        private Type(int color, String name) {
-            this.color = new Color(color);
-            this.name = name;
-        }
-    }
+    public abstract Player createPlayer(int playerNumber) throws Exception;
 }

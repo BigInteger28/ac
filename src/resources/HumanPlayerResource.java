@@ -18,9 +18,9 @@ public class HumanPlayerResource extends PlayerResource
     }
 
     @Override
-    public Type getType()
+    public int getType()
     {
-        return Type.HUMAN;
+        return TYPE_HUMAN;
     }
     
     @Override

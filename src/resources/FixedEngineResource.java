@@ -29,9 +29,9 @@ public class FixedEngineResource extends PlayerResource
     }
 
     @Override
-    public Type getType()
+    public int getType()
     {
-        return Type.FIXED;
+        return TYPE_FIXED;
     }
     
     @Override

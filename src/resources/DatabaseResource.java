@@ -11,6 +11,11 @@ import static common.Constants.*;
 
 public class DatabaseResource extends Resource
 {
+    public static final int TYPE_DATABASE = 0;
+    public static final Type[] TYPES = {
+        new Type("Database", 0xFFCD85),
+    };
+
     private final File resource;
 
     public DatabaseResource(File resource)
@@ -106,5 +111,11 @@ public class DatabaseResource extends Resource
         case 'd': return DEFENSE;
         }
         throw new Exception("invalid element: " + in);
+    }
+
+    @Override
+    public int getType()
+    {
+        return TYPE_DATABASE;
     }
 }
