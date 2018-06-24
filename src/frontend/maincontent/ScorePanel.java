@@ -31,6 +31,7 @@ class ScorePanel extends JPanel implements GameChangeListener
         this.label2 = new JLabel();
         label1.setFont(Main.monospaceFont);
         label2.setFont(Main.monospaceFont);
+        this.updateLabels(0, 0);
         this.add(label1);
         this.add(label2);
         
