@@ -7,7 +7,7 @@ import engines.FixedEngine;
 
 import static common.Constants.*;
 
-public class FixedEngineResource implements PlayerResource
+public class FixedEngineResource extends PlayerResource
 {
     private final File resource;
 

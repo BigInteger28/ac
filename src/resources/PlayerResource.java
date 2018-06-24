@@ -2,10 +2,16 @@ package resources;
 
 import backend.Player;
 
-public interface PlayerResource
+public abstract class PlayerResource
 {
-    String getName();
-    String getPath();
-    int getTypeColor();
-    Player createPlayer(int playerNumber) throws Exception;
+    public abstract String getName();
+    public abstract String getPath();
+    public abstract int getTypeColor();
+    public abstract Player createPlayer(int playerNumber) throws Exception;
+
+    @Override
+    public String toString()
+    {
+        return this.getName();
+    }
 }

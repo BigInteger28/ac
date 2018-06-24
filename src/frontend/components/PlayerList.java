@@ -3,7 +3,6 @@ package frontend.components;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
-import javax.swing.event.ListDataListener;
 
 import frontend.util.Callback;
 import frontend.util.SimpleKeyListener;
@@ -27,28 +26,8 @@ public class PlayerList extends JPanel
     public PlayerList(List<PlayerResource> playerList)
     {
         this.playerList = playerList;
-        this.list = new JList<>();
+        this.list = new FilterableList<>(playerList);
         this.list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        this.list.setModel(new ListModel<PlayerResource>() {
-            @Override
-            public int getSize()
-            {
-                return playerList.size();
-            }
-            @Override
-            public PlayerResource getElementAt(int index)
-            {
-                return playerList.get(index);
-            }
-            @Override
-            public void addListDataListener(ListDataListener l)
-            {
-            }
-            @Override
-            public void removeListDataListener(ListDataListener l)
-            {
-            }
-        });
         this.list.setCellRenderer(new Renderer());
         final JScrollPane scrollpane = new JScrollPane(this.list);
         scrollpane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);

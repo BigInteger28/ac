@@ -3,7 +3,7 @@ package resources;
 import backend.Player;
 import frontend.HumanPlayer;
 
-public class HumanPlayerResource implements PlayerResource
+public class HumanPlayerResource extends PlayerResource
 {
     @Override
     public String getName()

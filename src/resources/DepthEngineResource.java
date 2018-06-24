@@ -5,7 +5,7 @@ import java.io.File;
 import backend.Player;
 import engines.DepthEngine;
 
-public class DepthEngineResource implements PlayerResource
+public class DepthEngineResource extends PlayerResource
 {
     private final File resource;
 
