@@ -40,7 +40,9 @@ public class ChoosePlayerDialog extends JDialog
         final ResourceList<PlayerResource> list;
         list = new ResourceList<>(playerList, PlayerResource.TYPES);
         list.setPreferredSize(new Dimension(550, 300));
-        list.setSelectedResource(preselectedPlayer);
+        if (!list.setSelectedResource(preselectedPlayer)) {
+            list.setSelectedResource('<' + preselectedPlayer + '>');
+        }
         final Callback chooseListener = () -> {
             result[0] = list.getSelectedResource();
             SwingUtil.close(dialog);

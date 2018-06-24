@@ -91,12 +91,12 @@ public class ResourceList<T extends Resource> extends JPanel
         this.list.setSelectedIndex(idx);
     }
     
-    public void setSelectedResource(String name)
+    public boolean setSelectedResource(String name)
     {
         this.list.setSelectedIndex(0);
 
         if (name == null) {
-            return;
+            return false;
         }
         
         int idx = 0;
@@ -104,10 +104,12 @@ public class ResourceList<T extends Resource> extends JPanel
             if (name.equals(r.getName())) {
                 this.list.setSelectedIndex(idx);
                 this.list.ensureIndexIsVisible(idx);
-                return;
+                return true;
             }
             idx++;
         }
+
+        return false;
     }
     
     public T getSelectedResource()
