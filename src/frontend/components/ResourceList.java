@@ -76,6 +76,11 @@ public class ResourceList<T extends Resource> extends JPanel
         }
     }
     
+    public void addCancelListener(Callback listener)
+    {
+        this.list.addCancelListener(listener);
+    }
+
     public void addChooseListener(Callback listener)
     {
         this.list.addChooseListener(listener);

@@ -25,11 +25,13 @@ import frontend.util.SimpleKeyListener;
 
 public class FilterableList<T> extends JList<T>
 {
+    private final List<Callback> cancelListeners;
     private final List<Consumer<List<T>>> filterListeners;
     private final Model model;
 
     public FilterableList(List<T> values)
     {
+        this.cancelListeners = new ArrayList<>();
         this.filterListeners = new ArrayList<>();
         this.model = new Model(values);
         this.setModel(this.model);
@@ -57,6 +59,11 @@ public class FilterableList<T> extends JList<T>
                 listener.invoke();
             }
         }));
+    }
+    
+    public void addCancelListener(Callback listener)
+    {
+        this.cancelListeners.add(listener);
     }
     
     public void addFilterListener(Consumer<List<T>> listener)
@@ -254,6 +261,12 @@ public class FilterableList<T> extends JList<T>
                     this.filterText = this.filterText.substring(0, len);
                     this.updateFilter();
                     return;
+                }
+            } else {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    for (Callback l : cancelListeners) {
+                        l.invoke();
+                    }
                 }
             }
             

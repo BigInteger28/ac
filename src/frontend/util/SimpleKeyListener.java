@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 public class SimpleKeyListener implements KeyListener
 {
     private final Consumer<KeyEvent> listener;
+
     public SimpleKeyListener(Consumer<KeyEvent> listener)
     {
         this.listener = listener;

@@ -47,12 +47,16 @@ public class ChoosePlayerDialog extends JDialog
             result[0] = list.getSelectedResource();
             SwingUtil.close(dialog);
         };
+        final Callback cancelListener = () -> {
+            SwingUtil.close(dialog);
+        };
         list.addChooseListener(chooseListener);
+        list.addCancelListener(cancelListener);
         
         final JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton btnCancel = new JButton("Cancel");
         final JButton btnOk = new JButton("Ok");
-        btnCancel.addActionListener(e -> SwingUtil.close(dialog));
+        btnCancel.addActionListener(e -> cancelListener.invoke());
         btnOk.addActionListener(e -> chooseListener.invoke());
         pnlButtons.add(btnCancel);
         pnlButtons.add(btnOk);
