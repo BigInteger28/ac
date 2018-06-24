@@ -15,6 +15,7 @@ public class EngineSourceManager
     private static final String LOCATIONSFILENAME;
     private static final File locationsfile;
     private static final List<File> locations;
+    private static final List<PlayerResource> BUILTINENGINES;
 
     private static int lastAmountOfResources;
     
@@ -24,6 +25,27 @@ public class EngineSourceManager
         locationsfile = Resources.workingdir.resolve(LOCATIONSFILENAME).toFile();
         locations = new ArrayList<>();
         readLocations();
+        BUILTINENGINES = new ArrayList<>();
+        BUILTINENGINES.add(bi("sYnergY 1", 6, 6, 6, 6, 6, 6, 6, 6));
+        BUILTINENGINES.add(bi("sYnergY 2 PRO", 8, 8, 9, 9, 9, 6, 7, 8));
+        BUILTINENGINES.add(bi("sYnergY 3", 9, 6, 9, 8, 7, 6, 7, 8));
+        BUILTINENGINES.add(bi("Junior", 9, 8, 7, 6, 9, 6, 7, 8));
+        BUILTINENGINES.add(bi("GreenFrog", 8, 8, 8, 8, 6, 8, 9, 9));
+        BUILTINENGINES.add(bi("Jaguar", 8, 8, 7, 7, 6, 6, 8, 7));
+        BUILTINENGINES.add(bi("Red", 7, 6, 9, 7, 6, 8, 8, 7));
+        BUILTINENGINES.add(bi("Deep Red", 9, 9, 8, 7, 7, 8, 6, 7));
+        BUILTINENGINES.add(bi("Derp", 8, 6, 8, 7, 7, 6, 8, 8));
+        BUILTINENGINES.add(bi("Schildpad", 9, 9, 9, 9, 9, 9, 9, 9));
+        BUILTINENGINES.add(bi("Botje 2 PRO", 9, 7, 8, 7, 8, 7, 9, 7));
+    }
+    
+    private static BuiltinEngineResource bi(String name, int... depths)
+    {
+        final byte[] d = new byte[9];
+        for (int i = 0; i < depths.length; i++) {
+            d[i] = (byte) depths[i];
+        }
+        return new BuiltinEngineResource(name, d);
     }
     
     public static void collectResources(
@@ -70,9 +92,11 @@ public class EngineSourceManager
             }
         }
         
+        int bpos = 0;
         if (includeHuman) {
-            playerList.add(0, new HumanPlayerResource());
+            playerList.add(bpos++, new HumanPlayerResource());
         }
+        playerList.addAll(bpos, BUILTINENGINES);
 
         lastAmountOfResources = playerList.size() + 20;
     }
