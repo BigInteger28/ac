@@ -105,15 +105,22 @@ public class Main implements FrontendController, Game.Listener
     @Override
     public void startNewGameAdv()
     {
+        final Player[] players = new Player[2];
         final List<PlayerResource> playerList;
         playerList = EngineSourceManager.collectResources(/*includeHuman*/ true);
         for (int i = 0; i < 2; i++) {
-            final Player p = ChoosePlayerDialog.show(this.frame, i + 1, playerList);
+            final Player p = ChoosePlayerDialog.show(
+                this.frame,
+                i + 1,
+                playerList,
+                this.players[i] == null ? null : this.players[i].getName()
+            );
             if (p == null) {
                 return;
             }
-            this.players[i] = p;
+            players[i] = p;
         }
+        System.arraycopy(players, 0, this.players, 0, 2);
 
         this.startNewGame();
     }

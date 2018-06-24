@@ -17,9 +17,11 @@ import java.util.List;
 public class PlayerList extends JPanel
 {
     private final JList<PlayerResource> list;
+    private final List<PlayerResource> playerList;
 
     public PlayerList(List<PlayerResource> playerList)
     {
+        this.playerList = playerList;
         this.list = new JList<>();
         this.list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.list.setModel(new ListModel<PlayerResource>() {
@@ -43,7 +45,6 @@ public class PlayerList extends JPanel
             }
         });
         this.list.setCellRenderer(new Renderer());
-        this.list.setSelectedIndex(0);
         final JScrollPane scrollpane = new JScrollPane(this.list);
         scrollpane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollpane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -51,6 +52,25 @@ public class PlayerList extends JPanel
         
         this.setLayout(new BorderLayout());
         this.add(scrollpane);
+    }
+    
+    public void setSelectedPlayer(String name)
+    {
+        this.list.setSelectedIndex(0);
+
+        if (name == null) {
+            return;
+        }
+        
+        int idx = 0;
+        for (PlayerResource r : this.playerList) {
+            if (name.equals(r.getName())) {
+                this.list.setSelectedIndex(idx);
+                this.list.ensureIndexIsVisible(idx);
+                return;
+            }
+            idx++;
+        }
     }
     
     public PlayerResource getSelectedPlayerResource()

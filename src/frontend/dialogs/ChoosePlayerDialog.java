@@ -21,7 +21,8 @@ public class ChoosePlayerDialog extends JDialog
     public static Player show(
         Window parentWindow,
         int playerNumber,
-        List<PlayerResource> playerList)
+        List<PlayerResource> playerList,
+        String preselectedPlayer)
     {
         final String title = "Select player " + playerNumber;
 
@@ -35,6 +36,7 @@ public class ChoosePlayerDialog extends JDialog
         final PlayerResource[] result = { null };
         final PlayerList list = new PlayerList(playerList);
         list.setPreferredSize(new Dimension(550, 300));
+        list.setSelectedPlayer(preselectedPlayer);
         
         final JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
         final JButton btnCancel = new JButton("Cancel");
@@ -66,11 +68,12 @@ public class ChoosePlayerDialog extends JDialog
         try {
             return result[0].createPlayer(playerNumber);
         } catch (Exception e) {
-            VolatileLogger.logf(e, "creating player '%s'", result[0].getName());
+            final String name = result[0].getName();
+            VolatileLogger.logf(e, "creating player '%s'", name);
             final String _message = SwingMsg.format(e);
             final String _title = "Could not create player";
             SwingMsg.err_ok(parentWindow, _title, _message);
-            return show(parentWindow, playerNumber, playerList);
+            return show(parentWindow, playerNumber, playerList, name);
         }
     }
 }
