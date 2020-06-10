@@ -2,7 +2,6 @@ package frontend.maincontent;
 
 import frontend.FrontendController;
 import frontend.Main;
-import frontend.components.TripleBorder;
 import frontend.util.SwingUtil;
 
 import javax.swing.*;
@@ -26,7 +25,7 @@ class ScorePanel extends JPanel implements GameChangeListener
 		final Border titleBorder = SwingUtil.titledBorder("Score");
 		final Border outerBorder = new EmptyBorder(5, 5, 5, 0);
 		final Border innerBorder = new EmptyBorder(2, 9, 4, 9);
-		this.setBorder(TripleBorder.create(outerBorder, titleBorder, innerBorder));
+		this.setBorder(SwingUtil.tripleBorder(outerBorder, titleBorder, innerBorder));
 		this.label1 = new JLabel();
 		this.label2 = new JLabel();
 		label1.setFont(Main.monospaceFont);

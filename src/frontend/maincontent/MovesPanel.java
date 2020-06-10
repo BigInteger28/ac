@@ -2,7 +2,6 @@ package frontend.maincontent;
 
 import frontend.FrontendController;
 import frontend.Main;
-import frontend.components.TripleBorder;
 import frontend.util.SwingUtil;
 
 import javax.swing.*;
@@ -27,7 +26,7 @@ class MovesPanel extends JPanel implements GameChangeListener
 		final Border titleBorder = SwingUtil.titledBorder("Game");
 		final Border outerBorder = new EmptyBorder(5, 0, 5, 5);
 		final Border innerBorder = new EmptyBorder(2, 9, 4, 9);
-		this.setBorder(TripleBorder.create(outerBorder, titleBorder, innerBorder));
+		this.setBorder(SwingUtil.tripleBorder(outerBorder, titleBorder, innerBorder));
 
 		this.playerLabels = new JLabel[2][];
 		this.playerLabels[0] = new JLabel[9];
