@@ -8,7 +8,7 @@ import javax.swing.SpringLayout;
 import frontend.FrontendController;
 import frontend.dialogs.LocationDialog;
 
-class Ribbon extends JTabbedPane
+public class Ribbon extends JTabbedPane
 {
 	private static final String N = SpringLayout.NORTH;
 	private static final String E = SpringLayout.EAST;
@@ -18,7 +18,7 @@ class Ribbon extends JTabbedPane
 
 	private final FrontendController controller;
 
-	Ribbon(FrontendController controller)
+	public Ribbon(FrontendController controller)
 	{
 		this.controller = controller;
 		this.addTab("Game", this.createGameMenu());

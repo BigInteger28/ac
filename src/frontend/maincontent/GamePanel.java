@@ -7,13 +7,13 @@ import frontend.FrontendController;
 
 import java.awt.*;
 
-class GamePanel extends JPanel
+public class GamePanel extends JPanel
 {
 	private final MovesPanel movesPanel;
 	private final ScorePanel scorePanel;
 	private final PlayerControl[] playerControls;
 
-	GamePanel(FrontendController controller)
+	public GamePanel(FrontendController controller)
 	{
 		this.setLayout(new BorderLayout());
 

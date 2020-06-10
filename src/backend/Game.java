@@ -8,7 +8,7 @@ public class Game
 {
 	private final Listener listener;
 
-	private Data data;
+	public Data data;
 
 	private int chosenElement[] = { -1, -1 };
 
@@ -88,11 +88,6 @@ public class Game
 		}
 
 		return element;
-	}
-
-	public Data getData()
-	{
-		return this.data;
 	}
 
 	public static class Data
