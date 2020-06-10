@@ -1,6 +1,7 @@
 package frontend;
 
 import backend.Game;
+import backend.GameChangeListener;
 import backend.Player;
 import frontend.dialogs.ChoosePlayerDialog;
 import frontend.maincontent.MainContent;

@@ -7,10 +7,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import backend.Game;
+import backend.GameChangeListener;
 import backend.Game.Data;
 import frontend.FrontendController;
-import frontend.GameChangeListener;
-import frontend.components.DefaultTitledBorder;
+import frontend.util.SwingUtil;
 
 import java.awt.*;
 
@@ -28,7 +28,7 @@ class PlayerControl extends JPanel implements GameChangeListener
 	{
 		this.player = player;
 		this.setLayout(new GridLayout(0, 5, 5, 0));
-		this.titleBorder = new DefaultTitledBorder(name);
+		this.titleBorder = SwingUtil.titledBorder(name);
 		final Border innerBorder = new EmptyBorder(2, 4, 4, 4);
 		this.setBorder(new CompoundBorder(titleBorder, innerBorder));
 		this.buttons = new JButton[5];

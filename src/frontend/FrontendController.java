@@ -2,6 +2,8 @@ package frontend;
 
 import java.awt.Window;
 
+import backend.GameChangeListener;
+
 public interface FrontendController
 {
 	Window getWindow();

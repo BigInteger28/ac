@@ -1,16 +1,16 @@
 package frontend.maincontent;
 
 import frontend.FrontendController;
-import frontend.GameChangeListener;
 import frontend.Main;
-import frontend.components.DefaultTitledBorder;
 import frontend.components.TripleBorder;
+import frontend.util.SwingUtil;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import backend.Game;
+import backend.GameChangeListener;
 import backend.Game.Data;
 
 import java.awt.*;
@@ -23,7 +23,7 @@ class ScorePanel extends JPanel implements GameChangeListener
 	ScorePanel(FrontendController controller)
 	{
 		this.setLayout(new GridLayout(2, 0, 0, 5));
-		final Border titleBorder = new DefaultTitledBorder("Score");
+		final Border titleBorder = SwingUtil.titledBorder("Score");
 		final Border outerBorder = new EmptyBorder(5, 5, 5, 0);
 		final Border innerBorder = new EmptyBorder(2, 9, 4, 9);
 		this.setBorder(TripleBorder.create(outerBorder, titleBorder, innerBorder));
@@ -60,5 +60,4 @@ class ScorePanel extends JPanel implements GameChangeListener
 	public void onGameEnd(Data data)
 	{
 	}
-
 }

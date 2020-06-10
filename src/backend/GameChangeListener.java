@@ -1,6 +1,4 @@
-package frontend;
-
-import backend.Game;
+package backend;
 
 public interface GameChangeListener
 {
