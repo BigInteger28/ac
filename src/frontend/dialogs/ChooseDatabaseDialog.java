@@ -13,7 +13,6 @@ import engines.Database;
 import resources.DatabaseResource;
 import frontend.VolatileLogger;
 import frontend.components.ResourceList;
-import frontend.util.Callback;
 import frontend.util.SwingMsg;
 import frontend.util.SwingUtil;
 
@@ -36,11 +35,11 @@ public class ChooseDatabaseDialog extends JDialog
 		list = new ResourceList<>(dbList, DatabaseResource.TYPES);
 		list.setPreferredSize(new Dimension(550, 300));
 		list.setSelectedIndex(0);
-		final Callback chooseListener = () -> {
+		final Runnable chooseListener = () -> {
 			result[0] = list.getSelectedResource();
 			SwingUtil.close(dialog);
 		};
-		final Callback cancelListener = () -> {
+		final Runnable cancelListener = () -> {
 			SwingUtil.close(dialog);
 		};
 		list.addChooseListener(chooseListener);
@@ -50,8 +49,8 @@ public class ChooseDatabaseDialog extends JDialog
 		final JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		final JButton btnCancel = new JButton("Cancel");
 		final JButton btnOk = new JButton("Ok");
-		btnCancel.addActionListener(e -> cancelListener.invoke());
-		btnOk.addActionListener(e -> chooseListener.invoke());
+		btnCancel.addActionListener(e -> cancelListener.run());
+		btnOk.addActionListener(e -> chooseListener.run());
 		pnlButtons.add(btnCancel);
 		pnlButtons.add(btnOk);
 

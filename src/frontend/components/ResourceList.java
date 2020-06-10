@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
-import frontend.util.Callback;
 import resources.EngineSourceManager;
 import resources.Resource;
 
@@ -76,12 +75,12 @@ public class ResourceList<T extends Resource> extends JPanel
 		}
 	}
 
-	public void addCancelListener(Callback listener)
+	public void addCancelListener(Runnable listener)
 	{
 		this.list.addCancelListener(listener);
 	}
 
-	public void addChooseListener(Callback listener)
+	public void addChooseListener(Runnable listener)
 	{
 		this.list.addChooseListener(listener);
 	}

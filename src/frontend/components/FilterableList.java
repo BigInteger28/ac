@@ -20,12 +20,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import frontend.util.Callback;
 import frontend.util.SimpleKeyListener;
 
 public class FilterableList<T> extends JList<T>
 {
-	private final List<Callback> cancelListeners;
+	private final List<Runnable> cancelListeners;
 	private final List<Consumer<List<T>>> filterListeners;
 	private final Model model;
 
@@ -40,25 +39,25 @@ public class FilterableList<T> extends JList<T>
 		this.setBackground(Color.WHITE);
 	}
 
-	public void addChooseListener(Callback listener)
+	public void addChooseListener(Runnable listener)
 	{
 		this.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e)
 			{
 				if (e.getClickCount() > 1) {
-					listener.invoke();
+					listener.run();
 				}
 			}
 		});
 		this.addKeyListener(new SimpleKeyListener((e) -> {
 			if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyChar() == '\n' || e.getKeyChar() == '\r') {
-				listener.invoke();
+				listener.run();
 			}
 		}));
 	}
 
-	public void addCancelListener(Callback listener)
+	public void addCancelListener(Runnable listener)
 	{
 		this.cancelListeners.add(listener);
 	}
@@ -252,8 +251,8 @@ public class FilterableList<T> extends JList<T>
 				}
 			} else {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-					for (Callback l : cancelListeners) {
-						l.invoke();
+					for (Runnable l : cancelListeners) {
+						l.run();
 					}
 				}
 			}
