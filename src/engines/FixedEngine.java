@@ -5,66 +5,66 @@ import backend.Player;
 
 public class FixedEngine implements Player
 {
-    private final String name;
-    private final int moves[];
+	private final String name;
+	private final int moves[];
 
-    private Database db;
+	private Database db;
 
-    public FixedEngine(String name, int[] moves)
-    {
-        this.name = name;
-        this.moves = moves;
-    }
+	public FixedEngine(String name, int[] moves)
+	{
+		this.name = name;
+		this.moves = moves;
+	}
 
-    @Override
-    public String getName()
-    {
-        if (this.db != null) {
-            return this.name + " + " + this.db.getName();
-        }
-        return this.name;
-    }
+	@Override
+	public String getName()
+	{
+		if (this.db != null) {
+			return this.name + " + " + this.db.getName();
+		}
+		return this.name;
+	}
 
-    @Override
-    public int doMove(int p, Game.Data data)
-    {
-        int dbres = db.findEntry(data, p);
-        if (dbres != -1 && data.getElementsLeft(p, dbres) > 0) {
-            return dbres;
-        }
-        return this.moves[data.getCurrentMove()];
-    }
+	@Override
+	public int doMove(int p, Game.Data data)
+	{
+		int dbres = db.findEntry(data, p);
+		if (dbres != -1 && data.getElementsLeft(p, dbres) > 0) {
+			return dbres;
+		}
+		return this.moves[data.getCurrentMove()];
+	}
 
-    @Override
-    public void onGameStart(Game.Data gamedata, int yourPlayerNumber)
-    {
-    }
+	@Override
+	public void onGameStart(Game.Data gamedata, int yourPlayerNumber)
+	{
+	}
 
-    @Override
-    public void onMoveDone(int yourMove, int otherMove, int score)
-    {
-    }
+	@Override
+	public void onMoveDone(int yourMove, int otherMove, int score)
+	{
+	}
 
-    @Override
-    public void onGameEnd(Game.Data gamedata)
-    {
-    }
+	@Override
+	public void onGameEnd(Game.Data gamedata)
+	{
+	}
 
-    @Override
-    public boolean isHumanControlled()
-    {
-        return false;
-    }
-    
-    @Override
-    public boolean canUseDatabase()
-    {
-        return true;
-    }
-    
-    @Override
-    public void useDatabase(Database db)
-    {
-        this.db = db;
-    }
+	@Override
+	public boolean isHumanControlled()
+	{
+		return false;
+	}
+
+	@Override
+	public boolean canUseDatabase()
+	{
+		return true;
+	}
+
+	@Override
+	public void useDatabase(Database db)
+	{
+		this.db = db;
+	}
 }
