@@ -16,6 +16,9 @@ import resources.EngineSourceManager;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +33,22 @@ public class Main implements FrontendController, Game.Listener
 
 	public static void main(String[] args)
 	{
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			public void uncaughtException(Thread t, Throwable e)
+			{
+				e.printStackTrace();
+				StringBuilder sb = new StringBuilder();
+				e.printStackTrace(new PrintStream(new OutputStream() {
+					@Override
+					public void write(int b) throws IOException
+					{
+						sb.append((char) b);
+					}
+				}));
+				SwingMsg.err_ok(null, e.getClass().getCanonicalName(), sb.toString());
+			}
+		});
+
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
