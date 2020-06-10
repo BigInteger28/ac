@@ -28,9 +28,11 @@ public class FixedEngine implements Player
 	@Override
 	public int doMove(int p, Game.Data data)
 	{
-		int dbres = db.findEntry(data, p);
-		if (dbres != -1 && data.getElementsLeft(p, dbres) > 0) {
-			return dbres;
+		if (this.db != null) {
+			int dbres = this.db.findEntry(data, p);
+			if (dbres != -1 && data.getElementsLeft(p, dbres) > 0) {
+				return dbres;
+			}
 		}
 		return this.moves[data.getCurrentMove()];
 	}
