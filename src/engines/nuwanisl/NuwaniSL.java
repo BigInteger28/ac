@@ -8,7 +8,7 @@ import backend.Player;
 public class NuwaniSL implements Player
 {
 	public static String NAME = "Nuwani SL";
-	public static int loseScoreFactor = 2;
+	public static int loseScoreFactor = 5;
 
 	private static boolean verbose = System.getProperty("nuwanisl.verbose") != null;
 
@@ -36,7 +36,7 @@ public class NuwaniSL implements Player
 		int amountUsage;
 
 		if (movesDone == 0) {
-			// special case bacuse the bitshift goes wrong (-1 >>> 32 results in -1?)
+			// special case because the bitshift goes wrong (-1 >>> 32 results in -1?)
 			for (int i = 0; i < variant.numData; i++) {
 				opponentNextDepth = variant.data[i * 2] & 0x3;
 				nextDepthUsages[opponentNextDepth] += variant.data[i * 2 + 1];
@@ -50,11 +50,18 @@ public class NuwaniSL implements Player
 					amountUsage = variant.data[i * 2 + 1];
 					nextDepthUsages[opponentNextDepth] += amountUsage;
 					if (verbose) {
-						System.out.printf(
-							"found pattern for move %d, usages: %d%n",
-							movesDone + 1,
-							amountUsage
-						);
+						System.out.printf("found enemy's pattern: (depths [");
+						for (int j = 0; j < movesDone; j++) {
+							if (j != 0) {
+								System.out.printf(" ");
+							}
+							System.out.printf("%d", (variant.data[i * 2] >> (j * 4)) & 0x3);
+						}
+						System.out.printf("]");
+						for (int j = movesDone; j < 7; j++) {
+							System.out.printf(" %d", (variant.data[i * 2] >> (j * 4)) & 0x3);
+						}
+						System.out.printf("), this pattern was seen %d times%n", amountUsage);
 					}
 				}
 			}
@@ -97,12 +104,16 @@ public class NuwaniSL implements Player
 		int value;
 		int myPreviousElement;
 		int myElementsLeft[];
-		int mostLikelyEnemyDepths[];
-		int theirDepthScores[];
+		int nextDepthUsages[];
+		int myMoveScores[];
 
 		currentMove = gamedata.getCurrentMove();
 		if (currentMove == 0) {
 			return Constants.DEFENSE;
+		}
+
+		if (verbose) {
+			System.out.printf("%ncurrent (0-based) move: %d%n", currentMove);
 		}
 
 		movesDone = currentMove - 1;
@@ -113,51 +124,80 @@ public class NuwaniSL implements Player
 		myElementsLeft = gamedata.getElementsLeft(this.myNumber);
 		myPreviousElement = myPlayedElements[currentMove - 1];
 
-		mostLikelyEnemyDepths = calculateNextDepthUsages(value, this.db, movesDone);
-		theirDepthScores = new int[4];
-		for (int i = 0; i < 4; i++) {
-			if (myElementsLeft[i] > 0) {
-				int myNext = i;
+		nextDepthUsages = calculateNextDepthUsages(value, this.db, movesDone);
+		myMoveScores = new int[4];
+		for (int myNext = 0; myNext < 4; myNext++) {
+			if (myElementsLeft[myNext] > 0) {
+				if (verbose) {
+					System.out.printf("- if I would play %c, then%n", Constants.CHARELEMENTS[myNext]);
+				}
 				for (int j = 0; j < 4; j++) {
 					int theirNext = myPreviousElement + j;
 					if (theirNext >= 4) {
 						theirNext -= 4;
 					}
+
 					int score = Constants.RESULTMATRIX[myNext][theirNext];
+					int moveScore;
 					if (score > 0) {
-						theirDepthScores[i] -= mostLikelyEnemyDepths[j];
+						moveScore = nextDepthUsages[j];
 					} else if (score < 0) {
-						theirDepthScores[i] += loseScoreFactor * mostLikelyEnemyDepths[j];
+						moveScore = -loseScoreFactor * nextDepthUsages[j];
+					} else {
+						moveScore = 0;
+					}
+					myMoveScores[myNext] += moveScore;
+
+					if (verbose) {
+						System.out.printf(
+							"  they used depth %d (=%c) for %d times * score %d = %d%n",
+							j,
+							Constants.CHARELEMENTS[theirNext],
+							nextDepthUsages[j],
+							score,
+							moveScore);
 					}
 				}
 			} else {
-				theirDepthScores[i] = Integer.MAX_VALUE;
+				if (verbose) {
+					System.out.printf("- I can't play %c, none left%n", Constants.CHARELEMENTS[myNext]);
+				}
 			}
 		}
 
 		if (verbose) {
 			System.out.printf(
-				"enemy next depth scores: 0=%d 1=%d 2=%d 3=%d%n",
-				theirDepthScores[0],
-				theirDepthScores[1],
-				theirDepthScores[2],
-				theirDepthScores[3]
+				"MY SCORE IF I PLAY ELEMENT: %c=%d %c=%d %c=%d %c=%d%n",
+				Constants.CHARELEMENTS[0],
+				myMoveScores[0],
+				Constants.CHARELEMENTS[1],
+				myMoveScores[1],
+				Constants.CHARELEMENTS[2],
+				myMoveScores[2],
+				Constants.CHARELEMENTS[3],
+				myMoveScores[3]
 			);
 		}
 
 		int maxValue, maxValueIndex = 0;
 		for (int j = 0; j < 4; j++) {
-			maxValue = Integer.MAX_VALUE;
+			maxValue = Integer.MIN_VALUE;
 			for (int i = 0; i < 4; i++) {
-				if (theirDepthScores[i] < maxValue) {
-					maxValue = theirDepthScores[i];
+				if (myMoveScores[i] > maxValue) {
+					maxValue = myMoveScores[i];
 					maxValueIndex = i;
 				}
+			}
+			if (verbose) {
+				System.out.printf("best score is move %c with score %d%n", Constants.CHARELEMENTS[maxValueIndex], maxValue);
 			}
 			if (myElementsLeft[maxValueIndex] > 0) {
 				return maxValueIndex;
 			}
-			theirDepthScores[maxValueIndex] = Integer.MAX_VALUE;
+			if (verbose) {
+				System.out.println("I don't have this element");
+			}
+			myMoveScores[maxValueIndex] = Integer.MIN_VALUE;
 		}
 
 		return 0;
@@ -195,6 +235,24 @@ public class NuwaniSL implements Player
 			this.db.data[index] = value;
 			this.db.data[index + 1] = 1;
 			this.db.numData++;
+		}
+
+		if (verbose) {
+			int myPrev, theirCurrent;
+
+			System.out.println();
+			System.out.println("END ANALYSIS");
+			for (int i = 1; i < 7; i++) {
+				myPrev = myPlayedElements[i - 1];
+				theirCurrent = theirPlayedElements[i];
+				System.out.printf(
+					"(0-based) move %d: my previous: %c their current: %c depth %d%n",
+					i,
+					Constants.CHARELEMENTS[myPrev],
+					Constants.CHARELEMENTS[theirCurrent],
+					this.depth(myPrev, theirCurrent)
+				);
+			}
 		}
 	}
 
