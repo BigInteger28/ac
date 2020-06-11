@@ -46,21 +46,28 @@ public class NuwaniSL implements Player
 		return nextDepthUsages;
 	}
 
-	private static int[] calculateBestDepthFrom(int nextDepthUsages[])
+	private static int[] calculateTheirBestDepthFromUsages(int nextDepthUsages[])
 	{
+		int usagesReducedByCounters[] = new int[4];
 		int depthPreferences[] = new int[4];
 		int maxUsage, maxUsageIndex;
+
+		usagesReducedByCounters[0] = nextDepthUsages[0] - nextDepthUsages[1] - 5;
+		usagesReducedByCounters[1] = nextDepthUsages[1] - nextDepthUsages[2] - 5;
+		usagesReducedByCounters[2] = nextDepthUsages[2] - nextDepthUsages[3] - 5;
+		usagesReducedByCounters[3] = nextDepthUsages[3] - nextDepthUsages[0] - 5;
+
 		for (int j = 0; j < 4; j++) {
 			maxUsage = -1;
 			maxUsageIndex = 0;
 			for (int i = 0; i < 4; i++) {
-				if (nextDepthUsages[i] > maxUsage) {
-					maxUsage = nextDepthUsages[i];
+				if (usagesReducedByCounters[i] > maxUsage) {
+					maxUsage = usagesReducedByCounters[i];
 					maxUsageIndex = i;
 				}
 			}
 			depthPreferences[j] = maxUsageIndex;
-			nextDepthUsages[maxUsageIndex] = -1;
+			usagesReducedByCounters[maxUsageIndex] = -1;
 		}
 		return depthPreferences;
 	}
@@ -82,25 +89,27 @@ public class NuwaniSL implements Player
 	public int doMove(int p, Data gamedata)
 	{
 		int currentMove = gamedata.getCurrentMove();
+		int myPlayedElements[], theirPlayedElements[];
 		int value;
-		boolean human;
-		int options[];
+		int myPreviousElement;
+		int mostLikelyDepths[];
+		DB.Variant db;
 
 		if (currentMove == 0) {
 			return Constants.DEFENSE;
 		}
 
-		human = gamedata.isHumanControlled(this.myPlayer ^ 1);
-		value = this.value(gamedata.getMoves(this.myPlayer), gamedata.getMoves(this.myPlayer ^ 1), currentMove - 1);
+		myPlayedElements = gamedata.getMoves(this.myPlayer);
+		theirPlayedElements = gamedata.getMoves(this.myPlayer ^ 1);
+		value = this.value(myPlayedElements, theirPlayedElements, currentMove - 1);
 
-		DB.Variant db = human ? DB.forPlayers : DB.forEngines;
-		options = calculateBestDepthFrom(calculateNextDepthUsages(value, db, currentMove));
-		// fix: check what loses the most and subtract
+		db = gamedata.isHumanControlled(this.myPlayer ^ 1) ? db = DB.forPlayers : DB.forEngines;
+		mostLikelyDepths = calculateTheirBestDepthFromUsages(calculateNextDepthUsages(value, db, currentMove));
 
-		int myLastZet = gamedata.getMove(this.myPlayer, currentMove - 1);
-		for (int i = 0; i < options.length; i++) {
-			int option = myLastZet + options[i];
-			option += 3; // counter zet
+		myPreviousElement = myPlayedElements[currentMove - 1];
+		for (int i = 0; i < mostLikelyDepths.length; i++) {
+			int option = myPreviousElement + mostLikelyDepths[i];
+			option += 3; // counter
 			while (option >= 4) {
 				option -= 4;
 			}
@@ -144,10 +153,10 @@ public class NuwaniSL implements Player
 		}
 	}
 
-	private int value(int myMoves[], int otherMoves[], int zetten)
+	private int value(int myMoves[], int otherMoves[], int movesDone)
 	{
 		int value = 0;
-		for (int i = 0; i < zetten; i++) {
+		for (int i = 0; i < movesDone; i++) {
 			value |= this.depth(myMoves[i], otherMoves[i + 1]) << (i * 4);
 		}
 		return value;
