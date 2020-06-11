@@ -32,7 +32,7 @@ public class NuwaniSLTraining
 
 		ArrayList<PlayerResource> playerList = new ArrayList<>();
 		ArrayList<DatabaseResource> dbList = new ArrayList<>();
-		EngineSourceManager.collectResources(playerList, dbList, true);
+		EngineSourceManager.collectResources(playerList, dbList, false);
 		Game.Listener listener = new Game.Listener() {
 			@Override
 			public void onGameStart()

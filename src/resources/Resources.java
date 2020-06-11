@@ -2,17 +2,34 @@ package resources;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.file.Path;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.file.Paths;
 
 import frontend.VolatileLogger;
 
 public class Resources
 {
-	public static Path workingdir;
+	public static File workingdir;
 
 	static {
-		workingdir = Paths.get(".").toAbsolutePath().normalize();
+		workingdir = Paths.get(".").toAbsolutePath().normalize().toFile();
+
+		String loc = Resources.class.getResource(Resources.class.getSimpleName() + ".class").toString();
+		if (loc.startsWith("jar:")) {
+			String wdir = loc.substring(9); // remove jar:file:
+			int lastSeparatorIdx = wdir.lastIndexOf("!/");
+			final String path = wdir.substring(0, lastSeparatorIdx);
+			File jarfile = new File(path);
+			if (!jarfile.exists()) {
+				try {
+					jarfile = new File(URLDecoder.decode(path, "utf-8"));
+				} catch (UnsupportedEncodingException e) {
+					System.err.println("failed to decode path url");
+				}
+			}
+			workingdir = jarfile.getParentFile();
+		}
 	}
 
 	public static File ptof(String path)

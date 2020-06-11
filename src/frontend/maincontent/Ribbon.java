@@ -1,5 +1,7 @@
 package frontend.maincontent;
 
+import java.awt.FlowLayout;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -7,6 +9,8 @@ import javax.swing.SpringLayout;
 
 import frontend.FrontendController;
 import frontend.dialogs.LocationDialog;
+import frontend.util.SwingMsg;
+import resources.Resources;
 
 public class Ribbon extends JTabbedPane
 {
@@ -51,17 +55,15 @@ public class Ribbon extends JTabbedPane
 
 	private JPanel createSettingsMenu()
 	{
-		final SpringLayout layout = new SpringLayout();
-		final JPanel pnl = new JPanel(layout);
+		final JPanel pnl = new JPanel(new FlowLayout());
 
 		final JButton btnLocations = new JButton("Engine locations");
 		btnLocations.addActionListener(e -> LocationDialog.show(this.controller));
 		pnl.add(btnLocations);
 
-		layout.putConstraint(W, btnLocations, PADDING, W, pnl);
-		layout.putConstraint(N, btnLocations, PADDING, N, pnl);
-		layout.putConstraint(S, pnl, PADDING, S, btnLocations);
-		layout.putConstraint(E, pnl, -PADDING, E, btnLocations);
+		JButton btnWorkingdir = new JButton("Workingdir");
+		btnWorkingdir.addActionListener(e -> SwingMsg.err_ok(btnWorkingdir, "a", Resources.workingdir.getAbsolutePath()));
+		pnl.add(btnWorkingdir);
 
 		return pnl;
 	}

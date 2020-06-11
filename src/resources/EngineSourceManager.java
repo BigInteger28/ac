@@ -25,7 +25,7 @@ public class EngineSourceManager
 	static {
 		LOCATIONSFILENAME = "locations.txt";
 		lastAmountOfResources = 100;
-		locationsfile = Resources.workingdir.resolve(LOCATIONSFILENAME).toFile();
+		locationsfile = new File(Resources.workingdir, LOCATIONSFILENAME);
 		locations = new ArrayList<>();
 		readLocations();
 		BUILTINENGINES = new ArrayList<>();

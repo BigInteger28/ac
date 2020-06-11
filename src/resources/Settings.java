@@ -14,7 +14,7 @@ public class Settings
 	public static final Properties settings;
 
 	static {
-		file = Resources.workingdir.resolve("settings.properties").toFile();
+		file = new File(Resources.workingdir, "settings.properties");
 		settings = new Properties();
 
 		try (FileInputStream in = new FileInputStream(file.getAbsolutePath())) {
