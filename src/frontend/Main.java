@@ -1,8 +1,10 @@
 package frontend;
 
+import backend.ACMain;
 import backend.Game;
 import backend.GameChangeListener;
 import backend.Player;
+import common.ErrorHandler;
 import common.Images;
 import frontend.components.BigCardsDisplay;
 import frontend.dialogs.ChoosePlayerDialog;
@@ -17,9 +19,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,35 +31,19 @@ public class Main implements FrontendController, Game.Listener
 	public static Image backImage;
 	public static Image[] bigElementImages = new Image[5];
 	public static Image[] smallElementImages = new Image[5];
+	public static boolean uiReady;
 
 	public static void main(String[] args)
 	{
-		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-			public void uncaughtException(Thread t, Throwable e)
-			{
-				e.printStackTrace();
-				StringBuilder sb = new StringBuilder();
-				e.printStackTrace(new PrintStream(new OutputStream() {
-					@Override
-					public void write(int b) throws IOException
-					{
-						sb.append((char) b);
-					}
-				}));
-				SwingMsg.err_ok(null, e.getClass().getCanonicalName(), sb.toString());
-			}
-		});
-
-		settingsDir = new File(System.getProperty("user.home"), ".avatarcarto");
-		if (!settingsDir.exists() && !settingsDir.mkdirs()) {
-			throw new RuntimeException("can't write directory " + settingsDir);
-		}
+		ErrorHandler.handler = new ErrorHandlerFrontendImpl();
 
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			ErrorHandler.handler.handleException(e);
 		}
+
+		ACMain.main();
 
 		monospaceFont = new Font("Courier New", Font.PLAIN, 12);
 		SwingUtilities.invokeLater(Main::new);
@@ -74,6 +57,8 @@ public class Main implements FrontendController, Game.Listener
 
 	public Main()
 	{
+		uiReady = true;
+
 		Container contentPane;
 		RawStringInputStream rsis;
 		JPanel middlePanel, topPanel;
@@ -143,10 +128,10 @@ public class Main implements FrontendController, Game.Listener
 	}
 
 	@Override
-	public void onGameEnd()
+	public void onGameEnd(Game game)
 	{
 		for (GameChangeListener listener : this.listeners) {
-			listener.onGameEnd(this.game.data);
+			listener.onGameEnd(game.data);
 		}
 		this.bigCardsDisplay.gameStateChanged();
 	}

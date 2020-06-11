@@ -61,7 +61,7 @@ public class Game
 			Arrays.fill(this.chosenElement, -1);
 
 			if (this.data.currentMove > 8) {
-				this.listener.onGameEnd();
+				this.listener.onGameEnd(this);
 				this.data.players[0].onGameEnd(this.data);
 				this.data.players[1].onGameEnd(this.data);
 				return;
@@ -162,7 +162,7 @@ public class Game
 
 		void onMoveDone(int[] playerElements, int result);
 
-		void onGameEnd();
+		void onGameEnd(Game game);
 	}
 
 }

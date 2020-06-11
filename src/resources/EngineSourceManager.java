@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import engines.NuwaniSL;
 import engines.Synergy2PROEngine;
+import engines.nuwanisl.NuwaniSLResource;
 import frontend.VolatileLogger;
 
 public class EngineSourceManager
@@ -39,7 +39,7 @@ public class EngineSourceManager
 		BUILTINENGINES.add(bi("Derp", 8, 6, 8, 7, 7, 6, 8, 8));
 		BUILTINENGINES.add(bi("Schildpad", 9, 9, 9, 9, 9, 9, 9, 9));
 		BUILTINENGINES.add(bi("Botje 2 PRO", 9, 7, 8, 7, 8, 7, 9, 7));
-		BUILTINENGINES.add(new NuwaniSL.Resource());
+		BUILTINENGINES.add(new NuwaniSLResource());
 	}
 
 	private static BuiltinEngineResource bi(String name, int... depths)
