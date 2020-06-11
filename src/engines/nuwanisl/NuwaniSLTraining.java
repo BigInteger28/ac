@@ -100,8 +100,8 @@ public class NuwaniSLTraining
 						buildingGenerationEngine.numData++;
 					}
 				} catch (Exception e1) {
-					System.err.println(playerResource.getPath());
 					r.remove();
+					System.err.println(playerResource.getPath() + '/' + playerResource.getName());
 					e1.printStackTrace();
 				}
 			}
