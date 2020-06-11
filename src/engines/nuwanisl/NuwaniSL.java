@@ -8,11 +8,19 @@ import backend.Player;
 public class NuwaniSL implements Player
 {
 	public static String NAME = "Nuwani SL";
+	public static int loseScoreFactor = 2;
 
 	private static boolean verbose = System.getProperty("nuwanisl.verbose") != null;
 
 	public static void init()
 	{
+		String loseScoreFactorProp;
+
+		loseScoreFactorProp = System.getProperty("nuwanisl.losescorefactor");
+		if (loseScoreFactorProp != null) {
+			loseScoreFactor = Integer.parseInt(loseScoreFactorProp);
+		}
+
 		DB.init();
 	}
 
@@ -119,7 +127,7 @@ public class NuwaniSL implements Player
 					if (score > 0) {
 						theirDepthScores[i] -= mostLikelyEnemyDepths[j];
 					} else if (score < 0) {
-						theirDepthScores[i] += 2 * mostLikelyEnemyDepths[j];
+						theirDepthScores[i] += loseScoreFactor * mostLikelyEnemyDepths[j];
 					}
 				}
 			} else {
