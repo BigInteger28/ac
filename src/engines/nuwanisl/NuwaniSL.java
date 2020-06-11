@@ -25,6 +25,7 @@ public class NuwaniSL implements Player
 		int nextDepthUsages[] = { 0, 0, 0, 0 };
 		int mask;
 		int opponentNextDepth;
+		int amountUsage;
 
 		if (movesDone == 0) {
 			// special case bacuse the bitshift goes wrong (-1 >>> 32 results in -1?)
@@ -38,9 +39,23 @@ public class NuwaniSL implements Player
 			for (int i = 0; i < variant.numData; i++) {
 				if ((variant.data[i * 2]  & mask) == value) {
 					opponentNextDepth = (variant.data[i * 2] >> (movesDone * 4)) & 0x3;
-					nextDepthUsages[opponentNextDepth] += variant.data[i * 2 + 1];
+					amountUsage = variant.data[i * 2 + 1];
+					nextDepthUsages[opponentNextDepth] += amountUsage;
+					if (verbose) {
+						System.out.printf("found pattern for move %d, usages: %d%n", movesDone + 1, amountUsage);
+					}
 				}
 			}
+		}
+
+		if (verbose) {
+			System.out.printf(
+				"enemy next depth usages: 0x%d 1x%d 2x%d 3x%d%n",
+				nextDepthUsages[0],
+				nextDepthUsages[1],
+				nextDepthUsages[2],
+				nextDepthUsages[3]
+			);
 		}
 
 		return nextDepthUsages;
@@ -131,6 +146,16 @@ public class NuwaniSL implements Player
 			} else {
 				scores[i] = Integer.MIN_VALUE;
 			}
+		}
+
+		if (verbose) {
+			System.out.printf(
+				"enemy next depth scores: 0=%d 1=%d 2=%d 3=%d%n",
+				scores[0],
+				scores[1],
+				scores[2],
+				scores[3]
+			);
 		}
 
 		int maxv, maxi = 0;
