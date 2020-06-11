@@ -127,6 +127,13 @@ public class Game
 			return this.moves[p][move];
 		}
 
+		public int[] getMoves(int p)
+		{
+			int[] moves = new int[9];
+			System.arraycopy(this.moves[p], 0, moves, 0, 9);
+			return moves;
+		}
+
 		public int getMoveScore(int move)
 		{
 			return this.moveScores[move];

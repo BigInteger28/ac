@@ -16,6 +16,7 @@ import resources.EngineSourceManager;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -26,6 +27,7 @@ import static common.Constants.*;
 
 public class Main implements FrontendController, Game.Listener
 {
+	public static File settingsDir;
 	public static Font monospaceFont;
 	public static Image backImage;
 	public static Image[] bigElementImages = new Image[5];
@@ -48,6 +50,11 @@ public class Main implements FrontendController, Game.Listener
 				SwingMsg.err_ok(null, e.getClass().getCanonicalName(), sb.toString());
 			}
 		});
+
+		settingsDir = new File(System.getProperty("user.home"), ".avatarcarto");
+		if (!settingsDir.exists() && !settingsDir.mkdirs()) {
+			throw new RuntimeException("can't write directory " + settingsDir);
+		}
 
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
