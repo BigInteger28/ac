@@ -62,7 +62,7 @@ public class NuwaniSL implements Player
 						} else if (count == 0 && data == MARK_END_DATA) {
 							break;
 						}
-						if (count >= 4) {
+						if (count < 4) {
 							a |= ((data & 0xFF) << (count * 8));
 						} else if (count < 8) {
 							b |= ((data & 0xFF) << (count * 8));
