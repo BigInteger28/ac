@@ -4,11 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import backend.Game.Data;
 import common.Constants;
-import frontend.Main;
 import backend.Player;
+import resources.EngineSourceManager;
 import resources.PlayerResource;
 
 public class NuwaniSL implements Player
@@ -17,8 +18,6 @@ public class NuwaniSL implements Player
 	private static byte MARK_START_ENGINE_DATA = 8;
 	private static byte MARK_START_PLAYER_DATA = 7;
 	private static byte MARK_END_DATA = 6;
-
-	private static File databaseFile;
 
 	// int for depths:
 	// 00 00 00 00
@@ -32,22 +31,35 @@ public class NuwaniSL implements Player
 
 	static
 	{
-		databaseFile = new File(Main.settingsDir, "nuwani.sl");
-		readDatabase();
-		Runtime.getRuntime().addShutdownHook(new Thread(NuwaniSL::writeDatabase));
+		numEngineData = numPlayerData = 0;
+		for (File dir : EngineSourceManager.getLocations()) {
+			File f = new File(dir, "nuwani.sl");
+			if (f.exists() && f.isFile()) {
+				readDatabase(f);
+			}
+		}
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			List<File> locations = EngineSourceManager.getLocations();
+			for (File dir : locations) {
+				File f = new File(dir, "nuwani.sl");
+				if (f.exists() && f.isFile()) {
+					writeDatabase(f);
+					return;
+				}
+			}
+			if (!locations.isEmpty()) {
+				writeDatabase(new File(locations.get(0), "nuwani.sl"));
+			}
+		}));
 	}
 
-	private static void readDatabase()
+	private static void readDatabase(File f)
 	{
 		int data, count, a, b;
 
 		numEngineData = numPlayerData = 0;
-		if (!databaseFile.exists()) {
-			return;
-		}
-
 		// TODO: make a backup?
-		try (FileInputStream in = new FileInputStream(databaseFile)) {
+		try (FileInputStream in = new FileInputStream(f)) {
 			for (;;) {
 				data = in.read();
 				count = 0;
@@ -107,9 +119,9 @@ public class NuwaniSL implements Player
 		}
 	}
 
-	private static void writeDatabase()
+	private static void writeDatabase(File f)
 	{
-		try (FileOutputStream out = new FileOutputStream(databaseFile)) {
+		try (FileOutputStream out = new FileOutputStream(f)) {
 			out.write(MARK_START_ENGINE_DATA);
 			for (int i = 0; i < numEngineData; i++) {
 				int a = engineData[i * 2];
