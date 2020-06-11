@@ -17,10 +17,12 @@ public class Settings
 		file = new File(Resources.workingdir, "settings.properties");
 		settings = new Properties();
 
-		try (FileInputStream in = new FileInputStream(file.getAbsolutePath())) {
-			settings.load(in);
-		} catch (Exception e) {
-			VolatileLogger.logf(e, "loading settings");
+		if (file.exists()) {
+			try (FileInputStream in = new FileInputStream(file.getAbsolutePath())) {
+				settings.load(in);
+			} catch (Exception e) {
+				VolatileLogger.logf(e, "loading settings");
+			}
 		}
 	}
 
