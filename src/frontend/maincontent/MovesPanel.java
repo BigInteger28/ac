@@ -1,32 +1,24 @@
 package frontend.maincontent;
 
-import frontend.FrontendController;
 import frontend.Main;
-import frontend.util.SwingUtil;
 
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.border.EmptyBorder;
 
 import backend.Game;
-import backend.GameChangeListener;
-import backend.Game.Data;
 
 import java.awt.*;
 
 import static common.Constants.CHARELEMENTS;
 
-class MovesPanel extends JPanel implements GameChangeListener
+public class MovesPanel extends JPanel
 {
 	private final JLabel[][] playerLabels;
 	private static final Color[] RESULTCOLORS = { new Color(0xFF0000), new Color(0x0), new Color(0x008000) };
 
-	MovesPanel(FrontendController controller)
+	public MovesPanel()
 	{
 		this.setLayout(new BorderLayout());
-		final Border titleBorder = SwingUtil.titledBorder("Game");
-		final Border outerBorder = new EmptyBorder(5, 0, 5, 5);
-		final Border innerBorder = new EmptyBorder(2, 9, 4, 9);
-		this.setBorder(SwingUtil.tripleBorder(outerBorder, titleBorder, innerBorder));
 
 		this.playerLabels = new JLabel[2][];
 		this.playerLabels[0] = new JLabel[9];
@@ -54,44 +46,23 @@ class MovesPanel extends JPanel implements GameChangeListener
 		}
 
 		this.add(mp, BorderLayout.CENTER);
-
-		controller.addGameChangeListener(this);
 	}
 
-	@Override
-	public void onGameStart(Data data)
+	public void updateLabels(Game.Data gamedata)
 	{
 		for (int i = 0; i < 9; i++) {
+			final int moveResult = gamedata.getMoveScore(i);
 			for (int p = 0; p < 2; p++) {
 				final JLabel l = this.playerLabels[p][i];
-				l.setText("?");
-				l.setForeground(RESULTCOLORS[1]);
-			}
-		}
-	}
-
-	@Override
-	public void onGameChange(Game.Data data)
-	{
-		for (int i = 0; i < 9; i++) {
-			final int moveResult = data.getMoveScore(i);
-			for (int p = 0; p < 2; p++) {
-				final JLabel l = this.playerLabels[p][i];
-				if (data.getCurrentMove() <= i) {
+				if (gamedata.getCurrentMove() <= i) {
 					l.setText("?");
 					l.setForeground(RESULTCOLORS[1]);
 					continue;
 				}
 
-				l.setText(String.valueOf(CHARELEMENTS[data.getMove(p, i)]));
+				l.setText(String.valueOf(CHARELEMENTS[gamedata.getMove(p, i)]));
 				l.setForeground(RESULTCOLORS[moveResult * ((p * -1) | 1) + 1]);
 			}
 		}
 	}
-
-	@Override
-	public void onGameEnd(Data data)
-	{
-	}
-
 }

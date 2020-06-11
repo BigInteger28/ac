@@ -2,28 +2,37 @@ package backend;
 
 import static common.Constants.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Game
 {
-	private final Listener listener;
-
-	public Data data;
+	private final ArrayList<Listener> listeners;
 
 	private int chosenElement[] = { -1, -1 };
 
-	public Game(Listener listener)
+	public Player p1, p2;
+	public Data data;
+
+	public Game()
 	{
-		this.listener = listener;
+		this.listeners = new ArrayList<>();
 	}
 
-	public void startNewGame(Player[] players)
+	public void addListener(Listener listener)
 	{
-		this.data = new Data(new Player[] { players[0], players[1] });
+		this.listeners.add(listener);
+	}
+
+	public void startNewGame()
+	{
+		this.data = new Data(this.p1, this.p2);
 		Arrays.fill(this.chosenElement, -1);
-		this.listener.onGameStart();
-		players[0].onGameStart(this.data, 0);
-		players[1].onGameStart(this.data, 1);
+		for (Listener listener : this.listeners) {
+			listener.onGameStart(this);
+		}
+		this.p1.onGameStart(this.data, 0);
+		this.p2.onGameStart(this.data, 1);
 		this.update();
 	}
 
@@ -38,6 +47,8 @@ public class Game
 			int e1 = this.askPlayerMove(1);
 
 			if (e0 == -1 || e1 == -1) {
+				this.data.playerReady[0] = e0 != -1;
+				this.data.playerReady[1] = e1 != -1;
 				this.chosenElement[0] = e0;
 				this.chosenElement[1] = e1;
 				return;
@@ -54,14 +65,18 @@ public class Game
 			this.data.score[0] += dscore[result + 1];
 			this.data.score[1] += dscore[result * -1 + 1];
 
-			this.listener.onMoveDone(this.chosenElement, result);
+			for (Listener listener : this.listeners) {
+				listener.onMoveDone(this, this.chosenElement, result);
+			}
 			this.data.players[0].onMoveDone(e0, e1, result);
 			this.data.players[1].onMoveDone(e1, e0, -result);
 
 			Arrays.fill(this.chosenElement, -1);
 
 			if (this.data.currentMove > 8) {
-				this.listener.onGameEnd(this);
+				for (Listener listener : this.listeners) {
+					listener.onGameEnd(this);
+				}
 				this.data.players[0].onGameEnd(this.data);
 				this.data.players[1].onGameEnd(this.data);
 				return;
@@ -98,10 +113,11 @@ public class Game
 		private int currentMove;
 		private final int[][] elementsLeft;
 		private final int[] score;
+		private final boolean[] playerReady = { false, false };
 
-		Data(Player[] players)
+		Data(Player p1, Player p2)
 		{
-			this.players = players;
+			this.players = new Player[] { p1, p2 };
 			this.moves = new int[][] { new int[9], new int[9] };
 			this.moveScores = new int[9];
 			this.elementsLeft = new int[][] { new int[5], new int[5] };
@@ -164,14 +180,16 @@ public class Game
 			return this.score[p];
 		}
 
+		public boolean isPlayerReady(int p)
+		{
+			return this.playerReady[p];
+		}
 	}
 
 	public interface Listener
 	{
-		void onGameStart();
-
-		void onMoveDone(int[] playerElements, int result);
-
+		void onGameStart(Game game);
+		void onMoveDone(Game game, int[] playerElements, int result);
 		void onGameEnd(Game game);
 	}
 

@@ -96,7 +96,7 @@ public class EngineSourceManager
 
 		int bpos = 0;
 		if (includeHuman) {
-			playerList.add(bpos++, new HumanPlayerResource());
+			playerList.add(bpos++, HumanPlayerResource.INSTANCE);
 		}
 		playerList.addAll(bpos, BUILTINENGINES);
 

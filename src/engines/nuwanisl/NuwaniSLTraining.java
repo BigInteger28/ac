@@ -9,7 +9,6 @@ import java.util.List;
 
 import backend.ACMain;
 import backend.Game;
-import backend.Player;
 import resources.DatabaseResource;
 import resources.EngineSourceManager;
 import resources.PlayerResource;
@@ -33,14 +32,19 @@ public class NuwaniSLTraining
 		ArrayList<PlayerResource> playerList = new ArrayList<>();
 		ArrayList<DatabaseResource> dbList = new ArrayList<>();
 		EngineSourceManager.collectResources(playerList, dbList, false);
-		Game.Listener listener = new Game.Listener() {
+		myScore = new int[playerList.size()][GENS];
+		theirScore = new int[playerList.size()][GENS];
+		int engines = 0;
+		PlayerResource nuwaniResource = new NuwaniSLResource();
+		Game g = new Game();
+		g.addListener(new Game.Listener() {
 			@Override
-			public void onGameStart()
+			public void onGameStart(Game game)
 			{
 			}
 
 			@Override
-			public void onMoveDone(int[] playerElements, int result)
+			public void onMoveDone(Game game, int[] playerElements, int result)
 			{
 			}
 
@@ -60,11 +64,7 @@ public class NuwaniSLTraining
 					losses++;
 				}
 			}
-		};
-		myScore = new int[playerList.size()][GENS];
-		theirScore = new int[playerList.size()][GENS];
-		int engines = 0;
-		PlayerResource nuwaniResource = new NuwaniSLResource();
+		});
 		for (int i = 0; i < GENS; i++) {
 			DB.Variant cleanGenerationEngine = DB.forEngines.copy();
 			DB.Variant buildingGenerationEngine = DB.forEngines.copy();
@@ -74,12 +74,9 @@ public class NuwaniSLTraining
 				PlayerResource playerResource = r.next();
 				try {
 					DB.forEngines = cleanGenerationEngine.copy();
-					Game g = new Game(listener);
-					g.startNewGame(new Player[] {
-						nuwaniResource.createPlayer(0),
-						EngineSourceManager.makePlayerTryFindDatabase(playerResource, dbList, 1)
-					});
-					g.update();
+					g.p1 = nuwaniResource.createPlayer(0);
+					g.p2 = EngineSourceManager.makePlayerTryFindDatabase(playerResource, dbList, 1);
+					g.startNewGame();
 
 					myScore[idx][i] = g.data.getScore(0);
 					theirScore[idx][i] = g.data.getScore(1);

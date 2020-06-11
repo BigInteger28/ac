@@ -5,6 +5,8 @@ import frontend.HumanPlayer;
 
 public class HumanPlayerResource extends PlayerResource
 {
+	public static HumanPlayerResource INSTANCE = new HumanPlayerResource();
+
 	@Override
 	public String getName()
 	{
