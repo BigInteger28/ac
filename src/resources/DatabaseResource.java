@@ -43,7 +43,7 @@ public class DatabaseResource extends Resource
 		// Element [ElementSequence]
 		//
 		// DbEntry:
-		// ElementSequence § Element
+		// ElementSequence \u00a7 Element
 		//
 		// NextDbEntry:
 		// $ DbEntry [NextDbEntry]
@@ -67,7 +67,7 @@ public class DatabaseResource extends Resource
 					if (currententry != 0x77777777) {
 						throw new Exception("unexpected NextDbEntry");
 					}
-				} else if (c == '§') {
+				} else if (c == '\u00A7') {
 					if (currententry == 0x77777777) {
 						throw new Exception("invalid, expected ElementSequence");
 					}
