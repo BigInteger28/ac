@@ -42,7 +42,11 @@ public class NuwaniSL implements Player
 					amountUsage = variant.data[i * 2 + 1];
 					nextDepthUsages[opponentNextDepth] += amountUsage;
 					if (verbose) {
-						System.out.printf("found pattern for move %d, usages: %d%n", movesDone + 1, amountUsage);
+						System.out.printf(
+							"found pattern for move %d, usages: %d%n",
+							movesDone + 1,
+							amountUsage
+						);
 					}
 				}
 			}
@@ -61,37 +65,14 @@ public class NuwaniSL implements Player
 		return nextDepthUsages;
 	}
 
-	private static int[] calculateTheirBestDepthFromUsages(int nextDepthUsages[])
+	private int myNumber;
+	private int theirNumber;
+	private DB.Variant db;
+
+	public NuwaniSL(int myNumber)
 	{
-		int usagesReducedByCounters[] = new int[4];
-		int depthPreferences[] = new int[4];
-		int maxUsage, maxUsageIndex;
-
-		usagesReducedByCounters[0] = nextDepthUsages[0] - nextDepthUsages[1] - 5;
-		usagesReducedByCounters[1] = nextDepthUsages[1] - nextDepthUsages[2] - 5;
-		usagesReducedByCounters[2] = nextDepthUsages[2] - nextDepthUsages[3] - 5;
-		usagesReducedByCounters[3] = nextDepthUsages[3] - nextDepthUsages[0] - 5;
-
-		for (int j = 0; j < 4; j++) {
-			maxUsage = -1;
-			maxUsageIndex = 0;
-			for (int i = 0; i < 4; i++) {
-				if (usagesReducedByCounters[i] > maxUsage) {
-					maxUsage = usagesReducedByCounters[i];
-					maxUsageIndex = i;
-				}
-			}
-			depthPreferences[j] = maxUsageIndex;
-			usagesReducedByCounters[maxUsageIndex] = -1;
-		}
-		return depthPreferences;
-	}
-
-	private int myPlayer;
-
-	public NuwaniSL(int myPlayer)
-	{
-		this.myPlayer = myPlayer;
+		this.myNumber = myNumber;
+		this.theirNumber = myNumber ^ 1;
 	}
 
 	@Override
@@ -107,8 +88,9 @@ public class NuwaniSL implements Player
 		int myPlayedElements[], theirPlayedElements[];
 		int value;
 		int myPreviousElement;
-		int mostLikelyDepths[];
-		DB.Variant db;
+		int myElementsLeft[];
+		int mostLikelyEnemyDepths[];
+		int theirDepthScores[];
 
 		currentMove = gamedata.getCurrentMove();
 		if (currentMove == 0) {
@@ -116,74 +98,59 @@ public class NuwaniSL implements Player
 		}
 
 		movesDone = currentMove - 1;
-		myPlayedElements = gamedata.getMoves(this.myPlayer);
-		theirPlayedElements = gamedata.getMoves(this.myPlayer ^ 1);
+		myPlayedElements = gamedata.getMoves(this.myNumber);
+		theirPlayedElements = gamedata.getMoves(this.theirNumber);
 		value = this.value(myPlayedElements, theirPlayedElements, movesDone);
 
-		db = gamedata.isHumanControlled(this.myPlayer ^ 1) ? db = DB.forPlayers : DB.forEngines;
-		mostLikelyDepths = calculateTheirBestDepthFromUsages(calculateNextDepthUsages(value, db, movesDone));
-
+		myElementsLeft = gamedata.getElementsLeft(this.myNumber);
 		myPreviousElement = myPlayedElements[currentMove - 1];
 
-		int enemy[] = calculateNextDepthUsages(value, db, movesDone);
-		int scores[] = new int[4];
+		mostLikelyEnemyDepths = calculateNextDepthUsages(value, this.db, movesDone);
+		theirDepthScores = new int[4];
 		for (int i = 0; i < 4; i++) {
-			if (gamedata.getElementsLeft(this.myPlayer, i) > 0) {
+			if (myElementsLeft[i] > 0) {
 				int myNext = i;
 				for (int j = 0; j < 4; j++) {
 					int theirNext = myPreviousElement + j;
-					if (theirNext < 0) {
-						theirNext += 4;
+					if (theirNext >= 4) {
+						theirNext -= 4;
 					}
-					if (theirNext > 4) theirNext -= 4;
 					int score = Constants.RESULTMATRIX[myNext][theirNext];
 					if (score > 0) {
-						scores[i] += enemy[j];
+						theirDepthScores[i] -= mostLikelyEnemyDepths[j];
 					} else if (score < 0) {
-						scores[i] -= 2 * enemy[j];
+						theirDepthScores[i] += 2 * mostLikelyEnemyDepths[j];
 					}
 				}
 			} else {
-				scores[i] = Integer.MIN_VALUE;
+				theirDepthScores[i] = Integer.MAX_VALUE;
 			}
 		}
 
 		if (verbose) {
 			System.out.printf(
 				"enemy next depth scores: 0=%d 1=%d 2=%d 3=%d%n",
-				scores[0],
-				scores[1],
-				scores[2],
-				scores[3]
+				theirDepthScores[0],
+				theirDepthScores[1],
+				theirDepthScores[2],
+				theirDepthScores[3]
 			);
 		}
 
-		int maxv, maxi = 0;
+		int maxValue, maxValueIndex = 0;
 		for (int j = 0; j < 4; j++) {
-			maxv = Integer.MIN_VALUE;
+			maxValue = Integer.MAX_VALUE;
 			for (int i = 0; i < 4; i++) {
-				if (scores[i] > maxv) {
-					maxv = scores[i];
-					maxi = i;
+				if (theirDepthScores[i] < maxValue) {
+					maxValue = theirDepthScores[i];
+					maxValueIndex = i;
 				}
 			}
-			if (gamedata.getElementsLeft(this.myPlayer, maxi) > 0) {
-				return maxi;
+			if (myElementsLeft[maxValueIndex] > 0) {
+				return maxValueIndex;
 			}
-			scores[maxi] = Integer.MIN_VALUE;
+			theirDepthScores[maxValueIndex] = Integer.MAX_VALUE;
 		}
-		/*
-		for (int i = 0; i < mostLikelyDepths.length; i++) {
-			int option = myPreviousElement + mostLikelyDepths[i];
-			option += 3; // counter
-			while (option >= 4) {
-				option -= 4;
-			}
-			if (gamedata.getElementsLeft(this.myPlayer, option) > 0) {
-				return option;
-			}
-		}
-		*/
 
 		return 0;
 	}
@@ -191,6 +158,11 @@ public class NuwaniSL implements Player
 	@Override
 	public void onGameStart(Data gamedata, int yourPlayerNumber)
 	{
+		if (gamedata.isHumanControlled(this.theirNumber)) {
+			this.db = DB.forPlayers;
+		} else {
+			this.db = DB.forEngines;
+		}
 	}
 
 	@Override
@@ -201,22 +173,20 @@ public class NuwaniSL implements Player
 	@Override
 	public void onGameEnd(Data gamedata)
 	{
-		int value;
-		boolean human;
+		int myPlayedElements[], theirPlayedElements[];
+		int value, index;
 
-		human = gamedata.isHumanControlled(this.myPlayer ^ 1);
-		value = this.value(gamedata.getMoves(this.myPlayer), gamedata.getMoves(this.myPlayer ^ 1), 7);
-
-		DB.Variant db = human ? DB.forPlayers : DB.forEngines;
-		int index = db.indexFor(value, -1);
-
+		myPlayedElements = gamedata.getMoves(this.myNumber);
+		theirPlayedElements = gamedata.getMoves(this.theirNumber);
+		value = this.value(myPlayedElements, theirPlayedElements, 7);
+		index = this.db.indexFor(value, -1);
 		if (index != -1) {
-			db.data[index + 1]++;
+			this.db.data[index + 1]++;
 		} else {
-			index = db.numData * 2;
-			db.data[index] = value;
-			db.data[index + 1] = 1;
-			db.numData++;
+			index = this.db.numData * 2;
+			this.db.data[index] = value;
+			this.db.data[index + 1] = 1;
+			this.db.numData++;
 		}
 	}
 

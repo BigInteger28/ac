@@ -139,6 +139,16 @@ public class Game
 			return this.moveScores[move];
 		}
 
+		public int[] getElementsLeft(int p)
+		{
+			return new int[] {
+				this.elementsLeft[p][0],
+				this.elementsLeft[p][1],
+				this.elementsLeft[p][2],
+				this.elementsLeft[p][3],
+			};
+		}
+
 		public int getElementsLeft(int p, int element)
 		{
 			return this.elementsLeft[p][element];
