@@ -106,7 +106,9 @@ public class NuwaniSLTraining
 				}
 			}
 			engines = idx;
-			System.out.printf("win %d lose %d tie %d%n", wins, losses, ties);
+			System.out.printf("win %d lose %d tie %d = %.02f <-> %.02f%n", wins, losses, ties,
+				(wins + ties / 2.0f) / (wins + losses + ties),
+				wins + ties / 2.0f - (wins + losses + ties) / 2.0f);
 			DB.forEngines = buildingGenerationEngine;
 		}
 
