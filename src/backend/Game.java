@@ -162,6 +162,7 @@ public class Game
 				this.elementsLeft[p][1],
 				this.elementsLeft[p][2],
 				this.elementsLeft[p][3],
+				this.elementsLeft[p][4],
 			};
 		}
 

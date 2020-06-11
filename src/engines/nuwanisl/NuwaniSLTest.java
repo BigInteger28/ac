@@ -24,7 +24,7 @@ public class NuwaniSLTest
 
 		ArrayList<PlayerResource> playerList = new ArrayList<>();
 		ArrayList<DatabaseResource> dbList = new ArrayList<>();
-		EngineSourceManager.collectResources(playerList, dbList, false);
+		EngineSourceManager.collectResources(playerList, dbList, /*human*/ null);
 		PlayerResource nuwaniResource = new NuwaniSLResource();
 		wins = losses = ties = 0;
 		Game g = new Game();

@@ -13,7 +13,6 @@ import frontend.util.SwingUtil;
 import resources.PlayerResource;
 import resources.DatabaseResource;
 import resources.EngineSourceManager;
-import resources.HumanPlayerResource;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -23,6 +22,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -31,13 +32,18 @@ import static common.Constants.*;
 public class Main implements
 	FrontendController,
 	Game.Listener,
-	Runnable /*for SwingUtilities#invokeLater*/
+	Runnable /*for SwingUtilities#invokeLater*/,
+	ActionListener /*for buttons*/
 {
+	private static final char BUTTON_ID_PLAYER_CONTROL = 0;
+
 	public static File settingsDir;
 	public static Image backImage;
 	public static Image[] bigElementImages = new Image[5];
 	public static Image[] smallElementImages = new Image[5];
 	public static boolean uiReady;
+
+	static HumanPlayer humanPlayers[] = { new HumanPlayer(), new HumanPlayer() };
 
 	public static void main(String[] args)
 	{
@@ -76,7 +82,7 @@ public class Main implements
 	private TitledBorder player1border, player2border;
 	private Game game;
 
-	private PlayerControls player1controls, player2controls;
+	private JButton[] player1buttons, player2buttons;
 	private MovesPanel movesPanel;
 	private ScorePanel scorePanel;
 	private JPanel bigCardsDisplay;
@@ -92,15 +98,46 @@ public class Main implements
 		RawStringInputStream rsis;
 		Container contentPane;
 		GridBagConstraints gbc;
+		JPanel player1controls, player2controls;
+		JPanel pnl;
+		JButton btn;
 
 		(this.game = new Game()).addListener(this);
-		this.game.p1 = HumanPlayerResource.INSTANCE.createPlayer(0);
-		this.game.p2 = HumanPlayerResource.INSTANCE.createPlayer(1);
+		this.game.p1 = humanPlayers[0];
+		this.game.p2 = humanPlayers[1];
 		this.game.startNewGame();
 
 		this.frame = new JFrame("Avatar Carto Java Edition");
-		(contentPane = this.frame.getContentPane()).setLayout(new GridBagLayout());
 
+		// player controls
+		player1controls = new JPanel(new GridLayout(0, 5, 5, 0));
+		player2controls = new JPanel(new GridLayout(0, 5, 5, 0));
+		this.player1buttons = new JButton[5];
+		this.player2buttons = new JButton[5];
+		for (char i = 0; i < 5; i++) {
+			String text = STANDARDELEMENTS[i] + " (?)";
+			btn = this.player1buttons[i] = new JButton(text);
+			btn.setFocusable(false);
+			btn.setName(new String(new char[] { BUTTON_ID_PLAYER_CONTROL, 0, i }));
+			btn.addActionListener(this);
+			pnl = new JPanel(new BorderLayout());
+			pnl.setBorder(new EmptyBorder(3, 3, 3, 3));
+			pnl.setBackground(new Color(BUTTONCOLORS[i]));
+			pnl.add(btn);
+			player1controls.add(pnl);
+			btn = this.player2buttons[i] = new JButton(text);
+			btn.setFocusable(false);
+			btn.setName(new String(new char[] { BUTTON_ID_PLAYER_CONTROL, 1, i }));
+			btn.addActionListener(this);
+			pnl = new JPanel(new BorderLayout());
+			pnl.setBorder(new EmptyBorder(3, 3, 3, 3));
+			pnl.setBackground(new Color(BUTTONCOLORS[i]));
+			pnl.add(btn);
+			player2controls.add(pnl);
+		}
+
+		// placement and layout
+		(contentPane = this.frame.getContentPane()).setLayout(new GridBagLayout());
 		gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
 
@@ -113,7 +150,6 @@ public class Main implements
 		contentPane.add(new Ribbon(this), gbc);
 
 		// top player buttons
-		this.player1controls = new PlayerControls(this, 0);
 		gbc.gridx = 1;
 		gbc.gridy = 2;
 		gbc.weightx = 0d;
@@ -125,7 +161,7 @@ public class Main implements
 		gbc.insets.right = 5;
 		pushBorder(this.player1border = SwingUtil.titledBorder("Player 1"));
 		pushBorder(new EmptyBorder(2, 4, 4, 4));
-		contentPane.add(wrapWithBorder(this.player1controls), gbc);
+		contentPane.add(wrapWithBorder(player1controls), gbc);
 
 		// game field
 		this.movesPanel = new MovesPanel();
@@ -158,7 +194,6 @@ public class Main implements
 		contentPane.add(wrapWithBorder(this.scorePanel), gbc);
 
 		// bottom player buttons
-		this.player2controls = new PlayerControls(this, 1);
 		gbc.gridx = 1;
 		gbc.gridy = 4;
 		gbc.weightx = 0d;
@@ -170,7 +205,7 @@ public class Main implements
 		gbc.insets.right = 5;
 		pushBorder(this.player2border = SwingUtil.titledBorder("Player 2"));
 		pushBorder(new EmptyBorder(2, 4, 4, 4));
-		contentPane.add(wrapWithBorder(this.player2controls), gbc);
+		contentPane.add(wrapWithBorder(player2controls), gbc);
 
 		// analysis
 		gbc.gridx = 3;
@@ -252,7 +287,7 @@ public class Main implements
 
 		playerList = new ArrayList<>();
 		dbList = new ArrayList<>();
-		EngineSourceManager.collectResources(playerList, dbList, /*includeHuman*/ true);
+		EngineSourceManager.collectResources(playerList, dbList, HumanPlayer.RESOURCEINSTANCE);
 
 		preChosenName = this.game.data.isHumanControlled(0) ? null : this.game.data.getPlayerName(0);
 		p1 = ChoosePlayerDialog.show(this.frame, 0, playerList, dbList, preChosenName);
@@ -284,29 +319,6 @@ public class Main implements
 	}
 
 	@Override
-	public void chooseElement(int player, int element)
-	{
-		// TODO this is shit
-		// TODO try to remove some of the Resource shit?
-		// resources are created with player number, why not only in game start?
-		if (player == 0) {
-			if (this.game.p1 instanceof HumanPlayer) {
-				((HumanPlayer) this.game.p1).setChosenElement(element);
-				this.game.update();
-				this.updateButtons = true;
-				this.queueUpdate();
-			}
-		} else {
-			if (this.game.p2 instanceof HumanPlayer) {
-				((HumanPlayer) this.game.p2).setChosenElement(element);
-				this.game.update();
-				this.updateButtons = true;
-				this.queueUpdate();
-			}
-		}
-	}
-
-	@Override
 	public void onGameStart(Game game)
 	{
 		this.queueUpdate();
@@ -331,6 +343,25 @@ public class Main implements
 	{
 	}
 
+	private void updatePlayerButtons()
+	{
+		boolean p1canPlay, p2canPlay;
+		int p1elementsLeft[], p2elementsLeft[];
+		Game.Data data;
+
+		data = this.game.data;
+		p1canPlay = !data.isPlayerReady(0) && data.isHumanControlled(0);
+		p2canPlay = !data.isPlayerReady(1) && data.isHumanControlled(1);
+		p1elementsLeft = data.getElementsLeft(0);
+		p2elementsLeft = data.getElementsLeft(1);
+		for (int i = 0; i < 5; i++) {
+			this.player1buttons[i].setText(STANDARDELEMENTS[i] + " (" + p1elementsLeft[i] + ")");
+			this.player1buttons[i].setEnabled(p1canPlay && p1elementsLeft[i] > 0);
+			this.player2buttons[i].setText(STANDARDELEMENTS[i] + " (" + p2elementsLeft[i] + ")");
+			this.player2buttons[i].setEnabled(p2canPlay && p2elementsLeft[i] > 0);
+		}
+	}
+
 	/**
 	 * Called from eventqueue by {@link SwingUtilities#invokeLater} calls
 	 */
@@ -345,8 +376,7 @@ public class Main implements
 		}
 
 		if (this.updateButtons) {
-			this.player1controls.updateButtons(this.game.data, 0);
-			this.player2controls.updateButtons(this.game.data, 1);
+			this.updatePlayerButtons();
 		}
 
 		if (this.updateMoves) {
@@ -355,6 +385,24 @@ public class Main implements
 
 		if (this.updateScore) {
 			this.scorePanel.updateLabels(this.game.data.getScore(0), this.game.data.getScore(1));
+		}
+	}
+
+	/**
+	 * Mainly button listeners
+	 */
+	@Override
+	public void actionPerformed(ActionEvent e)
+	{
+		char data[];
+
+		data = ((JComponent) e.getSource()).getName().toCharArray();
+
+		if (data[0] == BUTTON_ID_PLAYER_CONTROL) {
+			humanPlayers[data[1]].setChosenElement(data[2]);
+			this.game.update();
+			this.updateButtons = true;
+			this.queueUpdate();
 		}
 	}
 }

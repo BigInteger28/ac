@@ -31,7 +31,7 @@ public class NuwaniSLTraining
 
 		ArrayList<PlayerResource> playerList = new ArrayList<>();
 		ArrayList<DatabaseResource> dbList = new ArrayList<>();
-		EngineSourceManager.collectResources(playerList, dbList, false);
+		EngineSourceManager.collectResources(playerList, dbList, /*human*/ null);
 		myScore = new int[playerList.size()][GENS];
 		theirScore = new int[playerList.size()][GENS];
 		int engines = 0;

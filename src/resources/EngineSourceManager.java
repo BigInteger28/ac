@@ -53,7 +53,7 @@ public class EngineSourceManager
 	}
 
 	public static void collectResources(ArrayList<PlayerResource> playerList, ArrayList<DatabaseResource> dbList,
-		boolean includeHuman)
+		PlayerResource humanResource)
 	{
 		playerList.ensureCapacity(lastAmountOfResources);
 
@@ -95,8 +95,8 @@ public class EngineSourceManager
 		}
 
 		int bpos = 0;
-		if (includeHuman) {
-			playerList.add(bpos++, HumanPlayerResource.INSTANCE);
+		if (humanResource != null) {
+			playerList.add(bpos++, humanResource);
 		}
 		playerList.addAll(bpos, BUILTINENGINES);
 

@@ -3,17 +3,13 @@ package frontend;
 import backend.Game;
 import backend.Player;
 import engines.Database;
+import resources.PlayerResource;
 
 public class HumanPlayer implements Player
 {
-	private final String name;
+	public static final PlayerResource RESOURCEINSTANCE = new HumanPlayerResource();
 
 	private int chosenElement;
-
-	public HumanPlayer(String name)
-	{
-		this.name = name;
-	}
 
 	void setChosenElement(int element)
 	{
@@ -23,7 +19,7 @@ public class HumanPlayer implements Player
 	@Override
 	public String getName()
 	{
-		return this.name;
+		return "Human";
 	}
 
 	@Override
@@ -64,5 +60,32 @@ public class HumanPlayer implements Player
 	@Override
 	public void useDatabase(Database db)
 	{
+	}
+
+	private static class HumanPlayerResource extends PlayerResource
+	{
+		@Override
+		public String getName()
+		{
+			return "<Human player>";
+		}
+
+		@Override
+		public String getPath()
+		{
+			return null;
+		}
+
+		@Override
+		public int getType()
+		{
+			return TYPE_HUMAN;
+		}
+
+		@Override
+		public Player createPlayer(int playerNumber)
+		{
+			return Main.humanPlayers[playerNumber];
+		}
 	}
 }

@@ -7,5 +7,4 @@ public interface FrontendController
 	Window getWindow();
 	void startNewGameAdv();
 	void startNewGame();
-	void chooseElement(int player, int element);
 }
