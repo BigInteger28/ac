@@ -33,6 +33,14 @@ class DB
 		int data[] = new int[16384 * 2];
 		int numData;
 
+		Variant copy()
+		{
+			Variant v = new Variant();
+			System.arraycopy(this.data, 0, v.data, 0, this.data.length);
+			v.numData = this.numData;
+			return v;
+		}
+
 		int indexFor(int value, int mask)
 		{
 			if (mask == -1) {

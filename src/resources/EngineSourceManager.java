@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import backend.Player;
 import engines.Synergy2PROEngine;
 import engines.nuwanisl.NuwaniSLResource;
 import frontend.VolatileLogger;
@@ -100,6 +101,19 @@ public class EngineSourceManager
 		playerList.addAll(bpos, BUILTINENGINES);
 
 		lastAmountOfResources = playerList.size() + 20;
+	}
+
+	public static Player makePlayerTryFindDatabase(PlayerResource playerResource, ArrayList<DatabaseResource> dbList, int playerNumber) throws Exception
+	{
+		Player player = playerResource.createPlayer(playerNumber);
+		if (player.canUseDatabase()) {
+			for (DatabaseResource dbResource : dbList) {
+				if (dbResource.getNameWithoutExtension().equals(playerResource.getNameWithoutExtension())) {
+					player.useDatabase(dbResource.createDatabase());
+				}
+			}
+		}
+		return player;
 	}
 
 	private static <T extends Resource> void addResource(List<T> list, T resource)

@@ -10,6 +10,16 @@ public abstract class Resource
 
 	public abstract int getType();
 
+	public String getNameWithoutExtension()
+	{
+		String name = this.getName();
+		int dot = name.lastIndexOf('.');
+		if (dot == -1) {
+			return name;
+		}
+		return name.substring(0, dot);
+	}
+
 	@Override
 	public String toString()
 	{

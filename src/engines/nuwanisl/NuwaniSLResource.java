@@ -1,31 +1,18 @@
 package engines.nuwanisl;
 
 import backend.Player;
-import resources.PlayerResource;
+import resources.BuiltinEngineResource;
 
-public class NuwaniSLResource extends PlayerResource
+public class NuwaniSLResource extends BuiltinEngineResource
 {
+	public NuwaniSLResource()
+	{
+		super(NuwaniSL.NAME, (byte[]) null);
+	}
+
 	@Override
 	public Player createPlayer(int playerNumber) throws Exception
 	{
 		return new NuwaniSL(playerNumber);
-	}
-
-	@Override
-	public String getName()
-	{
-		return '<' + NuwaniSL.NAME + '>';
-	}
-
-	@Override
-	public String getPath()
-	{
-		return null;
-	}
-
-	@Override
-	public int getType()
-	{
-		return PlayerResource.TYPE_BUILTIN;
 	}
 }
