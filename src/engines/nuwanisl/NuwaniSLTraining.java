@@ -71,12 +71,13 @@ public class NuwaniSLTraining
 			wins = losses = ties = 0;
 			int idx = 0;
 			for (Iterator<PlayerResource> r = playerList.iterator() ; r.hasNext();) {
+				PlayerResource playerResource = r.next();
 				try {
 					DB.forEngines = cleanGenerationEngine.copy();
 					Game g = new Game(listener);
 					g.startNewGame(new Player[] {
 						nuwaniResource.createPlayer(0),
-						EngineSourceManager.makePlayerTryFindDatabase(r.next(), dbList, 1)
+						EngineSourceManager.makePlayerTryFindDatabase(playerResource, dbList, 1)
 					});
 					g.update();
 
@@ -99,7 +100,9 @@ public class NuwaniSLTraining
 						buildingGenerationEngine.numData++;
 					}
 				} catch (Exception e1) {
+					System.err.println(playerResource.getPath());
 					r.remove();
+					e1.printStackTrace();
 				}
 			}
 			engines = idx;
