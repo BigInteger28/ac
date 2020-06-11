@@ -34,7 +34,6 @@ public class Main implements
 	Runnable /*for SwingUtilities#invokeLater*/
 {
 	public static File settingsDir;
-	public static Font monospaceFont;
 	public static Image backImage;
 	public static Image[] bigElementImages = new Image[5];
 	public static Image[] smallElementImages = new Image[5];
@@ -52,7 +51,6 @@ public class Main implements
 
 		ACMain.main();
 
-		monospaceFont = new Font("Courier New", Font.PLAIN, 12);
 		SwingUtilities.invokeLater(Main::new);
 	}
 
@@ -91,8 +89,6 @@ public class Main implements
 
 	public Main()
 	{
-		uiReady = true;
-
 		RawStringInputStream rsis;
 		Container contentPane;
 		GridBagConstraints gbc;
@@ -230,6 +226,8 @@ public class Main implements
 		this.frame.setMinimumSize(frame.getSize());
 		this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.frame.setVisible(true);
+
+		uiReady = true;
 	}
 
 	@Override
@@ -288,6 +286,9 @@ public class Main implements
 	@Override
 	public void chooseElement(int player, int element)
 	{
+		// TODO this is shit
+		// TODO try to remove some of the Resource shit?
+		// resources are created with player number, why not only in game start?
 		if (player == 0) {
 			if (this.game.p1 instanceof HumanPlayer) {
 				((HumanPlayer) this.game.p1).setChosenElement(element);

@@ -1,7 +1,5 @@
 package frontend.maincontent;
 
-import frontend.Main;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -26,8 +24,6 @@ public class MovesPanel extends JPanel
 
 		final JLabel p1 = new JLabel("Player 1:");
 		final JLabel p2 = new JLabel("Player 2:");
-		p1.setFont(Main.monospaceFont);
-		p2.setFont(Main.monospaceFont);
 
 		final JPanel playerPanel = new JPanel();
 		playerPanel.setLayout(new GridLayout(2, 0, 0, 5));
@@ -39,9 +35,7 @@ public class MovesPanel extends JPanel
 		final JPanel mp = new JPanel(new GridLayout(2, 9, 5, 5));
 		for (int a = 0; a < 2; a++) {
 			for (int i = 0; i < 9; i++) {
-				this.playerLabels[a][i] = new JLabel("?");
-				this.playerLabels[a][i].setFont(Main.monospaceFont);
-				mp.add(this.playerLabels[a][i]);
+				mp.add(this.playerLabels[a][i] = new JLabel("?", SwingConstants.CENTER));
 			}
 		}
 

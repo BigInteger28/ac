@@ -1,7 +1,5 @@
 package frontend.maincontent;
 
-import frontend.Main;
-
 import javax.swing.*;
 
 import java.awt.*;
@@ -16,8 +14,6 @@ public class ScorePanel extends JPanel
 		this.setLayout(new GridLayout(2, 0, 0, 5));
 		this.label1 = new JLabel();
 		this.label2 = new JLabel();
-		label1.setFont(Main.monospaceFont);
-		label2.setFont(Main.monospaceFont);
 		this.updateLabels(0, 0);
 		this.add(label1);
 		this.add(label2);
