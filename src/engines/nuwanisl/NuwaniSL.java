@@ -20,13 +20,13 @@ public class NuwaniSL implements Player
 	 * @return int array with 4 components, index 0 representing depth 0 etc. Value is amount of
 	 *         times that depth is used in the next move.
 	 */
-	private static int[] calculateNextDepthUsages(int value, DB.Variant variant, int currentMove)
+	private static int[] calculateNextDepthUsages(int value, DB.Variant variant, int movesDone)
 	{
 		int nextDepthUsages[] = { 0, 0, 0, 0 };
 		int mask;
 		int opponentNextDepth;
 
-		if (currentMove - 1 == 0) {
+		if (movesDone == 0) {
 			// special case bacuse the bitshift goes wrong (-1 >>> 32 results in -1?)
 			for (int i = 0; i < variant.numData; i++) {
 				opponentNextDepth = variant.data[i * 2] & 0x3;
@@ -34,10 +34,10 @@ public class NuwaniSL implements Player
 			}
 		} else {
 			// 0x0 for 1, 0xF for 2, 0xFF for 3, ...
-			mask = -1 >>> (32 - (currentMove - 1) * 4);
+			mask = -1 >>> (32 - movesDone * 4);
 			for (int i = 0; i < variant.numData; i++) {
 				if ((variant.data[i * 2]  & mask) == value) {
-					opponentNextDepth = (variant.data[i * 2] >> ((currentMove - 1) * 4)) & 0x3;
+					opponentNextDepth = (variant.data[i * 2] >> (movesDone * 4)) & 0x3;
 					nextDepthUsages[opponentNextDepth] += variant.data[i * 2 + 1];
 				}
 			}
@@ -88,25 +88,66 @@ public class NuwaniSL implements Player
 	@Override
 	public int doMove(int p, Data gamedata)
 	{
-		int currentMove = gamedata.getCurrentMove();
+		int currentMove, movesDone;
 		int myPlayedElements[], theirPlayedElements[];
 		int value;
 		int myPreviousElement;
 		int mostLikelyDepths[];
 		DB.Variant db;
 
+		currentMove = gamedata.getCurrentMove();
 		if (currentMove == 0) {
 			return Constants.DEFENSE;
 		}
 
+		movesDone = currentMove - 1;
 		myPlayedElements = gamedata.getMoves(this.myPlayer);
 		theirPlayedElements = gamedata.getMoves(this.myPlayer ^ 1);
-		value = this.value(myPlayedElements, theirPlayedElements, currentMove - 1);
+		value = this.value(myPlayedElements, theirPlayedElements, movesDone);
 
 		db = gamedata.isHumanControlled(this.myPlayer ^ 1) ? db = DB.forPlayers : DB.forEngines;
-		mostLikelyDepths = calculateTheirBestDepthFromUsages(calculateNextDepthUsages(value, db, currentMove));
+		mostLikelyDepths = calculateTheirBestDepthFromUsages(calculateNextDepthUsages(value, db, movesDone));
 
 		myPreviousElement = myPlayedElements[currentMove - 1];
+
+		int enemy[] = calculateNextDepthUsages(value, db, movesDone);
+		int scores[] = new int[4];
+		for (int i = 0; i < 4; i++) {
+			if (gamedata.getElementsLeft(this.myPlayer, i) > 0) {
+				int myNext = i;
+				for (int j = 0; j < 4; j++) {
+					int theirNext = myPreviousElement + j;
+					if (theirNext < 0) {
+						theirNext += 4;
+					}
+					if (theirNext > 4) theirNext -= 4;
+					int score = Constants.RESULTMATRIX[myNext][theirNext];
+					if (score > 0) {
+						scores[i] += enemy[j];
+					} else if (score < 0) {
+						scores[i] -= 2 * enemy[j];
+					}
+				}
+			} else {
+				scores[i] = Integer.MIN_VALUE;
+			}
+		}
+
+		int maxv, maxi = 0;
+		for (int j = 0; j < 4; j++) {
+			maxv = Integer.MIN_VALUE;
+			for (int i = 0; i < 4; i++) {
+				if (scores[i] > maxv) {
+					maxv = scores[i];
+					maxi = i;
+				}
+			}
+			if (gamedata.getElementsLeft(this.myPlayer, maxi) > 0) {
+				return maxi;
+			}
+			scores[maxi] = Integer.MIN_VALUE;
+		}
+		/*
 		for (int i = 0; i < mostLikelyDepths.length; i++) {
 			int option = myPreviousElement + mostLikelyDepths[i];
 			option += 3; // counter
@@ -117,6 +158,7 @@ public class NuwaniSL implements Player
 				return option;
 			}
 		}
+		*/
 
 		return 0;
 	}
