@@ -181,6 +181,7 @@ public class NuwaniSL implements Player
 	{
 		int counts[] = { 0, 0, 0, 0 };
 		int mask;
+		boolean wat = System.getProperty("wat") != null;
 
 		if (zet - 1 == 0) {
 			// otherwise the bitshift goes wrong (-1 >>> 32 = -1???)
@@ -192,6 +193,9 @@ public class NuwaniSL implements Player
 			for (int i = 0; i < numdata; i++) {
 				if ((data[i * 2]  & mask) == value) {
 					counts[(data[i * 2] >> ((zet - 1) * 4)) & 0x3] += data[i * 2 + 1];
+					if (wat) {
+						System.out.printf("%d: I know this move (%d times)%n", zet, data[i * 2 + 1]);
+					}
 				}
 			}
 		}
