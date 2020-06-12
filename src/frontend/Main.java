@@ -119,7 +119,7 @@ public class Main implements
 		JButton btn;
 		JTabbedPane ribbon;
 
-		(this.game = new Game()).addListener(this);
+		this.game = new Game(this);
 		this.game.p1 = humanPlayers[0];
 		this.game.p2 = humanPlayers[1];
 		this.game.startNewGame();

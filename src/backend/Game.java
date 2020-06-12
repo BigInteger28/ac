@@ -2,35 +2,31 @@ package backend;
 
 import static common.Constants.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Game
 {
-	private final ArrayList<Listener> listeners;
-
 	private int chosenElement[] = { -1, -1 };
+	private Listener listener;
 
 	public Player p1, p2;
 	public Data data;
 
 	public Game()
 	{
-		this.listeners = new ArrayList<>();
+		this.listener = new ListenerAdapter();
 	}
 
-	public void addListener(Listener listener)
+	public Game(Listener listener)
 	{
-		this.listeners.add(listener);
+		this.listener = listener;
 	}
 
 	public void startNewGame()
 	{
 		this.data = new Data(this.p1, this.p2);
 		Arrays.fill(this.chosenElement, -1);
-		for (Listener listener : this.listeners) {
-			listener.onGameStart(this);
-		}
+		this.listener.onGameStart(this);
 		this.p1.onGameStart(this.data, 0);
 		this.p2.onGameStart(this.data, 1);
 		this.update();
@@ -49,9 +45,7 @@ public class Game
 			case 1: this.data.score[0]--; break;
 			}
 		}
-		for (Listener listener : this.listeners) {
-			listener.onMoveDone(this);
-		}
+		this.listener.onMoveDone(this);
 		this.update();
 	}
 
@@ -84,18 +78,14 @@ public class Game
 			this.data.score[0] += dscore[result + 1];
 			this.data.score[1] += dscore[result * -1 + 1];
 
-			for (Listener listener : this.listeners) {
-				listener.onMoveDone(this);
-			}
+			this.listener.onMoveDone(this);
 			this.data.players[0].onMoveDone(e0, e1, result);
 			this.data.players[1].onMoveDone(e1, e0, -result);
 
 			Arrays.fill(this.chosenElement, -1);
 
 			if (this.data.currentMove > 8) {
-				for (Listener listener : this.listeners) {
-					listener.onGameEnd(this);
-				}
+				this.listener.onGameEnd(this);
 				this.data.players[0].onGameEnd(this.data);
 				this.data.players[1].onGameEnd(this.data);
 				return;
@@ -213,4 +203,21 @@ public class Game
 		void onGameEnd(Game game);
 	}
 
+	public static class ListenerAdapter implements Listener
+	{
+		@Override
+		public void onGameStart(Game game)
+		{
+		}
+
+		@Override
+		public void onMoveDone(Game game)
+		{
+		}
+
+		@Override
+		public void onGameEnd(Game game)
+		{
+		}
+	}
 }

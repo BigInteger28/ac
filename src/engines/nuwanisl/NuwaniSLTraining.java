@@ -37,34 +37,6 @@ public class NuwaniSLTraining
 		int engines = 0;
 		PlayerResource nuwaniResource = new NuwaniSLResource();
 		Game g = new Game();
-		g.addListener(new Game.Listener() {
-			@Override
-			public void onGameStart(Game game)
-			{
-			}
-
-			@Override
-			public void onMoveDone(Game game)
-			{
-			}
-
-			@Override
-			public void onGameEnd(Game game)
-			{
-				int myScore, otherScore;
-
-				myScore = game.data.getScore(0);
-				otherScore = game.data.getScore(1);
-
-				if (myScore > otherScore) {
-					wins++;
-				} else if (myScore == otherScore) {
-					ties++;
-				} else {
-					losses++;
-				}
-			}
-		});
 		for (int i = 0; i < GENS; i++) {
 			DB.Variant cleanGenerationEngine = DB.forEngines.copy();
 			DB.Variant buildingGenerationEngine = DB.forEngines.copy();
@@ -78,9 +50,19 @@ public class NuwaniSLTraining
 					g.p2 = EngineSourceManager.makePlayerTryFindDatabase(playerResource, dbList, 1);
 					g.startNewGame();
 
-					myScore[idx][i] = g.data.getScore(0);
-					theirScore[idx][i] = g.data.getScore(1);
+					int m, t;
+
+					myScore[idx][i] = m = g.data.getScore(0);
+					theirScore[idx][i] = t = g.data.getScore(1);
 					idx++;
+
+					if (m > t) {
+						wins++;
+					} else if (m == t) {
+						ties++;
+					} else {
+						losses++;
+					}
 
 					for (int j = 0; j < cleanGenerationEngine.numData; j++) {
 						DB.forEngines.data[j * 2 + 1] -= cleanGenerationEngine.data[j * 2 + 1];
