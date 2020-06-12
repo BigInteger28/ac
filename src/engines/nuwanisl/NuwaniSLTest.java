@@ -25,14 +25,13 @@ public class NuwaniSLTest
 		ArrayList<PlayerResource> playerList = new ArrayList<>();
 		ArrayList<DatabaseResource> dbList = new ArrayList<>();
 		EngineSourceManager.collectResources(playerList, dbList);
-		PlayerResource nuwaniResource = new NuwaniSLResource();
 		wins = losses = ties = 0;
 		Game g = new Game();
 		for (Iterator<PlayerResource> r = playerList.iterator() ; r.hasNext();) {
 			PlayerResource playerResource = r.next();
 			try {
 				DB.forEngines = originalDbEngines.copy();
-				g.p1 = nuwaniResource.createPlayer();
+				g.p1 = NuwaniSL.INSTANCE;
 				g.p2 = EngineSourceManager.makePlayerTryFindDatabase(playerResource, dbList);
 				g.startNewGame();
 

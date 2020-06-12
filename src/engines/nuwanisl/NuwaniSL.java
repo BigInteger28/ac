@@ -2,11 +2,15 @@ package engines.nuwanisl;
 
 import backend.Game.Data;
 import common.Constants;
+import resources.PlayerResource;
+import resources.SingletonPlayerResource;
 import backend.Player;
 
 public class NuwaniSL implements Player
 {
-	public static String NAME = "Nuwani SL";
+	public static final NuwaniSL INSTANCE = new NuwaniSL();
+	public static final PlayerResource RESOURCE = new SingletonPlayerResource(INSTANCE);
+
 	public static int loseScoreFactor = 5;
 
 	private static boolean verbose = System.getProperty("nuwanisl.verbose") != null;
@@ -86,7 +90,7 @@ public class NuwaniSL implements Player
 	@Override
 	public String getName()
 	{
-		return NAME;
+		return "Nuwani SL";
 	}
 
 	@Override

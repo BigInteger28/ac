@@ -35,7 +35,6 @@ public class NuwaniSLTraining
 		myScore = new int[playerList.size()][GENS];
 		theirScore = new int[playerList.size()][GENS];
 		int engines = 0;
-		PlayerResource nuwaniResource = new NuwaniSLResource();
 		Game g = new Game();
 		for (int i = 0; i < GENS; i++) {
 			DB.Variant cleanGenerationEngine = DB.forEngines.copy();
@@ -46,7 +45,7 @@ public class NuwaniSLTraining
 				PlayerResource playerResource = r.next();
 				try {
 					DB.forEngines = cleanGenerationEngine.copy();
-					g.p1 = nuwaniResource.createPlayer();
+					g.p1 = NuwaniSL.INSTANCE;
 					g.p2 = EngineSourceManager.makePlayerTryFindDatabase(playerResource, dbList);
 					g.startNewGame();
 

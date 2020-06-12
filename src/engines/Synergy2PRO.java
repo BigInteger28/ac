@@ -3,20 +3,22 @@ package engines;
 import java.util.ArrayList;
 import java.util.List;
 
-import backend.Player;
 import resources.PlayerResource;
+import resources.SingletonPlayerResource;
 
 import static common.Constants.*;
 
-public class Synergy2PROEngine extends DepthEngine
+public class Synergy2PRO extends DepthEngine
 {
-	public static final String NAME = "sYnergY 2 PRO";
+	public static final String NAME;
+	public static final PlayerResource RESOURCE;
 
 	private static final  List<Integer> db;
 
 	static
 	{
 		int W = WATER, V = FIRE, A = EARTH, L = AIR, D = DEFENSE;
+
 		db = new ArrayList<>();
 		db.add(createEntry(W, D, A, V, A, L));
 		db.add(createEntry(A, D, A, V, A, L, W));
@@ -74,6 +76,9 @@ public class Synergy2PROEngine extends DepthEngine
 		db.add(createEntry(L, V, W, V, W, D, L, A));
 		db.add(createEntry(V, L, A, W, D, A, W));
 		db.add(createEntry(W, L, D, V, W, W));
+
+		NAME = "sYnergY 2 PRO";
+		RESOURCE = new SingletonPlayerResource(new Synergy2PRO());
 	}
 
 	private static int createEntry(int result, int... moves)
@@ -85,7 +90,7 @@ public class Synergy2PROEngine extends DepthEngine
 		return (hash << 4) | (result & 0xF);
 	}
 
-	Synergy2PROEngine()
+	Synergy2PRO()
 	{
 		super(NAME, new byte[] { 8, 8, 9, 9, 9, 6, 7, 8, 0 });
 		this.useDatabase(new Database(NAME + " db", db));
@@ -95,32 +100,5 @@ public class Synergy2PROEngine extends DepthEngine
 	public boolean canUseDatabase()
 	{
 		return false;
-	}
-
-	public static class Resource extends PlayerResource
-	{
-		@Override
-		public Player createPlayer() throws Exception
-		{
-			return new Synergy2PROEngine();
-		}
-
-		@Override
-		public String getName()
-		{
-			return '<' + Synergy2PROEngine.NAME + '>';
-		}
-
-		@Override
-		public String getPath()
-		{
-			return null;
-		}
-
-		@Override
-		public int getType()
-		{
-			return PlayerResource.TYPE_BUILTIN;
-		}
 	}
 }

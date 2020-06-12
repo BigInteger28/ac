@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Stack;
 
 import backend.Player;
-import engines.Synergy2PROEngine;
-import engines.nuwanisl.NuwaniSLResource;
+import engines.Synergy2PRO;
+import engines.nuwanisl.NuwaniSL;
 import frontend.VolatileLogger;
 
 public class EngineSourceManager
@@ -30,8 +30,9 @@ public class EngineSourceManager
 		readLocations();
 		BUILTINENGINES = new ArrayList<>();
 		BUILTINENGINES.add(bi("sYnergY 1", 6, 6, 6, 6, 6, 6, 6, 6));
-		BUILTINENGINES.add(new Synergy2PROEngine.Resource());
+		BUILTINENGINES.add(Synergy2PRO.RESOURCE);
 		BUILTINENGINES.add(bi("sYnergY 3", 9, 6, 9, 8, 7, 6, 7, 8));
+		BUILTINENGINES.add(NuwaniSL.RESOURCE);
 		BUILTINENGINES.add(bi("Junior", 9, 8, 7, 6, 9, 6, 7, 8));
 		BUILTINENGINES.add(bi("GreenFrog", 8, 8, 8, 8, 6, 8, 9, 9));
 		BUILTINENGINES.add(bi("Jaguar", 8, 8, 7, 7, 6, 6, 8, 7));
@@ -40,7 +41,6 @@ public class EngineSourceManager
 		BUILTINENGINES.add(bi("Derp", 8, 6, 8, 7, 7, 6, 8, 8));
 		BUILTINENGINES.add(bi("Schildpad", 9, 9, 9, 9, 9, 9, 9, 9));
 		BUILTINENGINES.add(bi("Botje 2 PRO", 9, 7, 8, 7, 8, 7, 9, 7));
-		BUILTINENGINES.add(new NuwaniSLResource());
 	}
 
 	private static BuiltinEngineResource bi(String name, int... depths)
