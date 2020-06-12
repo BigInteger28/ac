@@ -36,6 +36,25 @@ public class Game
 		this.update();
 	}
 
+	public void undoMove()
+	{
+		this.chosenElement[0] = this.chosenElement[1] = -1;
+		this.data.playerReady[0] = this.data.playerReady[1] = false;
+		if (this.data.currentMove > 0) {
+			this.data.currentMove--;
+			this.data.elementsLeft[0][this.data.moves[0][this.data.currentMove]]++;
+			this.data.elementsLeft[1][this.data.moves[1][this.data.currentMove]]++;
+			switch (this.data.moveScores[this.data.currentMove]) {
+			case -1: this.data.score[1]--; break;
+			case 1: this.data.score[0]--; break;
+			}
+		}
+		for (Listener listener : this.listeners) {
+			listener.onMoveDone(this);
+		}
+		this.update();
+	}
+
 	public void update()
 	{
 		for (;;) {
@@ -66,7 +85,7 @@ public class Game
 			this.data.score[1] += dscore[result * -1 + 1];
 
 			for (Listener listener : this.listeners) {
-				listener.onMoveDone(this, this.chosenElement, result);
+				listener.onMoveDone(this);
 			}
 			this.data.players[0].onMoveDone(e0, e1, result);
 			this.data.players[1].onMoveDone(e1, e0, -result);
@@ -190,7 +209,7 @@ public class Game
 	public interface Listener
 	{
 		void onGameStart(Game game);
-		void onMoveDone(Game game, int[] playerElements, int result);
+		void onMoveDone(Game game);
 		void onGameEnd(Game game);
 	}
 

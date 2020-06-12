@@ -25,7 +25,9 @@ public class HumanPlayer implements Player
 	@Override
 	public int doMove(int p, Game.Data data)
 	{
-		return this.chosenElement;
+		int element = this.chosenElement;
+		this.chosenElement = -1;
+		return element;
 	}
 
 	@Override
@@ -37,7 +39,6 @@ public class HumanPlayer implements Player
 	@Override
 	public void onMoveDone(int yourMove, int otherMove, int score)
 	{
-		this.chosenElement = -1;
 	}
 
 	@Override

@@ -309,6 +309,12 @@ public class Main implements
 		this.startNewGame();
 	}
 
+	@Override
+	public void undoMove()
+	{
+		this.game.undoMove();
+	}
+
 	public void queueUpdate()
 	{
 		if (!this.updateQueued) {
@@ -328,7 +334,7 @@ public class Main implements
 	}
 
 	@Override
-	public void onMoveDone(Game game, int[] playerElements, int result)
+	public void onMoveDone(Game game)
 	{
 		this.queueUpdate();
 		this.updateBigCards = true;

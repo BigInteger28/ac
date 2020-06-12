@@ -44,7 +44,7 @@ public class NuwaniSLTraining
 			}
 
 			@Override
-			public void onMoveDone(Game game, int[] playerElements, int result)
+			public void onMoveDone(Game game)
 			{
 			}
 

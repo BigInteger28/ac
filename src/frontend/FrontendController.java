@@ -7,4 +7,5 @@ public interface FrontendController
 	Window getWindow();
 	void startNewGameAdv();
 	void startNewGame();
+	void undoMove();
 }
