@@ -17,4 +17,9 @@ public class SwingMsg
 	{
 		JOptionPane.showMessageDialog(parent, message, title, ERROR_MESSAGE);
 	}
+
+	public static void info_ok(Component parent, String title, String message)
+	{
+		JOptionPane.showMessageDialog(parent, message, title, INFORMATION_MESSAGE);
+	}
 }

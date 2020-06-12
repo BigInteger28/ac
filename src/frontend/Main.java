@@ -496,7 +496,7 @@ public class Main implements
 			LocationDialog.show(this.frame);
 			break;
 		case BUTTON_ID_WORKINGDIR:
-			SwingMsg.err_ok(this.frame, "Working directory", Resources.workingdir.getAbsolutePath());
+			SwingMsg.info_ok(this.frame, "Working directory", Resources.workingdir.getAbsolutePath());
 			break;
 		}
 	}
