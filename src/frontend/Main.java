@@ -476,8 +476,22 @@ public class Main implements
 		}
 
 		if (this.updateScore) {
+			int score1, score2;
+
 			this.player1score.setText(String.valueOf(data.getScore(0)));
 			this.player2score.setText(String.valueOf(data.getScore(1)));
+			score1 = data.getScore(0);
+			score2 = data.getScore(1);
+			if (score1 > score2) {
+				this.player1score.setForeground(RESULTCOLORS[2]);
+				this.player2score.setForeground(RESULTCOLORS[1]);
+			} else if (score1 < score2) {
+				this.player1score.setForeground(RESULTCOLORS[1]);
+				this.player2score.setForeground(RESULTCOLORS[2]);
+			} else {
+				this.player1score.setForeground(RESULTCOLORS[1]);
+				this.player2score.setForeground(RESULTCOLORS[1]);
+			}
 		}
 	}
 
