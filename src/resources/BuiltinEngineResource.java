@@ -33,7 +33,7 @@ public class BuiltinEngineResource extends PlayerResource
 	}
 
 	@Override
-	public Player createPlayer(int playerNumber) throws Exception
+	public Player createPlayer() throws Exception
 	{
 		return new DepthEngine(this.name, this.depths);
 	}

@@ -35,7 +35,7 @@ public class FixedEngineResource extends PlayerResource
 	}
 
 	@Override
-	public Player createPlayer(int playerNumber) throws Exception
+	public Player createPlayer() throws Exception
 	{
 		final byte[] data = Resources.readFileCharacters(this.resource, 9);
 

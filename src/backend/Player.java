@@ -14,9 +14,12 @@ public interface Player
 
 	void onGameEnd(Game.Data gamedata);
 
-	boolean isHumanControlled();
+	default boolean canUseDatabase()
+	{
+		return false;
+	}
 
-	boolean canUseDatabase();
-
-	void useDatabase(Database db);
+	default void useDatabase(Database db)
+	{
+	}
 }

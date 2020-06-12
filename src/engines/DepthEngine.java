@@ -77,12 +77,6 @@ public class DepthEngine implements Player
 	}
 
 	@Override
-	public boolean isHumanControlled()
-	{
-		return false;
-	}
-
-	@Override
 	public boolean canUseDatabase()
 	{
 		return true;

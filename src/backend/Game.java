@@ -139,7 +139,7 @@ public class Game
 
 		public boolean isHumanControlled(int p)
 		{
-			return this.players[p].isHumanControlled();
+			return this.players[p] instanceof HumanControlled;
 		}
 
 		public String getPlayerName(int p)

@@ -478,7 +478,7 @@ public class Main implements
 
 		switch (id) {
 		case BUTTON_ID_PLAYER_CONTROL:
-			humanPlayers[data[1]].setChosenElement(data[2]);
+			HumanPlayer.chosenElement[data[1]] = data[2];
 			this.game.update();
 			this.updateButtons = true;
 			this.queueUpdate();

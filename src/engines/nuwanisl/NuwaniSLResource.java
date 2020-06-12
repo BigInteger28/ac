@@ -11,8 +11,8 @@ public class NuwaniSLResource extends BuiltinEngineResource
 	}
 
 	@Override
-	public Player createPlayer(int playerNumber) throws Exception
+	public Player createPlayer() throws Exception
 	{
-		return new NuwaniSL(playerNumber);
+		return new NuwaniSL();
 	}
 }

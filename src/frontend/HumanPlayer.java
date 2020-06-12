@@ -1,20 +1,16 @@
 package frontend;
 
 import backend.Game;
+import backend.HumanControlled;
 import backend.Player;
-import engines.Database;
 import resources.PlayerResource;
 
-public class HumanPlayer implements Player
+public class HumanPlayer implements Player, HumanControlled
 {
 	public static final PlayerResource RESOURCEINSTANCE = new HumanPlayerResource();
+	public static final HumanPlayer INSTANCE = new HumanPlayer();
 
-	private int chosenElement;
-
-	void setChosenElement(int element)
-	{
-		this.chosenElement = element;
-	}
+	static final int chosenElement[] = { -1, -1 };
 
 	@Override
 	public String getName()
@@ -25,15 +21,15 @@ public class HumanPlayer implements Player
 	@Override
 	public int doMove(int p, Game.Data data)
 	{
-		int element = this.chosenElement;
-		this.chosenElement = -1;
+		int element = chosenElement[p];
+		chosenElement[p] = -1;
 		return element;
 	}
 
 	@Override
 	public void onGameStart(Game.Data data, int yourPlayerNumber)
 	{
-		this.chosenElement = -1;
+		chosenElement[yourPlayerNumber] = -1;
 	}
 
 	@Override
@@ -43,23 +39,6 @@ public class HumanPlayer implements Player
 
 	@Override
 	public void onGameEnd(Game.Data data)
-	{
-	}
-
-	@Override
-	public boolean isHumanControlled()
-	{
-		return true;
-	}
-
-	@Override
-	public boolean canUseDatabase()
-	{
-		return false;
-	}
-
-	@Override
-	public void useDatabase(Database db)
 	{
 	}
 
@@ -84,9 +63,9 @@ public class HumanPlayer implements Player
 		}
 
 		@Override
-		public Player createPlayer(int playerNumber)
+		public Player createPlayer()
 		{
-			return Main.humanPlayers[playerNumber];
+			return HumanPlayer.INSTANCE;
 		}
 	}
 }

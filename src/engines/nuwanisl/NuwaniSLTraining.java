@@ -46,8 +46,8 @@ public class NuwaniSLTraining
 				PlayerResource playerResource = r.next();
 				try {
 					DB.forEngines = cleanGenerationEngine.copy();
-					g.p1 = nuwaniResource.createPlayer(0);
-					g.p2 = EngineSourceManager.makePlayerTryFindDatabase(playerResource, dbList, 1);
+					g.p1 = nuwaniResource.createPlayer();
+					g.p2 = EngineSourceManager.makePlayerTryFindDatabase(playerResource, dbList);
 					g.startNewGame();
 
 					int m, t;

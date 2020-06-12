@@ -2,7 +2,6 @@ package engines.nuwanisl;
 
 import backend.Game.Data;
 import common.Constants;
-import engines.Database;
 import backend.Player;
 
 public class NuwaniSL implements Player
@@ -83,12 +82,6 @@ public class NuwaniSL implements Player
 	private int myNumber;
 	private int theirNumber;
 	private DB.Variant db;
-
-	public NuwaniSL(int myNumber)
-	{
-		this.myNumber = myNumber;
-		this.theirNumber = myNumber ^ 1;
-	}
 
 	@Override
 	public String getName()
@@ -206,6 +199,8 @@ public class NuwaniSL implements Player
 	@Override
 	public void onGameStart(Data gamedata, int yourPlayerNumber)
 	{
+		this.myNumber = yourPlayerNumber;
+		this.theirNumber = yourPlayerNumber ^ 1;
 		if (gamedata.isHumanControlled(this.theirNumber)) {
 			this.db = DB.forPlayers;
 		} else {
@@ -275,22 +270,5 @@ public class NuwaniSL implements Player
 			d -= 4;
 		}
 		return d;
-	}
-
-	@Override
-	public boolean isHumanControlled()
-	{
-		return false;
-	}
-
-	@Override
-	public boolean canUseDatabase()
-	{
-		return false;
-	}
-
-	@Override
-	public void useDatabase(Database db)
-	{
 	}
 }

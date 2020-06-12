@@ -12,24 +12,12 @@ public class Synergy2PROEngine extends DepthEngine
 {
 	public static final String NAME = "sYnergY 2 PRO";
 
-	private static int createEntry(int result, int... moves)
-	{
-		int hash = 0x77777777;
-		for (int i = 0; i < moves.length; i++) {
-			hash = hash << 4 | (moves[i] & 0xF);
-		}
-		return (hash << 4) | (result & 0xF);
-	}
+	private static final  List<Integer> db;
 
-	Synergy2PROEngine()
+	static
 	{
-		super(NAME, new byte[] { 8, 8, 9, 9, 9, 6, 7, 8, 0 });
-		final List<Integer> db = new ArrayList<>();
-		final int W = WATER;
-		final int V = FIRE;
-		final int A = EARTH;
-		final int L = AIR;
-		final int D = DEFENSE;
+		int W = WATER, V = FIRE, A = EARTH, L = AIR, D = DEFENSE;
+		db = new ArrayList<>();
 		db.add(createEntry(W, D, A, V, A, L));
 		db.add(createEntry(A, D, A, V, A, L, W));
 		db.add(createEntry(V, W, D, W));
@@ -86,7 +74,21 @@ public class Synergy2PROEngine extends DepthEngine
 		db.add(createEntry(L, V, W, V, W, D, L, A));
 		db.add(createEntry(V, L, A, W, D, A, W));
 		db.add(createEntry(W, L, D, V, W, W));
-		super.useDatabase(new Database(NAME + " db", db));
+	}
+
+	private static int createEntry(int result, int... moves)
+	{
+		int hash = 0x77777777;
+		for (int i = 0; i < moves.length; i++) {
+			hash = hash << 4 | (moves[i] & 0xF);
+		}
+		return (hash << 4) | (result & 0xF);
+	}
+
+	Synergy2PROEngine()
+	{
+		super(NAME, new byte[] { 8, 8, 9, 9, 9, 6, 7, 8, 0 });
+		this.useDatabase(new Database(NAME + " db", db));
 	}
 
 	@Override
@@ -98,7 +100,7 @@ public class Synergy2PROEngine extends DepthEngine
 	public static class Resource extends PlayerResource
 	{
 		@Override
-		public Player createPlayer(int playerNumber) throws Exception
+		public Player createPlayer() throws Exception
 		{
 			return new Synergy2PROEngine();
 		}

@@ -102,9 +102,9 @@ public class EngineSourceManager
 		lastAmountOfResources = playerList.size() + 20;
 	}
 
-	public static Player makePlayerTryFindDatabase(PlayerResource playerResource, ArrayList<DatabaseResource> dbList, int playerNumber) throws Exception
+	public static Player makePlayerTryFindDatabase(PlayerResource playerResource, ArrayList<DatabaseResource> dbList) throws Exception
 	{
-		Player player = playerResource.createPlayer(playerNumber);
+		Player player = playerResource.createPlayer();
 		if (player.canUseDatabase()) {
 			for (DatabaseResource dbResource : dbList) {
 				if (dbResource.getNameWithoutExtension().equals(playerResource.getNameWithoutExtension())) {

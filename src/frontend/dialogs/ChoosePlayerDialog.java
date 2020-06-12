@@ -74,7 +74,7 @@ public class ChoosePlayerDialog extends JDialog
 
 		final Player player;
 		try {
-			player = result[0].createPlayer(playerNumber);
+			player = result[0].createPlayer();
 		} catch (Exception e) {
 			final String name = result[0].getName();
 			VolatileLogger.logf(e, "creating player '%s'", name);
@@ -84,20 +84,18 @@ public class ChoosePlayerDialog extends JDialog
 			return show(parentWindow, playerNumber, playerList, dbList, name);
 		}
 
-		if (!player.canUseDatabase()) {
-			return player;
-		}
+		if (player.canUseDatabase()) {
+			final String fileName = player.getName();
+			final int lidx = fileName.lastIndexOf('.');
+			final String playerName;
+			if (lidx != -1) {
+				playerName = fileName.substring(0, lidx);
+			} else {
+				playerName = fileName;
+			}
 
-		final String fileName = player.getName();
-		final int lidx = fileName.lastIndexOf('.');
-		final String playerName;
-		if (lidx != -1) {
-			playerName = fileName.substring(0, lidx);
-		} else {
-			playerName = fileName;
+			player.useDatabase(ChooseDatabaseDialog.show(parentWindow, playerNumber, dbList, playerName));
 		}
-
-		player.useDatabase(ChooseDatabaseDialog.show(parentWindow, playerNumber, dbList, playerName));
 
 		return player;
 	}
