@@ -5,10 +5,18 @@ import backend.Player;
 public class SingletonPlayerResource extends PlayerResource
 {
 	private Player player;
+	private String name;
 
 	public SingletonPlayerResource(Player player)
 	{
 		this.player = player;
+		this.name = player.getName();
+	}
+
+	public SingletonPlayerResource(Player player, String name)
+	{
+		this.player = player;
+		this.name = name;
 	}
 
 	@Override
@@ -20,7 +28,7 @@ public class SingletonPlayerResource extends PlayerResource
 	@Override
 	public String getName()
 	{
-		return this.player.getName();
+		return '<' + this.name + '>';
 	}
 
 	@Override

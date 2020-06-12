@@ -78,7 +78,7 @@ public class Synergy2PRO extends DepthEngine
 		db.add(createEntry(W, L, D, V, W, W));
 
 		NAME = "sYnergY 2 PRO";
-		RESOURCE = new SingletonPlayerResource(new Synergy2PRO());
+		RESOURCE = new SingletonPlayerResource(new Synergy2PRO(), NAME);
 	}
 
 	private static int createEntry(int result, int... moves)
