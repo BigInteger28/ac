@@ -38,21 +38,6 @@ public class FixedEngine implements Player
 	}
 
 	@Override
-	public void onGameStart(Game.Data gamedata, int yourPlayerNumber)
-	{
-	}
-
-	@Override
-	public void onMoveDone(int yourMove, int otherMove, int score)
-	{
-	}
-
-	@Override
-	public void onGameEnd(Game.Data gamedata)
-	{
-	}
-
-	@Override
 	public boolean canUseDatabase()
 	{
 		return true;

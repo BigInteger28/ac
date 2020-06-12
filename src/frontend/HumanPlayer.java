@@ -26,22 +26,6 @@ public class HumanPlayer implements Player, HumanControlled
 		return element;
 	}
 
-	@Override
-	public void onGameStart(Game.Data data, int yourPlayerNumber)
-	{
-		chosenElement[yourPlayerNumber] = -1;
-	}
-
-	@Override
-	public void onMoveDone(int yourMove, int otherMove, int score)
-	{
-	}
-
-	@Override
-	public void onGameEnd(Game.Data data)
-	{
-	}
-
 	private static class HumanPlayerResource extends PlayerResource
 	{
 		@Override

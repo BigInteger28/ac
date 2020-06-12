@@ -2,17 +2,24 @@ package backend;
 
 import engines.Database;
 
+/**
+ * Implementations must not hold any state!
+ */
 public interface Player
 {
 	String getName();
 
+	/**
+	 * @param p player's number
+	 */
 	int doMove(int p, Game.Data data);
 
-	void onGameStart(Game.Data gamedata, int yourPlayerNumber);
-
-	void onMoveDone(int yourMove, int otherMove, int score);
-
-	void onGameEnd(Game.Data gamedata);
+	/**
+	 * @param p player's number
+	 */
+	default void onGameEnd(int p, Game.Data gamedata)
+	{
+	}
 
 	default boolean canUseDatabase()
 	{

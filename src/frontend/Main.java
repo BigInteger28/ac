@@ -388,6 +388,8 @@ public class Main implements
 	@Override
 	public void onGameStart(Game game)
 	{
+		HumanPlayer.chosenElement[0] = HumanPlayer.chosenElement[1] = -1;
+
 		this.queueUpdate();
 		this.updateBigCards = true;
 		this.updateButtons = true;
@@ -555,9 +557,7 @@ public class Main implements
 				g.p1 = new FixedEngine("temp_opinion_p1", p1moves);
 				g.p2 = new FixedEngine("temp_opinion_p2", p2moves);
 				g.startNewGame();
-				p.onGameStart(g.data, 0);
 				p1chosenElement = p.doMove(0, g.data);
-				p.onGameStart(g.data, 1);
 				p2chosenElement = p.doMove(1, g.data);
 				msg = String.format(
 					"%s would play:\n for player 1: %c\n for player 2: %c",

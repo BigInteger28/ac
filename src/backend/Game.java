@@ -2,8 +2,6 @@ package backend;
 
 import static common.Constants.*;
 
-import java.util.Arrays;
-
 public class Game
 {
 	private Listener listener;
@@ -25,10 +23,9 @@ public class Game
 	public void startNewGame()
 	{
 		this.data = new Data(this.p1, this.p2);
-		Arrays.fill(this.chosenElement, -1);
+		this.chosenElement[0] = -1;
+		this.chosenElement[1] = -1;
 		this.listener.onGameStart(this);
-		this.p1.onGameStart(this.data, 0);
-		this.p2.onGameStart(this.data, 1);
 		this.update();
 	}
 
@@ -79,14 +76,13 @@ public class Game
 			this.data.score[1] += dscore[result * -1 + 1];
 
 			this.listener.onMoveDone(this);
-			this.data.players[0].onMoveDone(e0, e1, result);
-			this.data.players[1].onMoveDone(e1, e0, -result);
 
-			Arrays.fill(this.chosenElement, -1);
+			this.chosenElement[0] = -1;
+			this.chosenElement[1] = -1;
 
 			if (this.data.currentMove > 8) {
-				this.data.players[0].onGameEnd(this.data);
-				this.data.players[1].onGameEnd(this.data);
+				this.data.players[0].onGameEnd(0, this.data);
+				this.data.players[1].onGameEnd(1, this.data);
 				return;
 			}
 		}
@@ -119,7 +115,10 @@ public class Game
 		private final int[][] moves;
 		private final int[] moveScores;
 		private int currentMove;
-		private final int[][] elementsLeft;
+		private final int[][] elementsLeft = {
+			{ 2, 2, 2, 2, 1 },
+			{ 2, 2, 2, 2, 1 },
+		};
 		private final int[] score;
 		private final boolean[] playerReady = { false, false };
 
@@ -128,11 +127,6 @@ public class Game
 			this.players = new Player[] { p1, p2 };
 			this.moves = new int[][] { new int[9], new int[9] };
 			this.moveScores = new int[9];
-			this.elementsLeft = new int[][] { new int[5], new int[5] };
-			Arrays.fill(this.elementsLeft[0], 2);
-			Arrays.fill(this.elementsLeft[1], 2);
-			this.elementsLeft[0][DEFENSE] = 1;
-			this.elementsLeft[1][DEFENSE] = 1;
 			this.score = new int[] { 0, 0 };
 		}
 

@@ -4,6 +4,7 @@ import backend.Game.Data;
 import common.Constants;
 import resources.PlayerResource;
 import resources.SingletonPlayerResource;
+import backend.Game;
 import backend.Player;
 
 public class NuwaniSL implements Player
@@ -83,9 +84,14 @@ public class NuwaniSL implements Player
 		return nextDepthUsages;
 	}
 
-	private int myNumber;
-	private int theirNumber;
-	private DB.Variant db;
+	private DB.Variant getDb(int p, Game.Data gamedata)
+	{
+		if (gamedata.isHumanControlled(p ^ 1)) {
+			return DB.forPlayers;
+		} else {
+			return DB.forEngines;
+		}
+	}
 
 	@Override
 	public String getName()
@@ -94,8 +100,10 @@ public class NuwaniSL implements Player
 	}
 
 	@Override
-	public int doMove(int p, Data gamedata)
+	public int doMove(int myNumber, Data gamedata)
 	{
+		DB.Variant db;
+		int theirNumber;
 		int currentMove, movesDone;
 		int myPlayedElements[], theirPlayedElements[];
 		int value;
@@ -103,6 +111,9 @@ public class NuwaniSL implements Player
 		int myElementsLeft[];
 		int nextDepthUsages[];
 		int myMoveScores[];
+
+		theirNumber = myNumber ^ 1;
+		db = this.getDb(myNumber, gamedata);
 
 		currentMove = gamedata.getCurrentMove();
 		if (currentMove == 0) {
@@ -114,14 +125,14 @@ public class NuwaniSL implements Player
 		}
 
 		movesDone = currentMove - 1;
-		myPlayedElements = gamedata.getMoves(this.myNumber);
-		theirPlayedElements = gamedata.getMoves(this.theirNumber);
+		myPlayedElements = gamedata.getMoves(myNumber);
+		theirPlayedElements = gamedata.getMoves(theirNumber);
 		value = this.value(myPlayedElements, theirPlayedElements, movesDone);
 
-		myElementsLeft = gamedata.getElementsLeft(this.myNumber);
+		myElementsLeft = gamedata.getElementsLeft(myNumber);
 		myPreviousElement = myPlayedElements[currentMove - 1];
 
-		nextDepthUsages = calculateNextDepthUsages(value, this.db, movesDone);
+		nextDepthUsages = calculateNextDepthUsages(value, db, movesDone);
 		myMoveScores = new int[4];
 		for (int myNext = 0; myNext < 4; myNext++) {
 			if (myElementsLeft[myNext] > 0) {
@@ -201,39 +212,27 @@ public class NuwaniSL implements Player
 	}
 
 	@Override
-	public void onGameStart(Data gamedata, int yourPlayerNumber)
+	public void onGameEnd(int myNumber, Data gamedata)
 	{
-		this.myNumber = yourPlayerNumber;
-		this.theirNumber = yourPlayerNumber ^ 1;
-		if (gamedata.isHumanControlled(this.theirNumber)) {
-			this.db = DB.forPlayers;
-		} else {
-			this.db = DB.forEngines;
-		}
-	}
-
-	@Override
-	public void onMoveDone(int yourMove, int otherMove, int score)
-	{
-	}
-
-	@Override
-	public void onGameEnd(Data gamedata)
-	{
+		DB.Variant db;
+		int theirNumber;
 		int myPlayedElements[], theirPlayedElements[];
 		int value, index;
 
-		myPlayedElements = gamedata.getMoves(this.myNumber);
-		theirPlayedElements = gamedata.getMoves(this.theirNumber);
+		theirNumber = myNumber ^ 1;
+		db = this.getDb(myNumber, gamedata);
+
+		myPlayedElements = gamedata.getMoves(myNumber);
+		theirPlayedElements = gamedata.getMoves(theirNumber);
 		value = this.value(myPlayedElements, theirPlayedElements, 7);
-		index = this.db.indexFor(value, -1);
+		index = db.indexFor(value, -1);
 		if (index != -1) {
-			this.db.data[index + 1]++;
+			db.data[index + 1]++;
 		} else {
-			index = this.db.numData * 2;
-			this.db.data[index] = value;
-			this.db.data[index + 1] = 1;
-			this.db.numData++;
+			index = db.numData * 2;
+			db.data[index] = value;
+			db.data[index + 1] = 1;
+			db.numData++;
 		}
 
 		if (verbose) {
