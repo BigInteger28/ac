@@ -45,26 +45,43 @@ public class Resources
 		return null;
 	}
 
-	public static byte[] readFileCharacters(File file, int len) throws Exception
+	public static int readFileCharacters(File file, byte[] into, int maxLen) throws Exception
 	{
-		final byte[] data = new byte[len];
+		int i;
+		int read;
+
 		try (FileInputStream in = new FileInputStream(file)) {
-			data[0] = (byte) in.read();
-			len--;
-			if ((data[0] & 0xEF) == 0xEF) {
+			i = in.read();
+			if (i == -1) {
+				return 0;
+			}
+			if ((i & 0xEF) == 0xEF) {
 				// BOM
-				in.read();
-				in.read();
-				data[0] = (byte) in.read();
+				if (in.read() == -1) {
+					return 0;
+				}
+				if (in.read() == -1) {
+					return 0;
+				}
+				i = in.read();
+				if (i == -1) {
+					return 0;
+				}
 			}
-			if (in.available() < len) {
-				throw new Exception("unexpected EOF");
-			}
-			final int read = in.read(data, /*off*/ 1, len);
-			if (read != len) {
-				throw new Exception("unexpected EOF");
+			into[0] = (byte) i;
+			read = 1;
+			maxLen--;
+			for (;;) {
+				i = in.read(into, read, maxLen);
+				if (i == -1) {
+					return read;
+				}
+				read += i;
+				if (maxLen == 0) {
+					return read;
+				}
+				maxLen -= i;
 			}
 		}
-		return data;
 	}
 }

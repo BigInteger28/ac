@@ -35,7 +35,19 @@ public class DepthEngineResource extends PlayerResource
 	@Override
 	public Player createPlayer() throws Exception
 	{
-		final byte[] data = Resources.readFileCharacters(this.resource, 9);
+		byte[] data;
+		int size;
+
+		data = new byte[9];
+		size = Resources.readFileCharacters(this.resource, data, 9);
+
+		if (size < 8) {
+			throw new Exception("need at least 8 depths, got " + size);
+		}
+
+		if (size < 9) {
+			data[8] = '0';
+		}
 
 		for (int i = 0; i < 9; i++) {
 			if (data[i] < '0' || '9' < data[i]) {

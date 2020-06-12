@@ -37,11 +37,19 @@ public class FixedEngineResource extends PlayerResource
 	@Override
 	public Player createPlayer() throws Exception
 	{
-		final byte[] data = Resources.readFileCharacters(this.resource, 9);
+		byte[] data;
+		int read;
 
-		final byte[] elementsused = new byte[5];
-		final int[] moves = new int[9];
-		for (int i = 0; i < 9; i++) {
+		data = new byte[9];
+		read = Resources.readFileCharacters(this.resource, data, 8);
+		if (read < 8) {
+			new Exception("need at least 8 elements, got " + read);
+		}
+
+		byte[] elementsneeded = { 2, 2, 2, 2, 1 };
+		byte[] elementsused = new byte[5];
+		int[] moves = new int[9];
+		for (int i = 0; i < 8; i++) {
 			int move = data[i] | 0x20;
 			switch (move) {
 			case 'w':
@@ -66,9 +74,19 @@ public class FixedEngineResource extends PlayerResource
 			elementsused[move]++;
 		}
 
-		if (elementsused[WATER] != 2 || elementsused[FIRE] != 2 || elementsused[EARTH] != 2
-			|| elementsused[AIR] != 2 || elementsused[DEFENSE] != 1) {
-			throw new Exception("invalid element sequence (is not 2 2 2 2 1)");
+		for (byte i = 0; i < 5; i++) {
+			if (elementsused[i] < elementsneeded[i]) {
+				data[8] = i;
+				elementsused[i]++;
+				break;
+			}
+		}
+
+		for (byte i = 0; i < 5; i++) {
+			if (elementsused[i] != elementsneeded[i]) {
+				String msg = String.format("need %d of %c, got only %d", elementsneeded[i], CHARELEMENTS[i], elementsused[i]);
+				throw new Exception(msg);
+			}
 		}
 
 		return new FixedEngine(this.resource.getName(), moves);
