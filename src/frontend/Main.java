@@ -432,10 +432,10 @@ public class Main implements
 			p2elementsLeft = data.getElementsLeft(1);
 			for (int i = 0; i < 5; i++) {
 				this.player1buttons[i].setText(ELEMENTS[i] + " (" + p1elementsLeft[i] + ")");
-				this.player1buttons[i].setEnabled(p1canPlay);
+				this.player1buttons[i].setEnabled(p1canPlay && p1elementsLeft[i] > 0);
 				this.player1buttons[i].setBorderPainted(p1elementsLeft[i] > 0);
 				this.player2buttons[i].setText(ELEMENTS[i] + " (" + p2elementsLeft[i] + ")");
-				this.player2buttons[i].setEnabled(p2canPlay);
+				this.player2buttons[i].setEnabled(p2canPlay && p2elementsLeft[i] > 0);
 				this.player2buttons[i].setBorderPainted(p2elementsLeft[i] > 0);
 			}
 
