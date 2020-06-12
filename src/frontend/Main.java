@@ -4,7 +4,6 @@ import backend.ACMain;
 import backend.Game;
 import backend.Player;
 import common.ErrorHandler;
-import common.Images;
 import frontend.dialogs.ChoosePlayerDialog;
 import frontend.maincontent.*;
 import frontend.util.RawStringInputStream;
