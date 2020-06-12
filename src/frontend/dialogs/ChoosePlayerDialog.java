@@ -7,7 +7,6 @@ import java.awt.Window;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 import backend.Player;
 import resources.DatabaseResource;
@@ -19,17 +18,9 @@ import frontend.util.SwingUtil;
 
 public class ChoosePlayerDialog extends JDialog
 {
-	public static Player show(Window parentWindow, int playerNumber, List<PlayerResource> playerList,
-		List<DatabaseResource> dbList, String preselectedPlayer)
+	public static Player show(Window parentWindow, String title, List<PlayerResource> playerList, List<DatabaseResource> dbList, String preselectedPlayer)
 	{
-		final String title = "Select player " + (playerNumber + 1);
-
 		final JDialog dialog = new JDialog(parentWindow);
-
-		final JLabel lbl = new JLabel(title);
-		lbl.setHorizontalAlignment(SwingConstants.CENTER);
-		lbl.setFont(SwingUtil.deriveFont(lbl.getFont(), true, 1.2f));
-		lbl.setBorder(new EmptyBorder(10, 0, 10, 0));
 
 		final PlayerResource[] result = { null };
 		final ResourceList<PlayerResource> list;
@@ -57,10 +48,9 @@ public class ChoosePlayerDialog extends JDialog
 		pnlButtons.add(btnOk);
 
 		dialog.getContentPane().setLayout(new BorderLayout());
-		dialog.add(lbl, BorderLayout.NORTH);
 		dialog.add(list);
 		dialog.add(pnlButtons, BorderLayout.SOUTH);
-		dialog.setTitle(title);
+		dialog.setTitle("Select player for " + title);
 		dialog.setModal(true);
 		dialog.pack();
 		dialog.setMinimumSize(dialog.getSize());
@@ -81,7 +71,7 @@ public class ChoosePlayerDialog extends JDialog
 			final String _message = SwingMsg.format(e);
 			final String _title = "Could not create player";
 			SwingMsg.err_ok(parentWindow, _title, _message);
-			return show(parentWindow, playerNumber, playerList, dbList, name);
+			return show(parentWindow, title, playerList, dbList, name);
 		}
 
 		if (player.canUseDatabase()) {
@@ -94,7 +84,7 @@ public class ChoosePlayerDialog extends JDialog
 				playerName = fileName;
 			}
 
-			player.useDatabase(ChooseDatabaseDialog.show(parentWindow, playerNumber, dbList, playerName));
+			player.useDatabase(ChooseDatabaseDialog.show(parentWindow, title, dbList, playerName));
 		}
 
 		return player;

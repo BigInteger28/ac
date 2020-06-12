@@ -6,9 +6,9 @@ import java.util.Arrays;
 
 public class Game
 {
-	private int chosenElement[] = { -1, -1 };
 	private Listener listener;
 
+	public int chosenElement[] = { -1, -1 };
 	public Player p1, p2;
 	public Data data;
 
@@ -85,7 +85,6 @@ public class Game
 			Arrays.fill(this.chosenElement, -1);
 
 			if (this.data.currentMove > 8) {
-				this.listener.onGameEnd(this);
 				this.data.players[0].onGameEnd(this.data);
 				this.data.players[1].onGameEnd(this.data);
 				return;
@@ -194,13 +193,17 @@ public class Game
 		{
 			return this.playerReady[p];
 		}
+
+		public boolean isFinished()
+		{
+			return this.currentMove > 8;
+		}
 	}
 
 	public interface Listener
 	{
 		void onGameStart(Game game);
 		void onMoveDone(Game game);
-		void onGameEnd(Game game);
 	}
 
 	public static class ListenerAdapter implements Listener
@@ -212,11 +215,6 @@ public class Game
 
 		@Override
 		public void onMoveDone(Game game)
-		{
-		}
-
-		@Override
-		public void onGameEnd(Game game)
 		{
 		}
 	}

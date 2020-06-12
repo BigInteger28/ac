@@ -35,6 +35,17 @@ public class DepthEngine implements Player
 			return DEFENSE;
 		}
 
+		// last move, put the element we have left
+		// (if this is removed, the 'second opinion' feature would freeze if it's the
+		// last move and the only element left is defense)
+		if (move == 8) {
+			for (int i = 0; i < 5; i++) {
+				if (data.getElementsLeft(p, i) > 0) {
+					return i;
+				}
+			}
+		}
+
 		if (this.db != null) {
 			int dbres = db.findEntry(data, p);
 			if (dbres != -1 && data.getElementsLeft(p, dbres) > 0) {

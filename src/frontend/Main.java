@@ -4,6 +4,7 @@ import backend.ACMain;
 import backend.Game;
 import backend.Player;
 import common.ErrorHandler;
+import engines.FixedEngine;
 import frontend.dialogs.ChoosePlayerDialog;
 import frontend.dialogs.LocationDialog;
 import frontend.maincontent.*;
@@ -50,6 +51,7 @@ public class Main implements
 	private static final char BUTTON_ID_UNDOMOVE = 3;
 	private static final char BUTTON_ID_LOCATIONS = 4;
 	private static final char BUTTON_ID_WORKINGDIR = 5;
+	private static final char BUTTON_ID_SECONDOPINION = 6;
 
 	public static File settingsDir;
 	public static Image backImage;
@@ -95,6 +97,7 @@ public class Main implements
 	private JFrame frame;
 	private TitledBorder player1border, player2border;
 	private Game game;
+	private String lastOpinionPlayerName;
 
 	private JLabel[] p1movelabels, p2movelabels;
 	private JButton[] player1buttons, player2buttons;
@@ -139,6 +142,10 @@ public class Main implements
 		pnl.add(btn);
 		btn = new JButton("Undo move");
 		btn.setName(new String(new char[] { BUTTON_ID_UNDOMOVE }));
+		btn.addActionListener(this);
+		pnl.add(btn);
+		btn = new JButton("Second opinion");
+		btn.setName(new String(new char[] { BUTTON_ID_SECONDOPINION }));
 		btn.addActionListener(this);
 		pnl.add(btn);
 		ribbon.addTab("Game", pnl);
@@ -346,12 +353,12 @@ public class Main implements
 		EngineSourceManager.collectResources(playerList, dbList, HumanPlayer.RESOURCEINSTANCE);
 
 		preChosenName = this.game.data.isHumanControlled(0) ? null : this.game.data.getPlayerName(0);
-		p1 = ChoosePlayerDialog.show(this.frame, 0, playerList, dbList, preChosenName);
+		p1 = ChoosePlayerDialog.show(this.frame, "player 1", playerList, dbList, preChosenName);
 		if (p1 == null) {
 			return;
 		}
 		preChosenName = this.game.data.isHumanControlled(1) ? null : this.game.data.getPlayerName(1);
-		p2 = ChoosePlayerDialog.show(this.frame, 1, playerList, dbList, preChosenName);
+		p2 = ChoosePlayerDialog.show(this.frame, "player 2", playerList, dbList, preChosenName);
 		if (p2 == null) {
 			return;
 		}
@@ -392,11 +399,6 @@ public class Main implements
 		this.updateButtons = true;
 		this.updateMoves = true;
 		this.updateScore = true;
-	}
-
-	@Override
-	public void onGameEnd(Game game)
-	{
 	}
 
 	/**
@@ -497,6 +499,42 @@ public class Main implements
 			break;
 		case BUTTON_ID_WORKINGDIR:
 			SwingMsg.info_ok(this.frame, "Working directory", Resources.workingdir.getAbsolutePath());
+			break;
+		case BUTTON_ID_SECONDOPINION:
+			if (game.data.isFinished()) {
+				SwingMsg.err_ok(this.frame, "Opinion", "Game is finished");
+				return;
+			}
+			ArrayList<PlayerResource> playerList = new ArrayList<>();
+			ArrayList<DatabaseResource> dbList = new ArrayList<>();
+			EngineSourceManager.collectResources(playerList, dbList);
+			Player p = ChoosePlayerDialog.show(this.frame, "opinion", playerList, dbList, this.lastOpinionPlayerName);
+			if (p != null) {
+				int p1chosenElement, p2chosenElement;
+				int p1moves[], p2moves[];
+				String msg;
+
+				p1moves = this.game.data.getMoves(0);
+				p2moves = this.game.data.getMoves(1);
+				p1moves[this.game.data.getCurrentMove()] = -1;
+				p2moves[this.game.data.getCurrentMove()] = -1;
+				Game g = new Game();
+				g.p1 = new FixedEngine("temp_opinion_p1", p1moves);
+				g.p2 = new FixedEngine("temp_opinion_p2", p2moves);
+				g.startNewGame();
+				p.onGameStart(g.data, 0);
+				p1chosenElement = p.doMove(0, g.data);
+				p.onGameStart(g.data, 1);
+				p2chosenElement = p.doMove(1, g.data);
+				msg = String.format(
+					"%s would play:\n for player 1: %c\n for player 2: %c",
+					p.getName(),
+					CHARELEMENTS[p1chosenElement],
+					CHARELEMENTS[p2chosenElement]
+				);
+				SwingMsg.info_ok(this.frame, "Opinion of " + p.getName(), msg);
+				this.lastOpinionPlayerName = p.getName();
+			}
 			break;
 		}
 	}
