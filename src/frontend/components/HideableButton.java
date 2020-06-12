@@ -6,8 +6,6 @@ import javax.swing.JButton;
 
 public class HideableButton extends JButton
 {
-	public boolean draw = true;
-
 	public HideableButton(String text)
 	{
 		super(text);
@@ -16,7 +14,7 @@ public class HideableButton extends JButton
 	@Override
 	protected void paintComponent(Graphics g)
 	{
-		if (this.draw) { 
+		if (this.isBorderPainted()) {
 			super.paintComponent(g);
 		}
 	}
