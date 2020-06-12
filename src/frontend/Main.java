@@ -36,12 +36,13 @@ public class Main implements
 	Runnable /*for SwingUtilities#invokeLater*/,
 	ActionListener /*for button actions*/
 {
-	private static final Color[] BUTTONCOLORS = {
+	public static final Color TITLECOLOR = new Color(0x0000FF);
+	public static final Color[] BUTTONCOLORS = {
 		new Color(0x5050FF), new Color(0xFF5050),
 		new Color(0x508050), new Color(0xFFFF50),
 		new Color(0x808080)
 	};
-	private static final Color[] RESULTCOLORS = {
+	public static final Color[] RESULTCOLORS = {
 		new Color(0xFF0000), Color.black, new Color(0x008000)
 	};
 
@@ -367,6 +368,8 @@ public class Main implements
 
 		this.player1border.setTitle(p1.getName());
 		this.player2border.setTitle(p2.getName());
+		this.player1border.setTitleColor(TITLECOLOR);
+		this.player2border.setTitleColor(TITLECOLOR);
 		// repaint to update the titled borders, see bug JDK-4117141
 		this.frame.getContentPane().repaint();
 
@@ -484,14 +487,26 @@ public class Main implements
 			score2 = data.getScore(1);
 			if (score1 > score2) {
 				this.player1score.setForeground(RESULTCOLORS[2]);
-				this.player2score.setForeground(RESULTCOLORS[1]);
+				this.player2score.setForeground(RESULTCOLORS[0]);
 			} else if (score1 < score2) {
-				this.player1score.setForeground(RESULTCOLORS[1]);
+				this.player1score.setForeground(RESULTCOLORS[0]);
 				this.player2score.setForeground(RESULTCOLORS[2]);
 			} else {
 				this.player1score.setForeground(RESULTCOLORS[1]);
 				this.player2score.setForeground(RESULTCOLORS[1]);
 			}
+			if (data.isFinished() && score1 > score2) {
+				this.player1border.setTitleColor(RESULTCOLORS[2]);
+				this.player2border.setTitleColor(RESULTCOLORS[0]);
+			} else if (data.isFinished() && score1 < score2) {
+				this.player1border.setTitleColor(RESULTCOLORS[0]);
+				this.player2border.setTitleColor(RESULTCOLORS[2]);
+			} else {
+				this.player1border.setTitleColor(TITLECOLOR);
+				this.player2border.setTitleColor(TITLECOLOR);
+			}
+			// repaint to update the titled borders, see bug JDK-4117141
+			this.frame.getContentPane().repaint();
 		}
 	}
 
