@@ -8,7 +8,6 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import frontend.FrontendController;
 import frontend.util.SwingUtil;
 import resources.EngineSourceManager;
 import resources.Settings;
@@ -20,9 +19,9 @@ public class LocationDialog
 {
 	private static final String SETTING_LAST_ACCESSED_FOLDER = "locationdialog.laf";
 
-	public static void show(FrontendController controller)
+	public static void show(Window parentWindow)
 	{
-		final JDialog dialog = new JDialog(controller.getWindow());
+		final JDialog dialog = new JDialog(parentWindow);
 
 		final List<File> locationList = EngineSourceManager.getLocations();
 		final List<ListDataListener> listDataListeners = new ArrayList<>();
@@ -136,7 +135,7 @@ public class LocationDialog
 		dialog.setModal(true);
 		dialog.pack();
 		dialog.setMinimumSize(dialog.getSize());
-		dialog.setLocationRelativeTo(controller.getWindow());
+		dialog.setLocationRelativeTo(parentWindow);
 		dialog.setVisible(true);
 		dialog.dispose();
 	}

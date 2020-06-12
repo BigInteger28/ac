@@ -5,11 +5,13 @@ import backend.Game;
 import backend.Player;
 import common.ErrorHandler;
 import frontend.dialogs.ChoosePlayerDialog;
+import frontend.dialogs.LocationDialog;
 import frontend.maincontent.*;
 import frontend.util.RawStringInputStream;
 import frontend.util.SwingMsg;
 import frontend.util.SwingUtil;
 import resources.PlayerResource;
+import resources.Resources;
 import resources.DatabaseResource;
 import resources.EngineSourceManager;
 
@@ -29,12 +31,25 @@ import java.util.ArrayList;
 import static common.Constants.*;
 
 public class Main implements
-	FrontendController,
 	Game.Listener,
 	Runnable /*for SwingUtilities#invokeLater*/,
-	ActionListener /*for buttons*/
+	ActionListener /*for button actions*/
 {
+	private static final Color[] BUTTONCOLORS = {
+		new Color(0x5050FF), new Color(0xFF5050),
+		new Color(0x508050), new Color(0xFFFF50),
+		new Color(0x808080)
+	};
+	private static final Color[] RESULTCOLORS = {
+		new Color(0xFF0000), Color.black, new Color(0x008000)
+	};
+
 	private static final char BUTTON_ID_PLAYER_CONTROL = 0;
+	private static final char BUTTON_ID_NEWGAME = 1;
+	private static final char BUTTON_ID_CHOOSEPLAYERS = 2;
+	private static final char BUTTON_ID_UNDOMOVE = 3;
+	private static final char BUTTON_ID_LOCATIONS = 4;
+	private static final char BUTTON_ID_WORKINGDIR = 5;
 
 	public static File settingsDir;
 	public static Image backImage;
@@ -81,9 +96,9 @@ public class Main implements
 	private TitledBorder player1border, player2border;
 	private Game game;
 
+	private JLabel[] p1movelabels, p2movelabels;
 	private JButton[] player1buttons, player2buttons;
-	private MovesPanel movesPanel;
-	private ScorePanel scorePanel;
+	private JLabel player1score, player2score;
 	private JPanel bigCardsDisplay;
 
 	private boolean updateQueued;
@@ -98,8 +113,11 @@ public class Main implements
 		Container contentPane;
 		GridBagConstraints gbc;
 		JPanel player1controls, player2controls;
+		JPanel scorePanel;
+		JPanel movesPanel;
 		JPanel pnl;
 		JButton btn;
+		JTabbedPane ribbon;
 
 		(this.game = new Game()).addListener(this);
 		this.game.p1 = humanPlayers[0];
@@ -108,20 +126,47 @@ public class Main implements
 
 		this.frame = new JFrame("Avatar Carto Java Edition");
 
+		// ribbon
+		ribbon = new JTabbedPane();
+		pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		btn = new JButton("New game");
+		btn.setName(new String(new char[] { BUTTON_ID_NEWGAME }));
+		btn.addActionListener(this);
+		pnl.add(btn);
+		btn = new JButton("Choose players");
+		btn.setName(new String(new char[] { BUTTON_ID_CHOOSEPLAYERS }));
+		btn.addActionListener(this);
+		pnl.add(btn);
+		btn = new JButton("Undo move");
+		btn.setName(new String(new char[] { BUTTON_ID_UNDOMOVE }));
+		btn.addActionListener(this);
+		pnl.add(btn);
+		ribbon.addTab("Game", pnl);
+		pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		btn = new JButton("Engine locations");
+		btn.setName(new String(new char[] { BUTTON_ID_LOCATIONS }));
+		btn.addActionListener(this);
+		pnl.add(btn);
+		btn = new JButton("Working dir");
+		btn.setName(new String(new char[] { BUTTON_ID_WORKINGDIR }));
+		btn.addActionListener(this);
+		pnl.add(btn);
+		ribbon.addTab("Settings", pnl);
+
 		// player controls
 		player1controls = new JPanel(new GridLayout(0, 5, 5, 0));
 		player2controls = new JPanel(new GridLayout(0, 5, 5, 0));
 		this.player1buttons = new JButton[5];
 		this.player2buttons = new JButton[5];
 		for (char i = 0; i < 5; i++) {
-			String text = STANDARDELEMENTS[i] + " (?)";
+			String text = ELEMENTS[i] + " (?)";
 			btn = this.player1buttons[i] = new JButton(text);
 			btn.setFocusable(false);
 			btn.setName(new String(new char[] { BUTTON_ID_PLAYER_CONTROL, 0, i }));
 			btn.addActionListener(this);
 			pnl = new JPanel(new BorderLayout());
 			pnl.setBorder(new EmptyBorder(3, 3, 3, 3));
-			pnl.setBackground(new Color(BUTTONCOLORS[i]));
+			pnl.setBackground(BUTTONCOLORS[i]);
 			pnl.add(btn);
 			player1controls.add(pnl);
 			btn = this.player2buttons[i] = new JButton(text);
@@ -130,10 +175,31 @@ public class Main implements
 			btn.addActionListener(this);
 			pnl = new JPanel(new BorderLayout());
 			pnl.setBorder(new EmptyBorder(3, 3, 3, 3));
-			pnl.setBackground(new Color(BUTTONCOLORS[i]));
+			pnl.setBackground(BUTTONCOLORS[i]);
 			pnl.add(btn);
 			player2controls.add(pnl);
 		}
+
+		// moves panel
+		movesPanel = new JPanel(new GridLayout(2, 9, 5, 5));
+		movesPanel.setBorder(new EmptyBorder(0, 20, 0, 10));
+		this.p1movelabels = new JLabel[9];
+		this.p2movelabels = new JLabel[9];
+		for (int i = 0; i < 9; i++) {
+			movesPanel.add(p1movelabels[i] = new JLabel("?", SwingConstants.CENTER));
+		}
+		for (int i = 0; i < 9; i++) {
+			movesPanel.add(p2movelabels[i] = new JLabel("?", SwingConstants.CENTER));
+		}
+
+		// score panel
+		scorePanel = new JPanel(new GridLayout(2, 1, 0, 5));
+		scorePanel.setBorder(new EmptyBorder(0, 20, 0, 10));
+		scorePanel.add(this.player1score = new JLabel("?", SwingConstants.CENTER));
+		scorePanel.add(this.player2score = new JLabel("?", SwingConstants.CENTER));
+
+		// big cards display
+		this.bigCardsDisplay = new BigCardsDisplay(this.game);
 
 		// placement and layout
 		(contentPane = this.frame.getContentPane()).setLayout(new GridBagLayout());
@@ -144,14 +210,16 @@ public class Main implements
 		gbc.gridx = 1;
 		gbc.gridy = 1;
 		gbc.weightx = 1d;
+		gbc.weighty = 0d;
 		gbc.gridwidth = 3;
 		gbc.gridheight = 1;
-		contentPane.add(new Ribbon(this), gbc);
+		contentPane.add(ribbon, gbc);
 
 		// top player buttons
 		gbc.gridx = 1;
 		gbc.gridy = 2;
 		gbc.weightx = 0d;
+		gbc.weighty = 0d;
 		gbc.gridwidth = 2;
 		gbc.gridheight = 1;
 		gbc.insets.top = 10;
@@ -163,10 +231,10 @@ public class Main implements
 		contentPane.add(wrapWithBorder(player1controls), gbc);
 
 		// game field
-		this.movesPanel = new MovesPanel();
 		gbc.gridx = 1;
 		gbc.gridy = 3;
 		gbc.weightx = .001d;
+		gbc.weighty = 0d;
 		gbc.gridwidth = 1;
 		gbc.gridheight = 1;
 		gbc.insets.top = 5;
@@ -175,13 +243,13 @@ public class Main implements
 		gbc.insets.right = 5;
 		pushBorder(SwingUtil.titledBorder("Game"));
 		pushBorder(new EmptyBorder(2, 9, 4, 9));
-		contentPane.add(wrapWithBorder(this.movesPanel), gbc);
+		contentPane.add(wrapWithBorder(movesPanel), gbc);
 
 		// score field
-		this.scorePanel = new ScorePanel();
 		gbc.gridx = 2;
 		gbc.gridy = 3;
 		gbc.weightx = 0d;
+		gbc.weighty = 0d;
 		gbc.gridwidth = 1;
 		gbc.gridheight = 1;
 		gbc.insets.top = 5;
@@ -190,12 +258,13 @@ public class Main implements
 		gbc.insets.right = 5;
 		pushBorder(SwingUtil.titledBorder("Score"));
 		pushBorder(new EmptyBorder(2, 9, 4, 9));
-		contentPane.add(wrapWithBorder(this.scorePanel), gbc);
+		contentPane.add(wrapWithBorder(scorePanel), gbc);
 
 		// bottom player buttons
 		gbc.gridx = 1;
 		gbc.gridy = 4;
 		gbc.weightx = 0d;
+		gbc.weighty = 0d;
 		gbc.gridwidth = 2;
 		gbc.gridheight = 1;
 		gbc.insets.top = 5;
@@ -210,6 +279,7 @@ public class Main implements
 		gbc.gridx = 3;
 		gbc.gridy = 2;
 		gbc.weightx = 1d;
+		gbc.weighty = 0d;
 		gbc.gridwidth = 1;
 		gbc.gridheight = 3;
 		gbc.insets.top = 10;
@@ -221,10 +291,10 @@ public class Main implements
 		contentPane.add(wrapWithBorder(new AnalysisGraph()), gbc);
 
 		// big cards
-		this.bigCardsDisplay = new BigCardsDisplay(this.game);
 		gbc.gridx = 1;
 		gbc.gridy = 5;
 		gbc.weightx = 1d;
+		gbc.weighty = 1d;
 		gbc.gridwidth = 3;
 		gbc.gridheight = 1;
 		gbc.insets.top = 5;
@@ -264,20 +334,7 @@ public class Main implements
 		uiReady = true;
 	}
 
-	@Override
-	public Window getWindow()
-	{
-		return this.frame;
-	}
-
-	@Override
-	public void startNewGame()
-	{
-		this.game.startNewGame();
-	}
-
-	@Override
-	public void startNewGameAdv()
+	private void startNewGameAdv()
 	{
 		Player p1, p2;
 		String preChosenName;
@@ -306,13 +363,7 @@ public class Main implements
 		// repaint to update the titled borders, see bug JDK-4117141
 		this.frame.getContentPane().repaint();
 
-		this.startNewGame();
-	}
-
-	@Override
-	public void undoMove()
-	{
-		this.game.undoMove();
+		this.game.startNewGame();
 	}
 
 	public void queueUpdate()
@@ -348,31 +399,15 @@ public class Main implements
 	{
 	}
 
-	private void updatePlayerButtons()
-	{
-		boolean p1canPlay, p2canPlay;
-		int p1elementsLeft[], p2elementsLeft[];
-		Game.Data data;
-
-		data = this.game.data;
-		p1canPlay = !data.isPlayerReady(0) && data.isHumanControlled(0);
-		p2canPlay = !data.isPlayerReady(1) && data.isHumanControlled(1);
-		p1elementsLeft = data.getElementsLeft(0);
-		p2elementsLeft = data.getElementsLeft(1);
-		for (int i = 0; i < 5; i++) {
-			this.player1buttons[i].setText(STANDARDELEMENTS[i] + " (" + p1elementsLeft[i] + ")");
-			this.player1buttons[i].setEnabled(p1canPlay && p1elementsLeft[i] > 0);
-			this.player2buttons[i].setText(STANDARDELEMENTS[i] + " (" + p2elementsLeft[i] + ")");
-			this.player2buttons[i].setEnabled(p2canPlay && p2elementsLeft[i] > 0);
-		}
-	}
-
 	/**
 	 * Called from eventqueue by {@link SwingUtilities#invokeLater} calls
 	 */
 	@Override
 	public void run()
 	{
+		Game.Data data;
+
+		data = this.game.data;
 		this.updateQueued = false;
 
 		if (this.updateBigCards) {
@@ -381,15 +416,52 @@ public class Main implements
 		}
 
 		if (this.updateButtons) {
-			this.updatePlayerButtons();
+			boolean p1canPlay, p2canPlay;
+			int p1elementsLeft[], p2elementsLeft[];
+
+			data = this.game.data;
+			p1canPlay = !data.isPlayerReady(0) && data.isHumanControlled(0);
+			p2canPlay = !data.isPlayerReady(1) && data.isHumanControlled(1);
+			p1elementsLeft = data.getElementsLeft(0);
+			p2elementsLeft = data.getElementsLeft(1);
+			for (int i = 0; i < 5; i++) {
+				this.player1buttons[i].setText(ELEMENTS[i] + " (" + p1elementsLeft[i] + ")");
+				this.player1buttons[i].setEnabled(p1canPlay && p1elementsLeft[i] > 0);
+				this.player2buttons[i].setText(ELEMENTS[i] + " (" + p2elementsLeft[i] + ")");
+				this.player2buttons[i].setEnabled(p2canPlay && p2elementsLeft[i] > 0);
+			}
 		}
 
 		if (this.updateMoves) {
-			this.movesPanel.updateLabels(this.game.data);
+			int currentMove;
+			int p1moves[], p2moves[];
+			int moveResult;
+			JLabel p1lbl, p2lbl;
+
+			currentMove = data.getCurrentMove();
+			p1moves = data.getMoves(0);
+			p2moves = data.getMoves(1);
+			for (int i = 0; i < 9; i++) {
+				p1lbl = this.p1movelabels[i];
+				p2lbl = this.p2movelabels[i];
+				if (currentMove <= i) {
+					p1lbl.setText("?");
+					p2lbl.setText("?");
+					p1lbl.setForeground(RESULTCOLORS[1]);
+					p2lbl.setForeground(RESULTCOLORS[1]);
+				} else {
+					moveResult = data.getMoveScore(i);
+					p1lbl.setText(String.valueOf(CHARELEMENTS[p1moves[i]]));
+					p2lbl.setText(String.valueOf(CHARELEMENTS[p2moves[i]]));
+					p1lbl.setForeground(RESULTCOLORS[1 + moveResult]);
+					p2lbl.setForeground(RESULTCOLORS[1 - moveResult]);
+				}
+			}
 		}
 
 		if (this.updateScore) {
-			this.scorePanel.updateLabels(this.game.data.getScore(0), this.game.data.getScore(1));
+			this.player1score.setText(String.valueOf(data.getScore(0)));
+			this.player2score.setText(String.valueOf(data.getScore(1)));
 		}
 	}
 
@@ -400,14 +472,32 @@ public class Main implements
 	public void actionPerformed(ActionEvent e)
 	{
 		char data[];
+		char id;
 
-		data = ((JComponent) e.getSource()).getName().toCharArray();
+		id = (data = ((JComponent) e.getSource()).getName().toCharArray())[0];
 
-		if (data[0] == BUTTON_ID_PLAYER_CONTROL) {
+		switch (id) {
+		case BUTTON_ID_PLAYER_CONTROL:
 			humanPlayers[data[1]].setChosenElement(data[2]);
 			this.game.update();
 			this.updateButtons = true;
 			this.queueUpdate();
+			break;
+		case BUTTON_ID_NEWGAME:
+			this.game.startNewGame();
+			break;
+		case BUTTON_ID_CHOOSEPLAYERS:
+			this.startNewGameAdv();
+			break;
+		case BUTTON_ID_UNDOMOVE:
+			this.game.undoMove();
+			break;
+		case BUTTON_ID_LOCATIONS:
+			LocationDialog.show(this.frame);
+			break;
+		case BUTTON_ID_WORKINGDIR:
+			SwingMsg.err_ok(this.frame, "Working directory", Resources.workingdir.getAbsolutePath());
+			break;
 		}
 	}
 }

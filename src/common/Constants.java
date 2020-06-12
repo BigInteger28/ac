@@ -2,9 +2,8 @@ package common;
 
 public class Constants
 {
-	public static final int[] BUTTONCOLORS = { 0x5050FF, 0xFF5050, 0x508050, 0xFFFF50, 0x808080 };
 	public static final char[] CHARELEMENTS = new char[] { 'W', 'V', 'A', 'L', 'D' };
-	public static final String[] STANDARDELEMENTS = new String[] { "Water", "Vuur", "Aarde", "Lucht", "Defensie" };
+	public static final String[] ELEMENTS = new String[] { "Water", "Vuur", "Aarde", "Lucht", "Defensie" };
 
 	public static final int WATER = 0;
 	public static final int FIRE = 1;
