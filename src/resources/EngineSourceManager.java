@@ -52,8 +52,7 @@ public class EngineSourceManager
 		return new BuiltinEngineResource(name, d);
 	}
 
-	public static void collectResources(ArrayList<PlayerResource> playerList, ArrayList<DatabaseResource> dbList,
-		PlayerResource humanResource)
+	public static void collectResources(ArrayList<PlayerResource> playerList, ArrayList<DatabaseResource> dbList, PlayerResource...extraResources)
 	{
 		playerList.ensureCapacity(lastAmountOfResources);
 
@@ -95,8 +94,8 @@ public class EngineSourceManager
 		}
 
 		int bpos = 0;
-		if (humanResource != null) {
-			playerList.add(bpos++, humanResource);
+		for (PlayerResource extraResource : extraResources) {
+			playerList.add(bpos++, extraResource);
 		}
 		playerList.addAll(bpos, BUILTINENGINES);
 
