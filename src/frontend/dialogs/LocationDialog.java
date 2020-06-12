@@ -8,8 +8,11 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import frontend.util.SwingMsg;
 import frontend.util.SwingUtil;
+import resources.DatabaseResource;
 import resources.EngineSourceManager;
+import resources.PlayerResource;
 import resources.Settings;
 
 import static javax.swing.JScrollPane.*;
@@ -125,6 +128,49 @@ public class LocationDialog
 			EngineSourceManager.setLocations(locationList);
 			SwingUtil.close(dialog);
 		});
+		JButton btnTest = new JButton("Test");
+		btnTest.addActionListener(e -> {
+			int numPlayers = 0, numDatabases = 0;
+			StringBuilder sb = new StringBuilder();
+			List<File> originalLocations = EngineSourceManager.getLocations();
+			try {
+				ArrayList<PlayerResource> playerList = new ArrayList<>();
+				ArrayList<DatabaseResource> dbList = new ArrayList<>();
+				EngineSourceManager.setLocations(locationList);
+				EngineSourceManager.collectResources(playerList, dbList);
+				for (PlayerResource res : playerList) {
+					numPlayers++;
+					try {
+						res.createPlayer();
+					} catch (Throwable t) {
+						sb.append(res.getPath() + "/" + res.getName());
+						sb.append(": ");
+						sb.append(t.toString());
+						sb.append("\n");
+					}
+				}
+				for (DatabaseResource res : dbList) {
+					numDatabases++;
+					try {
+						res.createDatabase();
+					} catch (Throwable t) {
+						sb.append(res.getPath() + "/" + res.getName());
+						sb.append(": ");
+						sb.append(t.toString());
+						sb.append("\n");
+					}
+				}
+			} finally {
+				EngineSourceManager.setLocations(originalLocations);
+			}
+			String prepend = String.format("Tested %d players, %d databases\n", numPlayers, numDatabases);
+			if (sb.length() > 0) {
+				SwingMsg.err_ok(dialog, "Test", prepend + sb.toString());
+			} else {
+				SwingMsg.err_ok(dialog, "Test", prepend + "ok");
+			}
+		});
+		pnlButtons.add(btnTest);
 		pnlButtons.add(btnCancel);
 		pnlButtons.add(btnOk);
 
