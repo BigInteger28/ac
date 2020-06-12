@@ -5,6 +5,7 @@ import backend.Game;
 import backend.Player;
 import common.ErrorHandler;
 import engines.FixedEngine;
+import frontend.components.HideableButton;
 import frontend.dialogs.ChoosePlayerDialog;
 import frontend.dialogs.LocationDialog;
 import frontend.maincontent.*;
@@ -101,7 +102,7 @@ public class Main implements
 	private String lastOpinionPlayerName;
 
 	private JLabel[] p1movelabels, p2movelabels;
-	private JButton[] player1buttons, player2buttons;
+	private HideableButton[] player1buttons, player2buttons;
 	private JLabel player1score, player2score;
 	private JPanel bigCardsDisplay;
 
@@ -164,11 +165,11 @@ public class Main implements
 		// player controls
 		player1controls = new JPanel(new GridLayout(0, 5, 5, 0));
 		player2controls = new JPanel(new GridLayout(0, 5, 5, 0));
-		this.player1buttons = new JButton[5];
-		this.player2buttons = new JButton[5];
+		this.player1buttons = new HideableButton[5];
+		this.player2buttons = new HideableButton[5];
 		for (char i = 0; i < 5; i++) {
 			String text = ELEMENTS[i] + " (?)";
-			btn = this.player1buttons[i] = new JButton(text);
+			btn = this.player1buttons[i] = new HideableButton(text);
 			btn.setFocusable(false);
 			btn.setName(new String(new char[] { BUTTON_ID_PLAYER_CONTROL, 0, i }));
 			btn.addActionListener(this);
@@ -177,7 +178,7 @@ public class Main implements
 			pnl.setBackground(BUTTONCOLORS[i]);
 			pnl.add(btn);
 			player1controls.add(pnl);
-			btn = this.player2buttons[i] = new JButton(text);
+			btn = this.player2buttons[i] = new HideableButton(text);
 			btn.setFocusable(false);
 			btn.setName(new String(new char[] { BUTTON_ID_PLAYER_CONTROL, 1, i }));
 			btn.addActionListener(this);
@@ -411,7 +412,6 @@ public class Main implements
 	public void run()
 	{
 		Game.Data data;
-		Container parent;
 
 		data = this.game.data;
 		this.updateQueued = false;
@@ -432,21 +432,11 @@ public class Main implements
 			p2elementsLeft = data.getElementsLeft(1);
 			for (int i = 0; i < 5; i++) {
 				this.player1buttons[i].setText(ELEMENTS[i] + " (" + p1elementsLeft[i] + ")");
-				this.player1buttons[i].setVisible(p1elementsLeft[i] > 0);
 				this.player1buttons[i].setEnabled(p1canPlay);
+				this.player1buttons[i].setBorderPainted(this.player1buttons[i].draw = p1elementsLeft[i] > 0);
 				this.player2buttons[i].setText(ELEMENTS[i] + " (" + p2elementsLeft[i] + ")");
-				this.player2buttons[i].setVisible(p2elementsLeft[i] > 0);
 				this.player2buttons[i].setEnabled(p2canPlay);
-
-				// if they're not visible, they take no space and that would mess up the layout
-				parent = this.player1buttons[i].getParent();
-				if (!parent.isMinimumSizeSet()) {
-					parent.setMinimumSize(parent.getSize());
-					parent.setPreferredSize(parent.getSize());
-					parent = this.player2buttons[i].getParent();
-					parent.setMinimumSize(parent.getSize());
-					parent.setPreferredSize(parent.getSize());
-				}
+				this.player2buttons[i].setBorderPainted(this.player2buttons[i].draw = p2elementsLeft[i] > 0);
 			}
 
 		}
