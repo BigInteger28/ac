@@ -167,7 +167,7 @@ public class LocationDialog
 			if (sb.length() > 0) {
 				SwingMsg.err_ok(dialog, "Test", prepend + sb.toString());
 			} else {
-				SwingMsg.err_ok(dialog, "Test", prepend + "ok");
+				SwingMsg.info_ok(dialog, "Test", prepend + "ok");
 			}
 		});
 		pnlButtons.add(btnTest);
