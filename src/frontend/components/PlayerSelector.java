@@ -434,6 +434,9 @@ public class PlayerSelector extends JPanel implements
 				this.txtFilterDatabase.setEnabled(true);
 				this.lstDatabase.setEnabled(true);
 				this.lstDatabase.hideWithMessage(null);
+				this.txtFilterDatabase.setText(this.lstPlayer.getSelectedValue().getName());
+				this.needDatabaseFilterUpdate = true;
+				this.queueUpdate();
 			} else {
 				this.txtFilterDatabase.setEnabled(false);
 				this.lstDatabase.setEnabled(false);
