@@ -1,12 +1,13 @@
 package engines;
 
+import backend.Database;
 import backend.Game.Data;
 import backend.Player;
 import backend.ResourceType;
 
 import static common.Constants.*;
 
-public class Nuwani4 implements Player
+public class Nuwani4 extends Player
 {
 	public static final Nuwani4 INSTANCE = new Nuwani4();
 
@@ -33,7 +34,7 @@ public class Nuwani4 implements Player
 	}
 
 	@Override
-	public int doMove(int p, Data data)
+	public int doMove(int p, Database db, Data data)
 	{
 		// ported from Nuwani4.vb
 		int myMove, theirMove;
