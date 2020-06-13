@@ -2,15 +2,13 @@ package engines.nuwanisl;
 
 import backend.Game.Data;
 import common.Constants;
-import resources.PlayerResource;
-import resources.SingletonPlayerResource;
 import backend.Game;
 import backend.Player;
+import backend.ResourceType;
 
 public class NuwaniSL implements Player
 {
 	public static final NuwaniSL INSTANCE = new NuwaniSL();
-	public static final PlayerResource RESOURCE = new SingletonPlayerResource(INSTANCE);
 
 	public static int loseScoreFactor = 5;
 
@@ -91,6 +89,18 @@ public class NuwaniSL implements Player
 		} else {
 			return DB.forEngines;
 		}
+	}
+
+	@Override
+	public ResourceType getType()
+	{
+		return ResourceType.BUILTIN;
+	}
+
+	@Override
+	public String getPath()
+	{
+		return null;
 	}
 
 	@Override
@@ -273,5 +283,11 @@ public class NuwaniSL implements Player
 			d -= 4;
 		}
 		return d;
+	}
+
+	@Override
+	public boolean canUseDatabase()
+	{
+		return false;
 	}
 }

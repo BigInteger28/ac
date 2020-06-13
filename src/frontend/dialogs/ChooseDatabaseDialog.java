@@ -8,8 +8,8 @@ import java.util.List;
 
 import javax.swing.*;
 
+import backend.ResourceType;
 import engines.Database;
-import resources.DatabaseResource;
 import frontend.VolatileLogger;
 import frontend.components.ResourceList;
 import frontend.util.SwingMsg;
@@ -17,13 +17,13 @@ import frontend.util.SwingUtil;
 
 public class ChooseDatabaseDialog extends JDialog
 {
-	public static Database show(Window parentWindow, String title, List<DatabaseResource> dbList, String preselectedFilter)
+	public static Database show(Window parentWindow, String title, List<Database> dbList, String preselectedFilter)
 	{
 		final JDialog dialog = new JDialog(parentWindow);
 
-		final DatabaseResource[] result = { null };
-		final ResourceList<DatabaseResource> list;
-		list = new ResourceList<>(dbList, DatabaseResource.TYPES);
+		final Database[] result = { null };
+		final ResourceList<Database> list;
+		list = new ResourceList<>(dbList, ResourceType.DATABASETYPES);
 		list.setPreferredSize(new Dimension(550, 300));
 		list.setSelectedIndex(0);
 		final Runnable chooseListener = () -> {
@@ -61,7 +61,8 @@ public class ChooseDatabaseDialog extends JDialog
 		}
 
 		try {
-			return result[0].createDatabase();
+			result[0].load();
+			return result[0];
 		} catch (Exception e) {
 			final String name = result[0].getName();
 			VolatileLogger.logf(e, "creating database '%s'", name);

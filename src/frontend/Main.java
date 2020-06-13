@@ -4,6 +4,7 @@ import backend.ACMain;
 import backend.Game;
 import backend.Player;
 import common.ErrorHandler;
+import engines.Database;
 import engines.FixedEngine;
 import frontend.components.HideableButton;
 import frontend.dialogs.ChoosePlayerDialog;
@@ -12,9 +13,7 @@ import frontend.maincontent.*;
 import frontend.util.RawStringInputStream;
 import frontend.util.SwingMsg;
 import frontend.util.SwingUtil;
-import resources.PlayerResource;
 import resources.Resources;
-import resources.DatabaseResource;
 import resources.EngineSourceManager;
 
 import javax.imageio.ImageIO;
@@ -347,12 +346,12 @@ public class Main implements
 	{
 		Player p1, p2;
 		String preChosenName;
-		ArrayList<PlayerResource> playerList;
-		ArrayList<DatabaseResource> dbList;
+		ArrayList<Player> playerList;
+		ArrayList<Database> dbList;
 
 		playerList = new ArrayList<>();
 		dbList = new ArrayList<>();
-		EngineSourceManager.collectResources(playerList, dbList, HumanPlayer.RESOURCEINSTANCE);
+		EngineSourceManager.collectResources(playerList, dbList, HumanPlayer.INSTANCE);
 
 		preChosenName = this.game.data.isHumanControlled(0) ? null : this.game.data.getPlayerName(0);
 		p1 = ChoosePlayerDialog.show(this.frame, "player 1", playerList, dbList, preChosenName);
@@ -540,8 +539,8 @@ public class Main implements
 				SwingMsg.err_ok(this.frame, "Opinion", "Game is finished");
 				return;
 			}
-			ArrayList<PlayerResource> playerList = new ArrayList<>();
-			ArrayList<DatabaseResource> dbList = new ArrayList<>();
+			ArrayList<Player> playerList = new ArrayList<>();
+			ArrayList<Database> dbList = new ArrayList<>();
 			EngineSourceManager.collectResources(playerList, dbList);
 			Player p = ChoosePlayerDialog.show(this.frame, "opinion", playerList, dbList, this.lastOpinionPlayerName);
 			if (p != null) {

@@ -4,8 +4,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
+import backend.Resource;
+import backend.ResourceType;
 import resources.EngineSourceManager;
-import resources.Resource;
 
 import static javax.swing.JScrollPane.*;
 
@@ -16,12 +17,12 @@ import java.util.List;
 
 public class ResourceList<T extends Resource> extends JPanel
 {
-	private final Resource.Type[] types;
+	private final ResourceType[] types;
 	private final FilterableList<T> list;
 	private final List<T> resourceList;
 	private final HashMap<Integer, JLabel> typeLabels;
 
-	public ResourceList(List<T> resouceList, Resource.Type[] types)
+	public ResourceList(List<T> resouceList, ResourceType[] types)
 	{
 		this.types = types;
 		this.typeLabels = new HashMap<>();
@@ -38,7 +39,7 @@ public class ResourceList<T extends Resource> extends JPanel
 			this.typeLabels.put(i, label);
 			final JPanel pnlCol = new JPanel();
 			pnlCol.setPreferredSize(new Dimension(10, 5));
-			pnlCol.setBackground(types[i].color);
+			pnlCol.setBackground(new Color(types[i].color));
 			pnlCol.setOpaque(true);
 			final JPanel pnlSub = new JPanel(new BorderLayout());
 			pnlSub.add(pnlCol, BorderLayout.WEST);
@@ -67,7 +68,7 @@ public class ResourceList<T extends Resource> extends JPanel
 	{
 		final int[] count = new int[this.types.length];
 		for (Resource r : shownList) {
-			count[r.getType()]++;
+			count[r.getType().index]++;
 		}
 		for (int i = 0; i < count.length; i++) {
 			final String text = String.format("%s (%d)", this.types[i].name, count[i]);
@@ -123,12 +124,12 @@ public class ResourceList<T extends Resource> extends JPanel
 
 	private static class Renderer<T extends Resource> extends JPanel implements ListCellRenderer<T>
 	{
-		private final Resource.Type[] types;
+		private final ResourceType[] types;
 		private final JPanel pnlType;
 		private final JLabel lblName;
 		private final JLabel lblLocation;
 
-		private Renderer(Resource.Type[] types)
+		private Renderer(ResourceType[] types)
 		{
 			this.types = types;
 
@@ -163,7 +164,7 @@ public class ResourceList<T extends Resource> extends JPanel
 				setBackground(list.getBackground());
 				setForeground(list.getForeground());
 			}
-			this.pnlType.setBackground(this.types[value.getType()].color);
+			this.pnlType.setBackground(new Color(this.types[value.getType().index].color));
 			this.lblName.setText(value.getName());
 			final String path = value.getPath();
 			this.lblLocation.setVisible(path != null);

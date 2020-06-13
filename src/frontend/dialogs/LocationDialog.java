@@ -8,11 +8,11 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import backend.Player;
+import engines.Database;
 import frontend.util.SwingMsg;
 import frontend.util.SwingUtil;
-import resources.DatabaseResource;
 import resources.EngineSourceManager;
-import resources.PlayerResource;
 import resources.Settings;
 
 import static javax.swing.JScrollPane.*;
@@ -134,27 +134,27 @@ public class LocationDialog
 			StringBuilder sb = new StringBuilder();
 			List<File> originalLocations = EngineSourceManager.getLocations();
 			try {
-				ArrayList<PlayerResource> playerList = new ArrayList<>();
-				ArrayList<DatabaseResource> dbList = new ArrayList<>();
+				ArrayList<Player> playerList = new ArrayList<>();
+				ArrayList<Database> dbList = new ArrayList<>();
 				EngineSourceManager.setLocations(locationList);
 				EngineSourceManager.collectResources(playerList, dbList);
-				for (PlayerResource res : playerList) {
+				for (Player player : playerList) {
 					numPlayers++;
 					try {
-						res.createPlayer();
+						player.load();
 					} catch (Throwable t) {
-						sb.append(res.getPath() + "/" + res.getName());
+						sb.append(player.getPath() + "/" + player.getName());
 						sb.append(": ");
 						sb.append(t.toString());
 						sb.append("\n");
 					}
 				}
-				for (DatabaseResource res : dbList) {
+				for (Database database : dbList) {
 					numDatabases++;
 					try {
-						res.createDatabase();
+						database.load();
 					} catch (Throwable t) {
-						sb.append(res.getPath() + "/" + res.getName());
+						sb.append(database.getPath() + "/" + database.getName());
 						sb.append(": ");
 						sb.append(t.toString());
 						sb.append("\n");

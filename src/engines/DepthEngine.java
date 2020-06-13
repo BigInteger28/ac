@@ -2,20 +2,39 @@ package engines;
 
 import backend.Game;
 import backend.Player;
+import backend.ResourceType;
 
 import static common.Constants.*;
 
 public class DepthEngine implements Player
 {
 	private final String name;
-	private final byte[] depths;
 
+	private ResourceType type;
 	private Database db;
 
-	public DepthEngine(String name, byte[] depths)
+	protected byte[] depths;
+
+	public DepthEngine(String name)
 	{
 		this.name = name;
-		this.depths = depths;
+		this.type = ResourceType.DEPTH;
+	}
+
+	public DepthEngine(String name, int...depths)
+	{
+		this.name = name;
+		this.type = ResourceType.BUILTIN;
+		this.depths = new byte[9];
+		for (int i = 0; i < depths.length; i++) {
+			this.depths[i] = (byte) depths[i];
+		}
+	}
+
+	@Override
+	public ResourceType getType()
+	{
+		return this.type;
 	}
 
 	@Override
@@ -25,6 +44,12 @@ public class DepthEngine implements Player
 			return this.name + " + " + this.db.getName();
 		}
 		return this.name;
+	}
+
+	@Override
+	public String getPath()
+	{
+		return null;
 	}
 
 	@Override

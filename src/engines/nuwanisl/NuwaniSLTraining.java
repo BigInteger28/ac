@@ -9,9 +9,9 @@ import java.util.List;
 
 import backend.ACMain;
 import backend.Game;
-import resources.DatabaseResource;
+import backend.Player;
+import engines.Database;
 import resources.EngineSourceManager;
-import resources.PlayerResource;
 
 public class NuwaniSLTraining
 {
@@ -29,8 +29,8 @@ public class NuwaniSLTraining
 		originalDbEngines = DB.forEngines;
 		DB.forEngines = new DB.Variant();
 
-		ArrayList<PlayerResource> playerList = new ArrayList<>();
-		ArrayList<DatabaseResource> dbList = new ArrayList<>();
+		ArrayList<Player> playerList = new ArrayList<>();
+		ArrayList<Database> dbList = new ArrayList<>();
 		EngineSourceManager.collectResources(playerList, dbList);
 		myScore = new int[playerList.size()][GENS];
 		theirScore = new int[playerList.size()][GENS];
@@ -41,12 +41,12 @@ public class NuwaniSLTraining
 			DB.Variant buildingGenerationEngine = DB.forEngines.copy();
 			wins = losses = ties = 0;
 			int idx = 0;
-			for (Iterator<PlayerResource> r = playerList.iterator() ; r.hasNext();) {
-				PlayerResource playerResource = r.next();
+			for (Iterator<Player> r = playerList.iterator() ; r.hasNext();) {
+				Player player = r.next();
 				try {
 					DB.forEngines = cleanGenerationEngine.copy();
 					g.p1 = NuwaniSL.INSTANCE;
-					g.p2 = EngineSourceManager.makePlayerTryFindDatabase(playerResource, dbList);
+					g.p2 = EngineSourceManager.makePlayerTryFindDatabase(player, dbList);
 					g.startNewGame();
 
 					int m, t;
@@ -79,7 +79,7 @@ public class NuwaniSLTraining
 					}
 				} catch (Exception e1) {
 					r.remove();
-					System.err.println(playerResource.getPath() + '/' + playerResource.getName());
+					System.err.println(player.getPath() + '/' + player.getName());
 					e1.printStackTrace();
 				}
 			}

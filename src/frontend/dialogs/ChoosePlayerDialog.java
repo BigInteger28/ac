@@ -9,8 +9,8 @@ import java.util.List;
 import javax.swing.*;
 
 import backend.Player;
-import resources.DatabaseResource;
-import resources.PlayerResource;
+import backend.ResourceType;
+import engines.Database;
 import frontend.VolatileLogger;
 import frontend.components.ResourceList;
 import frontend.util.SwingMsg;
@@ -18,13 +18,13 @@ import frontend.util.SwingUtil;
 
 public class ChoosePlayerDialog extends JDialog
 {
-	public static Player show(Window parentWindow, String title, List<PlayerResource> playerList, List<DatabaseResource> dbList, String preselectedPlayer)
+	public static Player show(Window parentWindow, String title, List<Player> players, List<Database> databases, String preselectedPlayer)
 	{
 		final JDialog dialog = new JDialog(parentWindow);
 
-		final PlayerResource[] result = { null };
-		final ResourceList<PlayerResource> list;
-		list = new ResourceList<>(playerList, PlayerResource.TYPES);
+		final Player[] result = { null };
+		final ResourceList<Player> list;
+		list = new ResourceList<>(players, ResourceType.PLAYERTYPES);
 		list.setPreferredSize(new Dimension(550, 300));
 		if (!list.setSelectedResource(preselectedPlayer)) {
 			list.setSelectedResource('<' + preselectedPlayer + '>');
@@ -62,16 +62,16 @@ public class ChoosePlayerDialog extends JDialog
 			return null;
 		}
 
-		final Player player;
+		Player player = result[0];
 		try {
-			player = result[0].createPlayer();
+			result[0].load();
 		} catch (Exception e) {
 			final String name = result[0].getName();
 			VolatileLogger.logf(e, "creating player '%s'", name);
 			final String _message = SwingMsg.format(e);
 			final String _title = "Could not create player";
 			SwingMsg.err_ok(parentWindow, _title, _message);
-			return show(parentWindow, title, playerList, dbList, name);
+			return show(parentWindow, title, players, databases, name);
 		}
 
 		if (player.canUseDatabase()) {
@@ -84,7 +84,7 @@ public class ChoosePlayerDialog extends JDialog
 				playerName = fileName;
 			}
 
-			player.useDatabase(ChooseDatabaseDialog.show(parentWindow, title, dbList, playerName));
+			player.useDatabase(ChooseDatabaseDialog.show(parentWindow, title, databases, playerName));
 		}
 
 		return player;

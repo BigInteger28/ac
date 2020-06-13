@@ -5,9 +5,11 @@ import engines.Database;
 /**
  * Implementations must not hold any state!
  */
-public interface Player
+public interface Player extends Resource
 {
-	String getName();
+	default void load() throws Exception
+	{
+	}
 
 	/**
 	 * @param p player's number
@@ -21,10 +23,7 @@ public interface Player
 	{
 	}
 
-	default boolean canUseDatabase()
-	{
-		return false;
-	}
+	boolean canUseDatabase();
 
 	default void useDatabase(Database db)
 	{

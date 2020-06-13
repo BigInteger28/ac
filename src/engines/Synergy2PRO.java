@@ -3,15 +3,13 @@ package engines;
 import java.util.ArrayList;
 import java.util.List;
 
-import resources.PlayerResource;
-import resources.SingletonPlayerResource;
-
 import static common.Constants.*;
 
 public class Synergy2PRO extends DepthEngine
 {
-	public static final String NAME;
-	public static final PlayerResource RESOURCE;
+	private static final String NAME = "sYnergY 2 PRO";
+
+	public static final Synergy2PRO INSTANCE = new Synergy2PRO();
 
 	private static final  List<Integer> db;
 
@@ -76,9 +74,6 @@ public class Synergy2PRO extends DepthEngine
 		db.add(createEntry(L, V, W, V, W, D, L, A));
 		db.add(createEntry(V, L, A, W, D, A, W));
 		db.add(createEntry(W, L, D, V, W, W));
-
-		NAME = "sYnergY 2 PRO";
-		RESOURCE = new SingletonPlayerResource(new Synergy2PRO(), NAME);
 	}
 
 	private static int createEntry(int result, int... moves)
@@ -92,7 +87,7 @@ public class Synergy2PRO extends DepthEngine
 
 	Synergy2PRO()
 	{
-		super(NAME, new byte[] { 8, 8, 9, 9, 9, 6, 7, 8, 0 });
+		super(NAME, 8, 8, 9, 9, 9, 6, 7, 8, 0);
 		this.useDatabase(new Database(NAME + " db", db));
 	}
 

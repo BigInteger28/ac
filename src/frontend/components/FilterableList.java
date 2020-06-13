@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import backend.Resource;
 import frontend.util.SimpleKeyListener;
 
 public class FilterableList<T> extends JList<T>
@@ -178,7 +179,8 @@ public class FilterableList<T> extends JList<T>
 			this.filteredValues.clear();
 			int newSelectedIndex = 0;
 			for (T data : this.values) {
-				if (this.filterActive && !data.toString().toLowerCase().contains(this.filterText)) {
+				// TODO: ?
+				if (this.filterActive && !((Resource) data).getName().toLowerCase().contains(this.filterText)) {
 					continue;
 				}
 				this.filteredValues.add(data);

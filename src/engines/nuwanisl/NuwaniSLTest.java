@@ -5,9 +5,9 @@ import java.util.Iterator;
 
 import backend.ACMain;
 import backend.Game;
-import resources.DatabaseResource;
+import backend.Player;
+import engines.Database;
 import resources.EngineSourceManager;
-import resources.PlayerResource;
 
 public class NuwaniSLTest
 {
@@ -22,17 +22,17 @@ public class NuwaniSLTest
 		originalDbEngines = DB.forEngines;
 		DB.forEngines = new DB.Variant();
 
-		ArrayList<PlayerResource> playerList = new ArrayList<>();
-		ArrayList<DatabaseResource> dbList = new ArrayList<>();
+		ArrayList<Player> playerList = new ArrayList<>();
+		ArrayList<Database> dbList = new ArrayList<>();
 		EngineSourceManager.collectResources(playerList, dbList);
 		wins = losses = ties = 0;
 		Game g = new Game();
-		for (Iterator<PlayerResource> r = playerList.iterator() ; r.hasNext();) {
-			PlayerResource playerResource = r.next();
+		for (Iterator<Player> r = playerList.iterator() ; r.hasNext();) {
+			Player player = r.next();
 			try {
 				DB.forEngines = originalDbEngines.copy();
 				g.p1 = NuwaniSL.INSTANCE;
-				g.p2 = EngineSourceManager.makePlayerTryFindDatabase(playerResource, dbList);
+				g.p2 = EngineSourceManager.makePlayerTryFindDatabase(player, dbList);
 				g.startNewGame();
 
 				int m = g.data.getScore(0);
@@ -51,7 +51,7 @@ public class NuwaniSLTest
 				}
 			} catch (Exception e1) {
 				r.remove();
-				System.err.println(playerResource.getPath() + '/' + playerResource.getName());
+				System.err.println(player.getPath() + '/' + player.getName());
 				e1.printStackTrace();
 			}
 		}

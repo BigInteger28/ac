@@ -1,39 +1,29 @@
-package resources;
+package engines;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.List;
-
-import engines.Database;
 
 import static common.Constants.*;
 
-public class DatabaseResource extends Resource
+public class FileDatabase extends Database
 {
-	public static final int TYPE_DATABASE = 0;
-	public static final Type[] TYPES = { new Type("Database", 0xFFCD85), };
+	private File file;
 
-	private final File resource;
-
-	public DatabaseResource(File resource)
+	public FileDatabase(File file)
 	{
-		this.resource = resource;
-	}
-
-	@Override
-	public String getName()
-	{
-		return this.resource.getName();
+		super(file.getName());
+		this.file = file;
 	}
 
 	@Override
 	public String getPath()
 	{
-		return this.resource.getParentFile().getAbsolutePath();
+		return this.file.getParentFile().getAbsolutePath();
 	}
 
-	public Database createDatabase() throws Exception
+	@Override
+	public void load() throws Exception
 	{
 		// Element:
 		// (one of)
@@ -51,14 +41,21 @@ public class DatabaseResource extends Resource
 		// Db:
 		// DbEntry [NextDbEntry]
 		//
-		final List<Integer> db = new ArrayList<>();
-		try (FileInputStream in = new FileInputStream(this.resource)) {
+		this.db = new ArrayList<>();
+		try (FileInputStream in = new FileInputStream(this.file)) {
 			int c = in.read();
 			if ((c & 0xEF) == 0xEF) {
 				// BOM
-				in.read();
-				in.read();
+				if (in.read() == -1) {
+					return;
+				}
+				if (in.read() == -1) {
+					return;
+				}
 				c = in.read();
+			}
+			if (c == -1) {
+				return;
 			}
 			int currententry = 0x77777777;
 			boolean cleanexit = false;
@@ -71,7 +68,7 @@ public class DatabaseResource extends Resource
 					if (currententry == 0x77777777) {
 						throw new Exception("invalid, expected ElementSequence");
 					}
-					db.add((currententry << 4) | (this.ctoe(in.read()) & 0xF));
+					this.db.add((currententry << 4) | (this.ctoe(in.read()) & 0xF));
 					currententry = 0x77777777;
 					cleanexit = true;
 				} else if (c == 0xC2) {
@@ -95,31 +92,18 @@ public class DatabaseResource extends Resource
 				cleanexit = false;
 			}
 		}
-		return new Database(this.getName(), db);
 	}
 
 	private int ctoe(int in) throws Exception
 	{
 		switch (in | 0x20) {
-		case -1:
-			throw new Exception("unexpected EOF");
-		case 'w':
-			return WATER;
-		case 'v':
-			return FIRE;
-		case 'a':
-			return EARTH;
-		case 'l':
-			return AIR;
-		case 'd':
-			return DEFENSE;
+		case -1: throw new Exception("unexpected EOF");
+		case 'w': return WATER;
+		case 'v': return FIRE;
+		case 'a': return EARTH;
+		case 'l': return AIR;
+		case 'd': return DEFENSE;
 		}
 		throw new Exception("invalid element: " + in);
-	}
-
-	@Override
-	public int getType()
-	{
-		return TYPE_DATABASE;
 	}
 }

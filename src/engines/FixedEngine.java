@@ -2,18 +2,37 @@ package engines;
 
 import backend.Game;
 import backend.Player;
+import backend.ResourceType;
 
 public class FixedEngine implements Player
 {
 	private final String name;
-	private final int moves[];
 
 	private Database db;
+
+	protected int moves[];
+
+	public FixedEngine(String name)
+	{
+		this.name = name;
+	}
 
 	public FixedEngine(String name, int[] moves)
 	{
 		this.name = name;
 		this.moves = moves;
+	}
+
+	@Override
+	public ResourceType getType()
+	{
+		return ResourceType.FIXED;
+	}
+
+	@Override
+	public String getPath()
+	{
+		return null;
 	}
 
 	@Override

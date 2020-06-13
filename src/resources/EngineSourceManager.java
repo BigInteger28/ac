@@ -9,6 +9,12 @@ import java.util.List;
 import java.util.Stack;
 
 import backend.Player;
+import backend.Resource;
+import engines.Database;
+import engines.DepthEngine;
+import engines.FileDatabase;
+import engines.FileDepthEngine;
+import engines.FileFixedEngine;
 import engines.Synergy2PRO;
 import engines.nuwanisl.NuwaniSL;
 import frontend.VolatileLogger;
@@ -18,7 +24,7 @@ public class EngineSourceManager
 	private static final String LOCATIONSFILENAME;
 	private static final File locationsfile;
 	private static final List<File> locations;
-	private static final List<PlayerResource> BUILTINENGINES;
+	private static final List<Player> BUILTINENGINES;
 
 	private static int lastAmountOfResources;
 
@@ -29,30 +35,21 @@ public class EngineSourceManager
 		locations = new ArrayList<>();
 		readLocations();
 		BUILTINENGINES = new ArrayList<>();
-		BUILTINENGINES.add(bi("sYnergY 1", 6, 6, 6, 6, 6, 6, 6, 6));
-		BUILTINENGINES.add(Synergy2PRO.RESOURCE);
-		BUILTINENGINES.add(bi("sYnergY 3", 9, 6, 9, 8, 7, 6, 7, 8));
-		BUILTINENGINES.add(NuwaniSL.RESOURCE);
-		BUILTINENGINES.add(bi("Junior", 9, 8, 7, 6, 9, 6, 7, 8));
-		BUILTINENGINES.add(bi("GreenFrog", 8, 8, 8, 8, 6, 8, 9, 9));
-		BUILTINENGINES.add(bi("Jaguar", 8, 8, 7, 7, 6, 6, 8, 7));
-		BUILTINENGINES.add(bi("Red", 7, 6, 9, 7, 6, 8, 8, 7));
-		BUILTINENGINES.add(bi("Deep Red", 9, 9, 8, 7, 7, 8, 6, 7));
-		BUILTINENGINES.add(bi("Derp", 8, 6, 8, 7, 7, 6, 8, 8));
-		BUILTINENGINES.add(bi("Schildpad", 9, 9, 9, 9, 9, 9, 9, 9));
-		BUILTINENGINES.add(bi("Botje 2 PRO", 9, 7, 8, 7, 8, 7, 9, 7));
+		BUILTINENGINES.add(new DepthEngine("sYnergY 1", 6, 6, 6, 6, 6, 6, 6, 6));
+		BUILTINENGINES.add(Synergy2PRO.INSTANCE);
+		BUILTINENGINES.add(new DepthEngine("sYnergY 3", 9, 6, 9, 8, 7, 6, 7, 8));
+		BUILTINENGINES.add(NuwaniSL.INSTANCE);
+		BUILTINENGINES.add(new DepthEngine("Junior", 9, 8, 7, 6, 9, 6, 7, 8));
+		BUILTINENGINES.add(new DepthEngine("GreenFrog", 8, 8, 8, 8, 6, 8, 9, 9));
+		BUILTINENGINES.add(new DepthEngine("Jaguar", 8, 8, 7, 7, 6, 6, 8, 7));
+		BUILTINENGINES.add(new DepthEngine("Red", 7, 6, 9, 7, 6, 8, 8, 7));
+		BUILTINENGINES.add(new DepthEngine("Deep Red", 9, 9, 8, 7, 7, 8, 6, 7));
+		BUILTINENGINES.add(new DepthEngine("Derp", 8, 6, 8, 7, 7, 6, 8, 8));
+		BUILTINENGINES.add(new DepthEngine("Schildpad", 9, 9, 9, 9, 9, 9, 9, 9));
+		BUILTINENGINES.add(new DepthEngine("Botje 2 PRO", 9, 7, 8, 7, 8, 7, 9, 7));
 	}
 
-	private static BuiltinEngineResource bi(String name, int... depths)
-	{
-		final byte[] d = new byte[9];
-		for (int i = 0; i < depths.length; i++) {
-			d[i] = (byte) depths[i];
-		}
-		return new BuiltinEngineResource(name, d);
-	}
-
-	public static void collectResources(ArrayList<PlayerResource> playerList, ArrayList<DatabaseResource> dbList, PlayerResource...extraResources)
+	public static void collectResources(ArrayList<Player> playerList, ArrayList<Database> dbList, Player...extraResources)
 	{
 		playerList.ensureCapacity(lastAmountOfResources);
 
@@ -83,18 +80,18 @@ public class EngineSourceManager
 					final String extension = name.substring(dotloc);
 
 					if (".ak".equals(extension)) {
-						addResource(playerList, new FixedEngineResource(child));
+						addResource(playerList, new FileFixedEngine(child));
 					} else if (".akb".equals(extension)) {
-						addResource(playerList, new DepthEngineResource(child));
+						addResource(playerList, new FileDepthEngine(child));
 					} else if (".adb".equals(extension)) {
-						addResource(dbList, new DatabaseResource(child));
+						addResource(dbList, new FileDatabase(child));
 					}
 				}
 			}
 		}
 
 		int bpos = 0;
-		for (PlayerResource extraResource : extraResources) {
+		for (Player extraResource : extraResources) {
 			playerList.add(bpos++, extraResource);
 		}
 		playerList.addAll(bpos, BUILTINENGINES);
@@ -102,13 +99,14 @@ public class EngineSourceManager
 		lastAmountOfResources = playerList.size() + 20;
 	}
 
-	public static Player makePlayerTryFindDatabase(PlayerResource playerResource, ArrayList<DatabaseResource> dbList) throws Exception
+	public static Player makePlayerTryFindDatabase(Player player, ArrayList<Database> databases) throws Exception
 	{
-		Player player = playerResource.createPlayer();
+		player.load();
 		if (player.canUseDatabase()) {
-			for (DatabaseResource dbResource : dbList) {
-				if (dbResource.getNameWithoutExtension().equals(playerResource.getNameWithoutExtension())) {
-					player.useDatabase(dbResource.createDatabase());
+			for (Database database : databases) {
+				if (database.getName().equals(player.getName())) {
+					database.load();
+					player.useDatabase(database);
 				}
 			}
 		}

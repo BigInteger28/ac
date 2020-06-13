@@ -3,27 +3,54 @@ package engines;
 import java.util.List;
 
 import backend.Game;
+import backend.Resource;
+import backend.ResourceType;
 
-public class Database
+public class Database implements Resource
 {
 	private final String name;
-	private final List<Integer> db;
+
+	/**
+	 * db entries:
+	 * lowest 4 bits: result element
+	 * next 4 bits: element 1
+	 * next 4 bits: element 2
+	 * ...
+	 * unused nibbles: 0x77
+	 */
+	protected List<Integer> db;
+
+	public Database(String name)
+	{
+		this.name = name;
+	}
 
 	public Database(String name, List<Integer> db)
 	{
-		// db entries:
-		// lowest 4 bits: result element
-		// next 4 bits: element 1
-		// next 4 bits: element 2
-		// ...
-		// unused nibbles: 0x77
 		this.name = name;
 		this.db = db;
 	}
 
+	public void load() throws Exception
+	{
+	}
+
+	@Override
+	public ResourceType getType()
+	{
+		return ResourceType.DATABASE;
+	}
+
+	@Override
 	public String getName()
 	{
 		return this.name;
+	}
+
+	@Override
+	public String getPath()
+	{
+		return null;
 	}
 
 	public int findEntry(Game.Data data, int playerNumber)
