@@ -7,9 +7,9 @@ import backend.Player;
 import common.ErrorHandler;
 import engines.FixedEngine;
 import frontend.components.HideableButton;
-import frontend.dialogs.ChooseDatabaseDialog;
-import frontend.dialogs.ChoosePlayerDialog;
 import frontend.dialogs.LocationDialog;
+import frontend.dialogs.SecondOpinionDialog;
+import frontend.dialogs.StartGameDialog;
 import frontend.maincontent.*;
 import frontend.util.RawStringInputStream;
 import frontend.util.SwingMsg;
@@ -99,7 +99,6 @@ public class Main implements
 	private JFrame frame;
 	private TitledBorder player1border, player2border;
 	private Game game;
-	private String lastOpinionPlayerName;
 
 	private JLabel[] p1movelabels, p2movelabels;
 	private HideableButton[] player1buttons, player2buttons;
@@ -345,62 +344,25 @@ public class Main implements
 
 	private void startNewGameAdv()
 	{
-		Player p1, p2;
-		Database db1, db2;
-		String preChosenName;
 		ArrayList<Player> players;
 		ArrayList<Database> databases;
+		StartGameDialog dialog;
 
 		players = new ArrayList<>();
 		databases = new ArrayList<>();
 		EngineSourceManager.collectResources(players, databases, HumanPlayer.INSTANCE);
 
-		db1 = db2 = null;
-		preChosenName = this.game.data.isHumanControlled(0) ? null : this.game.data.getPlayerName(0);
-		p1 = ChoosePlayerDialog.show(this.frame, "player 1", players, preChosenName);
-		if (p1 == null) {
-			return;
-		}
-		if (p1.canUseDatabase()) {
-			final String fileName = p1.getName();
-			final int lidx = fileName.lastIndexOf('.');
-			final String playerName;
-			if (lidx != -1) {
-				playerName = fileName.substring(0, lidx);
-			} else {
-				playerName = fileName;
-			}
-			db1 = ChooseDatabaseDialog.show(this.frame, "player 1", databases, playerName);
-		}
-		preChosenName = this.game.data.isHumanControlled(1) ? null : this.game.data.getPlayerName(1);
-		p2 = ChoosePlayerDialog.show(this.frame, "player 2", players, preChosenName);
-		if (p2 == null) {
-			return;
-		}
-		if (p2.canUseDatabase()) {
-			final String fileName = p2.getName();
-			final int lidx = fileName.lastIndexOf('.');
-			final String playerName;
-			if (lidx != -1) {
-				playerName = fileName.substring(0, lidx);
-			} else {
-				playerName = fileName;
-			}
-			db2 = ChooseDatabaseDialog.show(this.frame, "player 2", databases, playerName);
-		}
-		this.game.p1 = p1;
-		this.game.p2 = p2;
-		this.game.db1 = db1;
-		this.game.db2 = db2;
+		dialog = new StartGameDialog(this.frame, players, databases, this.game);
+		if (dialog.wasGameDataSet()) {
+			this.player1border.setTitle(this.game.getPlayer1WithDatabaseName());
+			this.player2border.setTitle(this.game.getPlayer2WithDatabaseName());
+			this.player1border.setTitleColor(TITLECOLOR);
+			this.player2border.setTitleColor(TITLECOLOR);
+			// repaint to update the titled borders, see bug JDK-4117141
+			this.frame.getContentPane().repaint();
 
-		this.player1border.setTitle(p1.getName());
-		this.player2border.setTitle(p2.getName());
-		this.player1border.setTitleColor(TITLECOLOR);
-		this.player2border.setTitleColor(TITLECOLOR);
-		// repaint to update the titled borders, see bug JDK-4117141
-		this.frame.getContentPane().repaint();
-
-		this.game.startNewGame();
+			this.game.startNewGame();
+		}
 	}
 
 	public void queueUpdate()
@@ -562,42 +524,27 @@ public class Main implements
 			SwingMsg.info_ok(this.frame, "Working directory", Resources.workingdir.getAbsolutePath());
 			break;
 		case BUTTON_ID_SECONDOPINION:
+			int p1moves[], p2moves[];
+
 			if (game.data.isFinished()) {
 				SwingMsg.err_ok(this.frame, "Opinion", "Game is finished");
 				return;
 			}
+
 			ArrayList<Player> players = new ArrayList<>();
 			ArrayList<Database> databases = new ArrayList<>();
 			EngineSourceManager.collectResources(players, databases);
-			Player p = ChoosePlayerDialog.show(this.frame, "opinion", players, this.lastOpinionPlayerName);
-			if (p != null) {
-				Database db = null;
-				if (p.canUseDatabase()) {
-					db = ChooseDatabaseDialog.show(this.frame, "opinion", databases, this.lastOpinionPlayerName);
-				}
-				int p1chosenElement, p2chosenElement;
-				int p1moves[], p2moves[];
-				String msg;
 
-				p1moves = this.game.data.getMoves(0);
-				p2moves = this.game.data.getMoves(1);
-				p1moves[this.game.data.getCurrentMove()] = -1;
-				p2moves[this.game.data.getCurrentMove()] = -1;
-				Game g = new Game();
-				g.p1 = new FixedEngine("temp_opinion_p1", p1moves);
-				g.p2 = new FixedEngine("temp_opinion_p2", p2moves);
-				g.startNewGame();
-				p1chosenElement = p.doMove(0, db, g.data);
-				p2chosenElement = p.doMove(1, db, g.data);
-				msg = String.format(
-					"%s would play:\n for player 1: %c\n for player 2: %c",
-					p.getName(),
-					CHARELEMENTS[p1chosenElement],
-					CHARELEMENTS[p2chosenElement]
-				);
-				SwingMsg.info_ok(this.frame, "Opinion of " + p.getName(), msg);
-				this.lastOpinionPlayerName = p.getName();
-			}
+			p1moves = this.game.data.getMoves(0);
+			p2moves = this.game.data.getMoves(1);
+			p1moves[this.game.data.getCurrentMove()] = -1;
+			p2moves[this.game.data.getCurrentMove()] = -1;
+			Game g = new Game();
+			g.p1 = new FixedEngine("temp_opinion_p1", p1moves);
+			g.p2 = new FixedEngine("temp_opinion_p2", p2moves);
+			g.startNewGame();
+
+			new SecondOpinionDialog(this.frame, players, databases, g);
 			break;
 		}
 	}

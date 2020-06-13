@@ -21,6 +21,22 @@ public class Game
 		this.listener = listener;
 	}
 
+	public String getPlayer1WithDatabaseName()
+	{
+		if (this.p1.canUseDatabase() && this.db1 != null) {
+			return this.p1.getName() + " + " + this.db1.getName();
+		}
+		return this.p1.getName();
+	}
+
+	public String getPlayer2WithDatabaseName()
+	{
+		if (this.p2.canUseDatabase() && this.db2 != null) {
+			return this.p2.getName() + " + " + this.db2.getName();
+		}
+		return this.p2.getName();
+	}
+
 	public void startNewGame()
 	{
 		this.data = new Data(this.p1, this.p2, this.db1, this.db2);

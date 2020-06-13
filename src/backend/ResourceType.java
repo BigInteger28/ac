@@ -9,11 +9,10 @@ public class ResourceType
 		BUILTIN = new ResourceType(3, "Built-in engine", 0xE3B7EB);
 
 	public static ResourceType
-		NODATABASE = new ResourceType(0, "No database", 0x555555),
 		DATABASE = new ResourceType(0, "Database", 0xFFCD85);
 
 	public static ResourceType[] PLAYERTYPES = { HUMAN, FIXED, DEPTH, BUILTIN };
-	public static ResourceType[] DATABASETYPES = { NODATABASE, DATABASE };
+	public static ResourceType[] DATABASETYPES = { DATABASE };
 
 	public final int index;
 	public final String name;
