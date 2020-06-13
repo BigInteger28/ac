@@ -212,7 +212,7 @@ public class PlayerSelector extends JPanel implements
 
 		this.setPreferredSize(new Dimension(450, 500));
 
-		if (preselectedPlayer != null) {
+		if (preselectedPlayer != null && !"Human".equals(preselectedPlayer.getName())) {
 			this.txtFilterPlayer.setText(preselectedPlayer.getName());
 		}
 		if (preselectedDatabase != null) {
