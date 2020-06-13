@@ -136,6 +136,7 @@ public class PlayerSelector extends JPanel implements
 		databaseScroller = new JScrollPane(this.lstDatabase);
 		databaseScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		databaseScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		databaseScroller.setPreferredSize(new Dimension(20, 100));
 
 		// datbase list info
 		this.lblDatabaseTypes = new JLabel[ResourceType.DATABASETYPES.length];
@@ -172,7 +173,7 @@ public class PlayerSelector extends JPanel implements
 		gbc.gridx = 1;
 		gbc.gridy = 3;
 		gbc.weightx = 1d;
-		gbc.weighty = .8d;
+		gbc.weighty = 1d;
 		this.add(playerScroller, gbc);
 
 		// player list info
@@ -200,7 +201,7 @@ public class PlayerSelector extends JPanel implements
 		gbc.gridx = 1;
 		gbc.gridy = 7;
 		gbc.weightx = 1d;
-		gbc.weighty = .2d;
+		gbc.weighty = 0d;
 		this.add(databaseScroller, gbc);
 
 		// database list info
