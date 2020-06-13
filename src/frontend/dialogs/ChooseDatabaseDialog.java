@@ -8,8 +8,8 @@ import java.util.List;
 
 import javax.swing.*;
 
+import backend.Database;
 import backend.ResourceType;
-import engines.Database;
 import frontend.VolatileLogger;
 import frontend.components.ResourceList;
 import frontend.util.SwingMsg;

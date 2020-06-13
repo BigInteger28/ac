@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 
+import backend.Database;
+
 import static common.Constants.*;
 
 public class FileDatabase extends Database

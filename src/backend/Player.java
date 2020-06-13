@@ -1,31 +1,25 @@
 package backend;
 
-import engines.Database;
-
 /**
  * Implementations must not hold any state!
  */
-public interface Player extends Resource
+public abstract class Player implements Resource
 {
-	default void load() throws Exception
+	public void load() throws Exception
 	{
 	}
 
 	/**
 	 * @param p player's number
 	 */
-	int doMove(int p, Game.Data data);
+	public abstract int doMove(int p, Database db, Game.Data data);
 
 	/**
 	 * @param p player's number
 	 */
-	default void onGameEnd(int p, Game.Data gamedata)
+	public void onGameEnd(int p, Database db, Game.Data gamedata)
 	{
 	}
 
-	boolean canUseDatabase();
-
-	default void useDatabase(Database db)
-	{
-	}
+	public abstract boolean canUseDatabase();
 }

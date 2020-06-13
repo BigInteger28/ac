@@ -1,12 +1,13 @@
 package frontend;
 
 import backend.ACMain;
+import backend.Database;
 import backend.Game;
 import backend.Player;
 import common.ErrorHandler;
-import engines.Database;
 import engines.FixedEngine;
 import frontend.components.HideableButton;
+import frontend.dialogs.ChooseDatabaseDialog;
 import frontend.dialogs.ChoosePlayerDialog;
 import frontend.dialogs.LocationDialog;
 import frontend.maincontent.*;
@@ -345,26 +346,52 @@ public class Main implements
 	private void startNewGameAdv()
 	{
 		Player p1, p2;
+		Database db1, db2;
 		String preChosenName;
-		ArrayList<Player> playerList;
-		ArrayList<Database> dbList;
+		ArrayList<Player> players;
+		ArrayList<Database> databases;
 
-		playerList = new ArrayList<>();
-		dbList = new ArrayList<>();
-		EngineSourceManager.collectResources(playerList, dbList, HumanPlayer.INSTANCE);
+		players = new ArrayList<>();
+		databases = new ArrayList<>();
+		EngineSourceManager.collectResources(players, databases, HumanPlayer.INSTANCE);
 
+		db1 = db2 = null;
 		preChosenName = this.game.data.isHumanControlled(0) ? null : this.game.data.getPlayerName(0);
-		p1 = ChoosePlayerDialog.show(this.frame, "player 1", playerList, dbList, preChosenName);
+		p1 = ChoosePlayerDialog.show(this.frame, "player 1", players, preChosenName);
 		if (p1 == null) {
 			return;
 		}
+		if (p1.canUseDatabase()) {
+			final String fileName = p1.getName();
+			final int lidx = fileName.lastIndexOf('.');
+			final String playerName;
+			if (lidx != -1) {
+				playerName = fileName.substring(0, lidx);
+			} else {
+				playerName = fileName;
+			}
+			db1 = ChooseDatabaseDialog.show(this.frame, "player 1", databases, playerName);
+		}
 		preChosenName = this.game.data.isHumanControlled(1) ? null : this.game.data.getPlayerName(1);
-		p2 = ChoosePlayerDialog.show(this.frame, "player 2", playerList, dbList, preChosenName);
+		p2 = ChoosePlayerDialog.show(this.frame, "player 2", players, preChosenName);
 		if (p2 == null) {
 			return;
 		}
+		if (p2.canUseDatabase()) {
+			final String fileName = p2.getName();
+			final int lidx = fileName.lastIndexOf('.');
+			final String playerName;
+			if (lidx != -1) {
+				playerName = fileName.substring(0, lidx);
+			} else {
+				playerName = fileName;
+			}
+			db2 = ChooseDatabaseDialog.show(this.frame, "player 2", databases, playerName);
+		}
 		this.game.p1 = p1;
 		this.game.p2 = p2;
+		this.game.db1 = db1;
+		this.game.db2 = db2;
 
 		this.player1border.setTitle(p1.getName());
 		this.player2border.setTitle(p2.getName());
@@ -539,11 +566,15 @@ public class Main implements
 				SwingMsg.err_ok(this.frame, "Opinion", "Game is finished");
 				return;
 			}
-			ArrayList<Player> playerList = new ArrayList<>();
-			ArrayList<Database> dbList = new ArrayList<>();
-			EngineSourceManager.collectResources(playerList, dbList);
-			Player p = ChoosePlayerDialog.show(this.frame, "opinion", playerList, dbList, this.lastOpinionPlayerName);
+			ArrayList<Player> players = new ArrayList<>();
+			ArrayList<Database> databases = new ArrayList<>();
+			EngineSourceManager.collectResources(players, databases);
+			Player p = ChoosePlayerDialog.show(this.frame, "opinion", players, this.lastOpinionPlayerName);
 			if (p != null) {
+				Database db = null;
+				if (p.canUseDatabase()) {
+					db = ChooseDatabaseDialog.show(this.frame, "opinion", databases, this.lastOpinionPlayerName);
+				}
 				int p1chosenElement, p2chosenElement;
 				int p1moves[], p2moves[];
 				String msg;
@@ -556,8 +587,8 @@ public class Main implements
 				g.p1 = new FixedEngine("temp_opinion_p1", p1moves);
 				g.p2 = new FixedEngine("temp_opinion_p2", p2moves);
 				g.startNewGame();
-				p1chosenElement = p.doMove(0, g.data);
-				p2chosenElement = p.doMove(1, g.data);
+				p1chosenElement = p.doMove(0, db, g.data);
+				p2chosenElement = p.doMove(1, db, g.data);
 				msg = String.format(
 					"%s would play:\n for player 1: %c\n for player 2: %c",
 					p.getName(),

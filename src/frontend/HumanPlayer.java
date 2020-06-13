@@ -1,11 +1,12 @@
 package frontend;
 
+import backend.Database;
 import backend.Game;
 import backend.HumanControlled;
 import backend.Player;
 import backend.ResourceType;
 
-public class HumanPlayer implements Player, HumanControlled
+public class HumanPlayer extends Player implements HumanControlled
 {
 	public static final HumanPlayer INSTANCE = new HumanPlayer();
 
@@ -36,7 +37,7 @@ public class HumanPlayer implements Player, HumanControlled
 	}
 
 	@Override
-	public int doMove(int p, Game.Data data)
+	public int doMove(int p, Database db, Game.Data data)
 	{
 		int element = chosenElement[p];
 		chosenElement[p] = -1;

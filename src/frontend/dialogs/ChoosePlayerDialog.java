@@ -10,7 +10,6 @@ import javax.swing.*;
 
 import backend.Player;
 import backend.ResourceType;
-import engines.Database;
 import frontend.VolatileLogger;
 import frontend.components.ResourceList;
 import frontend.util.SwingMsg;
@@ -18,7 +17,7 @@ import frontend.util.SwingUtil;
 
 public class ChoosePlayerDialog extends JDialog
 {
-	public static Player show(Window parentWindow, String title, List<Player> players, List<Database> databases, String preselectedPlayer)
+	public static Player show(Window parentWindow, String title, List<Player> players, String preselectedPlayer)
 	{
 		final JDialog dialog = new JDialog(parentWindow);
 
@@ -71,20 +70,7 @@ public class ChoosePlayerDialog extends JDialog
 			final String _message = SwingMsg.format(e);
 			final String _title = "Could not create player";
 			SwingMsg.err_ok(parentWindow, _title, _message);
-			return show(parentWindow, title, players, databases, name);
-		}
-
-		if (player.canUseDatabase()) {
-			final String fileName = player.getName();
-			final int lidx = fileName.lastIndexOf('.');
-			final String playerName;
-			if (lidx != -1) {
-				playerName = fileName.substring(0, lidx);
-			} else {
-				playerName = fileName;
-			}
-
-			player.useDatabase(ChooseDatabaseDialog.show(parentWindow, title, databases, playerName));
+			return show(parentWindow, title, players, name);
 		}
 
 		return player;

@@ -1,14 +1,13 @@
 package engines;
 
+import backend.Database;
 import backend.Game;
 import backend.Player;
 import backend.ResourceType;
 
-public class FixedEngine implements Player
+public class FixedEngine extends Player
 {
 	private final String name;
-
-	private Database db;
 
 	protected int moves[];
 
@@ -38,17 +37,14 @@ public class FixedEngine implements Player
 	@Override
 	public String getName()
 	{
-		if (this.db != null) {
-			return this.name + " + " + this.db.getName();
-		}
 		return this.name;
 	}
 
 	@Override
-	public int doMove(int p, Game.Data data)
+	public int doMove(int p, Database db, Game.Data data)
 	{
-		if (this.db != null) {
-			int dbres = this.db.findEntry(data, p);
+		if (db != null) {
+			int dbres = db.findEntry(data, p);
 			if (dbres != -1 && data.getElementsLeft(p, dbres) > 0) {
 				return dbres;
 			}
@@ -60,11 +56,5 @@ public class FixedEngine implements Player
 	public boolean canUseDatabase()
 	{
 		return true;
-	}
-
-	@Override
-	public void useDatabase(Database db)
-	{
-		this.db = db;
 	}
 }

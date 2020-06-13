@@ -2,11 +2,12 @@ package engines.nuwanisl;
 
 import backend.Game.Data;
 import common.Constants;
+import backend.Database;
 import backend.Game;
 import backend.Player;
 import backend.ResourceType;
 
-public class NuwaniSL implements Player
+public class NuwaniSL extends Player
 {
 	public static final NuwaniSL INSTANCE = new NuwaniSL();
 
@@ -110,7 +111,7 @@ public class NuwaniSL implements Player
 	}
 
 	@Override
-	public int doMove(int myNumber, Data gamedata)
+	public int doMove(int myNumber, Database _unuseddb, Data gamedata)
 	{
 		DB.Variant db;
 		int theirNumber;
@@ -222,7 +223,7 @@ public class NuwaniSL implements Player
 	}
 
 	@Override
-	public void onGameEnd(int myNumber, Data gamedata)
+	public void onGameEnd(int myNumber, Database _unuseddb, Data gamedata)
 	{
 		DB.Variant db;
 		int theirNumber;

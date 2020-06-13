@@ -8,6 +8,7 @@ public class Game
 
 	public int chosenElement[] = { -1, -1 };
 	public Player p1, p2;
+	public Database db1, db2;
 	public Data data;
 
 	public Game()
@@ -22,7 +23,7 @@ public class Game
 
 	public void startNewGame()
 	{
-		this.data = new Data(this.p1, this.p2);
+		this.data = new Data(this.p1, this.p2, this.db1, this.db2);
 		this.chosenElement[0] = -1;
 		this.chosenElement[1] = -1;
 		this.listener.onGameStart(this);
@@ -81,8 +82,8 @@ public class Game
 			this.chosenElement[1] = -1;
 
 			if (this.data.currentMove > 8) {
-				this.data.players[0].onGameEnd(0, this.data);
-				this.data.players[1].onGameEnd(1, this.data);
+				this.data.players[0].onGameEnd(0, this.data.db[0], this.data);
+				this.data.players[1].onGameEnd(1, this.data.db[1], this.data);
 				return;
 			}
 		}
@@ -94,7 +95,7 @@ public class Game
 			return this.chosenElement[p];
 		}
 
-		int element = this.data.players[p].doMove(p, this.data);
+		int element = this.data.players[p].doMove(p, this.data.db[p], this.data);
 		if (element == -1) {
 			return -1;
 		}
@@ -112,6 +113,7 @@ public class Game
 	public static class Data
 	{
 		private final Player[] players;
+		private final Database[] db;
 		private final int[][] moves;
 		private final int[] moveScores;
 		private int currentMove;
@@ -122,9 +124,10 @@ public class Game
 		private final int[] score;
 		private final boolean[] playerReady = { false, false };
 
-		Data(Player p1, Player p2)
+		Data(Player p1, Player p2, Database db1, Database db2)
 		{
 			this.players = new Player[] { p1, p2 };
+			this.db = new Database[] { db1, db2 };
 			this.moves = new int[][] { new int[9], new int[9] };
 			this.moveScores = new int[9];
 			this.score = new int[] { 0, 0 };

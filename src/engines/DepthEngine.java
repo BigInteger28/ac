@@ -1,17 +1,17 @@
 package engines;
 
+import backend.Database;
 import backend.Game;
 import backend.Player;
 import backend.ResourceType;
 
 import static common.Constants.*;
 
-public class DepthEngine implements Player
+public class DepthEngine extends Player
 {
 	private final String name;
 
 	private ResourceType type;
-	private Database db;
 
 	protected byte[] depths;
 
@@ -40,9 +40,6 @@ public class DepthEngine implements Player
 	@Override
 	public String getName()
 	{
-		if (this.db != null) {
-			return this.name + " + " + this.db.getName();
-		}
 		return this.name;
 	}
 
@@ -53,7 +50,7 @@ public class DepthEngine implements Player
 	}
 
 	@Override
-	public int doMove(int p, Game.Data data)
+	public int doMove(int p, Database db, Game.Data data)
 	{
 		final int move = data.getCurrentMove();
 		if (move == 0) {
@@ -71,7 +68,7 @@ public class DepthEngine implements Player
 			}
 		}
 
-		if (this.db != null) {
+		if (db != null) {
 			int dbres = db.findEntry(data, p);
 			if (dbres != -1 && data.getElementsLeft(p, dbres) > 0) {
 				return dbres;
@@ -101,11 +98,5 @@ public class DepthEngine implements Player
 	public boolean canUseDatabase()
 	{
 		return true;
-	}
-
-	@Override
-	public void useDatabase(Database db)
-	{
-		this.db = db;
 	}
 }

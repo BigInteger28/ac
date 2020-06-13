@@ -1,10 +1,6 @@
-package engines;
+package backend;
 
 import java.util.List;
-
-import backend.Game;
-import backend.Resource;
-import backend.ResourceType;
 
 public class Database implements Resource
 {

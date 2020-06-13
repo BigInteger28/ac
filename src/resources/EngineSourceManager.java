@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import backend.Database;
 import backend.Player;
 import backend.Resource;
-import engines.Database;
 import engines.DepthEngine;
 import engines.FileDatabase;
 import engines.FileDepthEngine;
@@ -99,18 +99,17 @@ public class EngineSourceManager
 		lastAmountOfResources = playerList.size() + 20;
 	}
 
-	public static Player makePlayerTryFindDatabase(Player player, ArrayList<Database> databases) throws Exception
+	public static Database tryFindDatabaseFor(Player player, ArrayList<Database> databases) throws Exception
 	{
-		player.load();
 		if (player.canUseDatabase()) {
 			for (Database database : databases) {
 				if (database.getName().equals(player.getName())) {
 					database.load();
-					player.useDatabase(database);
+					return database;
 				}
 			}
 		}
-		return player;
+		return null;
 	}
 
 	private static <T extends Resource> void addResource(List<T> list, T resource)

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import backend.ACMain;
+import backend.Database;
 import backend.Game;
 import backend.Player;
-import engines.Database;
 import resources.EngineSourceManager;
 
 public class NuwaniSLTest
@@ -23,16 +23,18 @@ public class NuwaniSLTest
 		DB.forEngines = new DB.Variant();
 
 		ArrayList<Player> playerList = new ArrayList<>();
-		ArrayList<Database> dbList = new ArrayList<>();
-		EngineSourceManager.collectResources(playerList, dbList);
+		ArrayList<Database> databases = new ArrayList<>();
+		EngineSourceManager.collectResources(playerList, databases);
 		wins = losses = ties = 0;
 		Game g = new Game();
 		for (Iterator<Player> r = playerList.iterator() ; r.hasNext();) {
 			Player player = r.next();
 			try {
+				player.load();
 				DB.forEngines = originalDbEngines.copy();
 				g.p1 = NuwaniSL.INSTANCE;
-				g.p2 = EngineSourceManager.makePlayerTryFindDatabase(player, dbList);
+				g.p2 = player;
+				g.db2 = EngineSourceManager.tryFindDatabaseFor(player, databases);
 				g.startNewGame();
 
 				int m = g.data.getScore(0);
