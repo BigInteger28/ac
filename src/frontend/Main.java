@@ -27,10 +27,12 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 
 import static common.Constants.*;
+import static resources.Settings.*;
 
 public class Main implements
 	Game.Listener,
@@ -54,14 +56,14 @@ public class Main implements
 	private static final char BUTTON_ID_LOCATIONS = 4;
 	private static final char BUTTON_ID_WORKINGDIR = 5;
 	private static final char BUTTON_ID_SECONDOPINION = 6;
+	private static final char BUTTON_ID_SAVEGAMESTATE = 7;
+	private static final char BUTTON_ID_LOADGAMESTATE = 8;
 
 	public static File settingsDir;
 	public static Image backImage;
 	public static Image[] bigElementImages = new Image[5];
 	public static Image[] smallElementImages = new Image[5];
 	public static boolean uiReady;
-
-	static HumanPlayer humanPlayers[] = { new HumanPlayer(), new HumanPlayer() };
 
 	public static void main(String[] args)
 	{
@@ -104,6 +106,7 @@ public class Main implements
 	private HideableButton[] player1buttons, player2buttons;
 	private JLabel player1score, player2score;
 	private JPanel bigCardsDisplay;
+	private JTabbedPane ribbon;
 
 	private boolean updateQueued;
 	private boolean updateBigCards;
@@ -121,17 +124,16 @@ public class Main implements
 		JPanel movesPanel;
 		JPanel pnl;
 		JButton btn;
-		JTabbedPane ribbon;
 
 		this.game = new Game(this);
-		this.game.p1 = humanPlayers[0];
-		this.game.p2 = humanPlayers[1];
+		this.game.p1 = HumanPlayer.INSTANCE;
+		this.game.p2 = HumanPlayer.INSTANCE;
 		this.game.startNewGame();
 
 		this.frame = new JFrame("Avatar Carto Java Edition");
 
 		// ribbon
-		ribbon = new JTabbedPane();
+		this.ribbon = new JTabbedPane();
 		pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		btn = new JButton("New game");
 		btn.setName(new String(new char[] { BUTTON_ID_NEWGAME }));
@@ -149,7 +151,15 @@ public class Main implements
 		btn.setName(new String(new char[] { BUTTON_ID_SECONDOPINION }));
 		btn.addActionListener(this);
 		pnl.add(btn);
-		ribbon.addTab("Game", pnl);
+		btn = new JButton("Save game state");
+		btn.setName(new String(new char[] { BUTTON_ID_SAVEGAMESTATE }));
+		btn.addActionListener(this);
+		pnl.add(btn);
+		btn = new JButton("Load game state");
+		btn.setName(new String(new char[] { BUTTON_ID_LOADGAMESTATE }));
+		btn.addActionListener(this);
+		pnl.add(btn);
+		this.ribbon.addTab("Game", pnl);
 		pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		btn = new JButton("Engine locations");
 		btn.setName(new String(new char[] { BUTTON_ID_LOCATIONS }));
@@ -159,7 +169,7 @@ public class Main implements
 		btn.setName(new String(new char[] { BUTTON_ID_WORKINGDIR }));
 		btn.addActionListener(this);
 		pnl.add(btn);
-		ribbon.addTab("Settings", pnl);
+		this.ribbon.addTab("Settings", pnl);
 
 		// player controls
 		player1controls = new JPanel(new GridLayout(0, 5, 5, 0));
@@ -221,7 +231,7 @@ public class Main implements
 		gbc.weighty = 0d;
 		gbc.gridwidth = 3;
 		gbc.gridheight = 1;
-		contentPane.add(ribbon, gbc);
+		contentPane.add(this.ribbon, gbc);
 
 		// top player buttons
 		gbc.gridx = 1;
@@ -342,6 +352,17 @@ public class Main implements
 		uiReady = true;
 	}
 
+	private void updatePlayerNameBorders()
+	{
+		this.player1border.setTitle(this.game.getPlayer1WithDatabaseName());
+		this.player2border.setTitle(this.game.getPlayer2WithDatabaseName());
+		this.player1border.setTitleColor(TITLECOLOR);
+		this.player2border.setTitleColor(TITLECOLOR);
+		// repaint to update the titled borders, see bug JDK-4117141
+		this.frame.getContentPane().repaint();
+
+	}
+
 	private void startNewGameAdv()
 	{
 		ArrayList<Player> players;
@@ -354,13 +375,7 @@ public class Main implements
 
 		dialog = new StartGameDialog(this.frame, players, databases, this.game);
 		if (dialog.wasGameDataSet()) {
-			this.player1border.setTitle(this.game.getPlayer1WithDatabaseName());
-			this.player2border.setTitle(this.game.getPlayer2WithDatabaseName());
-			this.player1border.setTitleColor(TITLECOLOR);
-			this.player2border.setTitleColor(TITLECOLOR);
-			// repaint to update the titled borders, see bug JDK-4117141
-			this.frame.getContentPane().repaint();
-
+			this.updatePlayerNameBorders();
 			this.game.startNewGame();
 		}
 	}
@@ -490,6 +505,104 @@ public class Main implements
 		}
 	}
 
+	private void saveGameState()
+	{
+		Dimension size;
+		BufferedImage img;
+		Graphics2D graphics;
+		FileDialog outputImgDialog;
+		String dir, file;
+		File outputFile, outDir;
+
+		size = this.frame.getContentPane().getSize();
+		size.height -= this.ribbon.getHeight();
+		img = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
+		graphics = img.createGraphics();
+		graphics.translate(0, -this.ribbon.getHeight());
+		this.frame.getContentPane().paint(graphics);
+
+		outDir = Resources.workingdir;
+		dir = settings.getProperty(SETTING_LAST_SAVED_GAME_PATH);
+		if (dir != null) {
+			outDir = new File(dir);
+			if (!outDir.exists()) {
+				outDir = Resources.workingdir;
+			}
+		}
+		outputImgDialog = new FileDialog(this.frame, "Choose output file", FileDialog.SAVE);
+		outputImgDialog.setDirectory(outDir.getAbsolutePath());
+		outputImgDialog.setVisible(true);
+		dir = outputImgDialog.getDirectory();
+		file = outputImgDialog.getFile();
+
+		if (dir == null || file == null) {
+			return;
+		}
+
+		if (!file.endsWith(".png")) {
+			file += ".png";
+		}
+		outputFile = new File(dir, file);
+		outDir = new File(dir);
+		try {
+			PictureSavedStorage.saveGameStateInPng(img, this.game, outputFile);
+			settings.setProperty(SETTING_LAST_SAVED_GAME_PATH, outDir.getAbsolutePath());
+			save();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			SwingMsg.err_ok(this.frame, "Failed to save", t.toString());
+		}
+	}
+
+	private void loadGameState()
+	{
+		File inDir;
+		String dir, file;
+		FileDialog fileDialog;
+		File inputFile;
+		String result;
+
+		inDir = Resources.workingdir;
+		dir = settings.getProperty(SETTING_LAST_SAVED_GAME_PATH);
+		if (dir != null) {
+			inDir = new File(dir);
+			if (!inDir.exists()) {
+				inDir = Resources.workingdir;
+			}
+		}
+		fileDialog = new FileDialog(this.frame, "Select saved game file", FileDialog.LOAD);
+		fileDialog.setDirectory(inDir.getAbsolutePath());
+		fileDialog.setVisible(true);
+		dir = fileDialog.getDirectory();
+		file = fileDialog.getFile();
+
+		if (dir == null || file == null) {
+			return;
+		}
+
+		inputFile = new File(dir, file);
+		if (!inputFile.exists()) {
+			SwingMsg.err_ok(this.frame, "Failed to open", "File doesn't exist");
+		}
+		try {
+			result = PictureSavedStorage.loadGameStateFromPng(this.game, inputFile);
+			this.updatePlayerNameBorders();
+			if (!result.isEmpty()) {
+				SwingMsg.info_ok(this.frame, "Load game", result);
+			}
+			settings.setProperty(SETTING_LAST_SAVED_GAME_PATH, inDir.getAbsolutePath());
+			save();
+		} catch (Throwable t) {
+			this.game.db1 = this.game.db2 = null;
+			this.game.p1 = HumanPlayer.INSTANCE;
+			this.game.p2 = HumanPlayer.INSTANCE;
+			this.game.startNewGame();
+			this.updatePlayerNameBorders();
+			t.printStackTrace();
+			SwingMsg.err_ok(this.frame, "Failed to open", t.toString());
+		}
+	}
+
 	/**
 	 * Mainly button listeners
 	 */
@@ -545,6 +658,12 @@ public class Main implements
 			g.startNewGame();
 
 			new SecondOpinionDialog(this.frame, players, databases, g);
+			break;
+		case BUTTON_ID_SAVEGAMESTATE:
+			this.saveGameState();
+			break;
+		case BUTTON_ID_LOADGAMESTATE:
+			this.loadGameState();
 			break;
 		}
 	}

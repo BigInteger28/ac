@@ -10,7 +10,7 @@ public class HumanPlayer extends Player implements HumanControlled
 {
 	public static final HumanPlayer INSTANCE = new HumanPlayer();
 
-	static final int chosenElement[] = { -1, -1 };
+	public static final int chosenElement[] = { -1, -1 };
 
 	@Override
 	public String getName()

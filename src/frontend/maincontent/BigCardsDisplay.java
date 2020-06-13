@@ -1,5 +1,6 @@
 package frontend.maincontent;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
@@ -33,11 +34,13 @@ public class BigCardsDisplay extends JPanel
 		size = this.getSize();
 		minSize = this.getMinimumSize();
 
-		g.clearRect(0, 0, size.width, size.height);
+		g.setColor(this.getBackground());
+		g.fillRect(0, 0, size.width, size.height);
 
 		minx = (size.width - minSize.width) / 2;
 		miny = (size.height - minSize.height) / 2;
 
+		g.setColor(Color.black);
 		move = this.game.data == null ? 0 : this.game.data.getCurrentMove();
 		for (int i = 0; i < 9; i++) {
 			x = minx + 72 * i + PADDING * i;

@@ -9,9 +9,11 @@ import frontend.VolatileLogger;
 
 public class Settings
 {
-	private static final File file;
-
 	public static final Properties settings;
+
+	public static final String SETTING_LAST_SAVED_GAME_PATH = "saved.games.lastpath";
+
+	private static final File file;
 
 	static {
 		file = new File(Resources.workingdir, "settings.properties");
