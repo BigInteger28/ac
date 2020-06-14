@@ -432,11 +432,12 @@ public class PlayerSelector extends JPanel implements
 				this.lstDatabase.setEnabled(false);
 				this.lstDatabase.setSelectedIndex(-1);
 				this.lstDatabase.hideWithMessage("No player chosen");
+				this.txtFilterDatabase.setText("");
 			} else if (this.lstPlayer.getSelectedValue().canUseDatabase()) {
 				this.txtFilterDatabase.setEnabled(true);
 				this.lstDatabase.setEnabled(true);
 				this.lstDatabase.hideWithMessage(null);
-				this.txtFilterDatabase.setText(this.lstPlayer.getSelectedValue().getName());
+				this.txtFilterDatabase.setText(this.lstPlayer.getSelectedValue().getNameWithoutExtension());
 				this.needDatabaseFilterUpdate = true;
 				this.queueUpdate();
 			} else {
@@ -444,6 +445,7 @@ public class PlayerSelector extends JPanel implements
 				this.lstDatabase.setEnabled(false);
 				this.lstDatabase.setSelectedIndex(-1);
 				this.lstDatabase.hideWithMessage("This player cannot use a db");
+				this.txtFilterDatabase.setText("");
 			}
 			return;
 		}
