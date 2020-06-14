@@ -137,6 +137,7 @@ public class PlayerSelector extends JPanel implements
 		databaseScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		databaseScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		databaseScroller.setPreferredSize(new Dimension(20, 100));
+		databaseScroller.setMinimumSize(new Dimension(20, 100));
 
 		// datbase list info
 		this.lblDatabaseTypes = new JLabel[ResourceType.DATABASETYPES.length];
