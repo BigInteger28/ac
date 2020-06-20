@@ -278,6 +278,7 @@ public class PlayerSelector extends JPanel implements
 		T val;
 		T nextExistingValue;
 		int nextExistingIndex;
+		int dbStartIndex;
 		int nextAllIndex;
 		int typeCounts[];
 
@@ -286,9 +287,18 @@ public class PlayerSelector extends JPanel implements
 		doFilter = !filterValue.isEmpty();
 		model = (DefaultListModel<T>) list.getModel();
 
+		if (list == lstDatabase) {
+			if (model.isEmpty()) {
+				model.addElement(null);
+			}
+			dbStartIndex = 1;
+		} else {
+			dbStartIndex = 0;
+		}
+
 		// first remove all the elements that should be gone
 		if (doFilter) {
-			for (int i = 0; i < model.getSize(); i++) {
+			for (int i = dbStartIndex; i < model.getSize(); i++) {
 				val = model.get(i);
 				if (!val.getName().toLowerCase().contains(filterValue)) {
 					model.remove(i);
@@ -298,7 +308,7 @@ public class PlayerSelector extends JPanel implements
 		}
 
 		// then add the missing ones
-		nextExistingIndex = 0;
+		nextExistingIndex = dbStartIndex;
 		nextAllIndex = 0;
 		while (nextAllIndex < allValues.size()) {
 			nextExistingValue = null;
@@ -319,7 +329,7 @@ public class PlayerSelector extends JPanel implements
 			nextAllIndex++;
 		}
 
-		for (int i = 0; i < model.getSize(); i++) {
+		for (int i = dbStartIndex; i < model.getSize(); i++) {
 			typeCounts[model.get(i).getType().index]++;
 		}
 		for (int i = 0; i < typeLabels.length; i++) {
@@ -330,7 +340,11 @@ public class PlayerSelector extends JPanel implements
 			list.ensureIndexIsVisible(list.getSelectedIndex());
 		}
 		if (list.getSelectedValue() == null && !model.isEmpty()) {
-			list.setSelectedIndex(0);
+			if (model.getSize() > 1 && model.get(0) == null) {
+				list.setSelectedIndex(1);
+			} else {
+				list.setSelectedIndex(0);
+			}
 		}
 	}
 
@@ -476,29 +490,34 @@ public class PlayerSelector extends JPanel implements
 			this.lstCellPnl.setForeground(list.getForeground());
 		}
 
-		this.lstCellPnlTypeColorSquare.setBackground(new Color(value.getType().color));
-		this.lstCellLblName.setText(value.getName());
+		if (value != null) {
+			this.lstCellPnlTypeColorSquare.setBackground(new Color(value.getType().color));
+			this.lstCellLblName.setText(value.getName());
 
-		if ((path = value.getPath()) != null) {
-			this.lstCellLblLocation.setVisible(true);
-			this.lstCellLblLocation.setText(path);
-			locations = EngineSourceManager.getLocations();
-			for (File location : locations) {
-				String locationPath = location.getAbsolutePath();
-				if (path.startsWith(locationPath)) {
-					final int len = locationPath.length();
-					if (path.length() > len &&
-						(path.charAt(len) == '/' || path.charAt(len) == '\\'))
-					{
-						this.lstCellLblLocation.setText(path.substring(len + 1));
-					} else {
-						this.lstCellLblLocation.setText(path.substring(len));
+			if ((path = value.getPath()) != null) {
+				this.lstCellLblLocation.setVisible(true);
+				this.lstCellLblLocation.setText(path);
+				locations = EngineSourceManager.getLocations();
+				for (File location : locations) {
+					String locationPath = location.getAbsolutePath();
+					if (path.startsWith(locationPath)) {
+						final int len = locationPath.length();
+						if (path.length() > len &&
+							(path.charAt(len) == '/' || path.charAt(len) == '\\'))
+						{
+							this.lstCellLblLocation.setText(path.substring(len + 1));
+						} else {
+							this.lstCellLblLocation.setText(path.substring(len));
+						}
+						break;
 					}
-					break;
 				}
+			} else {
+				this.lstCellLblLocation.setVisible(false);
 			}
 		} else {
-			this.lstCellLblLocation.setVisible(false);
+			this.lstCellLblName.setText("<none>");
+			this.lstCellPnlTypeColorSquare.setBackground(Color.black);
 		}
 
 		return this.lstCellPnl;
