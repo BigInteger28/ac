@@ -6,6 +6,7 @@ import backend.Game;
 import backend.Player;
 import common.ErrorHandler;
 import engines.FixedEngine;
+import frontend.components.ColoredBorder;
 import frontend.components.HideableButton;
 import frontend.dialogs.LocationDialog;
 import frontend.dialogs.SecondOpinionDialog;
@@ -22,11 +23,16 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -37,7 +43,9 @@ import static resources.Settings.*;
 public class Main implements
 	Game.Listener,
 	Runnable /*for SwingUtilities#invokeLater*/,
-	ActionListener /*for button actions*/
+	ActionListener, /*for button actions*/
+	MouseListener,
+	KeyListener
 {
 	public static final Color TITLECOLOR = new Color(0x0000FF);
 	public static final Color[] BUTTONCOLORS = {
@@ -100,12 +108,14 @@ public class Main implements
 
 	private JFrame frame;
 	private TitledBorder player1border, player2border;
+	private ColoredBorder playerreadyborder;
 	private Game game;
 
 	private JLabel[] p1movelabels, p2movelabels;
 	private HideableButton[] player1buttons, player2buttons;
 	private JLabel player1score, player2score;
 	private JPanel bigCardsDisplay;
+	private JPanel movesPanel;
 	private JTabbedPane ribbon;
 
 	private boolean updateQueued;
@@ -121,8 +131,8 @@ public class Main implements
 		GridBagConstraints gbc;
 		JPanel player1controls, player2controls;
 		JPanel scorePanel;
-		JPanel movesPanel;
 		JPanel pnl;
+		JLabel lbl;
 		JButton btn;
 
 		this.game = new Game(this);
@@ -199,15 +209,22 @@ public class Main implements
 		}
 
 		// moves panel
-		movesPanel = new JPanel(new GridLayout(2, 9, 5, 5));
-		movesPanel.setBorder(new EmptyBorder(0, 20, 0, 10));
+		this.movesPanel = new JPanel(new GridLayout(2, 9, 5, 5));
+		this.movesPanel.setBorder(new EmptyBorder(0, 20, 0, 10));
+		this.movesPanel.setFocusable(true);
+		this.movesPanel.addKeyListener(this);
+		this.movesPanel.addMouseListener(this);
 		this.p1movelabels = new JLabel[9];
 		this.p2movelabels = new JLabel[9];
 		for (int i = 0; i < 9; i++) {
-			movesPanel.add(p1movelabels[i] = new JLabel("?", SwingConstants.CENTER));
+			lbl = p1movelabels[i] = new JLabel("?", SwingConstants.CENTER);
+			lbl.addMouseListener(this);
+			this.movesPanel.add(lbl);
 		}
 		for (int i = 0; i < 9; i++) {
-			movesPanel.add(p2movelabels[i] = new JLabel("?", SwingConstants.CENTER));
+			lbl = p2movelabels[i] = new JLabel("?", SwingConstants.CENTER);
+			lbl.addMouseListener(this);
+			this.movesPanel.add(lbl);
 		}
 
 		// score panel
@@ -245,7 +262,7 @@ public class Main implements
 		gbc.insets.bottom = 5;
 		gbc.insets.right = 5;
 		pushBorder(this.player1border = SwingUtil.titledBorder("Player 1"));
-		pushBorder(new EmptyBorder(2, 4, 4, 4));
+		pushBorder(this.playerreadyborder = new ColoredBorder(4, 4, 4, 4));
 		contentPane.add(wrapWithBorder(player1controls), gbc);
 
 		// game field
@@ -261,7 +278,7 @@ public class Main implements
 		gbc.insets.right = 5;
 		pushBorder(SwingUtil.titledBorder("Game"));
 		pushBorder(new EmptyBorder(2, 9, 4, 9));
-		contentPane.add(wrapWithBorder(movesPanel), gbc);
+		contentPane.add(wrapWithBorder(this.movesPanel), gbc);
 
 		// score field
 		gbc.gridx = 2;
@@ -290,7 +307,7 @@ public class Main implements
 		gbc.insets.bottom = 5;
 		gbc.insets.right = 5;
 		pushBorder(this.player2border = SwingUtil.titledBorder("Player 2"));
-		pushBorder(new EmptyBorder(2, 4, 4, 4));
+		pushBorder(new EmptyBorder(4, 4, 4, 4));
 		contentPane.add(wrapWithBorder(player2controls), gbc);
 
 		// analysis
@@ -323,6 +340,8 @@ public class Main implements
 		pushBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.add(wrapWithBorder(this.bigCardsDisplay), gbc);
 
+		this.updatePlayerNameBorders();
+
 		ImageIO.setUseCache(false);
 		try {
 			rsis = new RawStringInputStream();
@@ -344,6 +363,7 @@ public class Main implements
 		}
 
 		this.frame.pack();
+		this.frame.addKeyListener(this);
 		this.frame.setLocationRelativeTo(null);
 		this.frame.setMinimumSize(frame.getSize());
 		this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -431,6 +451,7 @@ public class Main implements
 			int p1elementsLeft[], p2elementsLeft[];
 
 			data = this.game.data;
+			this.playerreadyborder.color = data.isPlayerReady(0) && data.isHumanControlled(0) ? Color.GREEN : null;
 			p1canPlay = !data.isPlayerReady(0) && data.isHumanControlled(0);
 			p2canPlay = !data.isPlayerReady(1) && data.isHumanControlled(1);
 			p1elementsLeft = data.getElementsLeft(0);
@@ -444,6 +465,7 @@ public class Main implements
 				this.player2buttons[i].setBorderPainted(p2elementsLeft[i] > 0);
 			}
 
+			this.movesPanel.requestFocusInWindow();
 		}
 
 		if (this.updateMoves) {
@@ -666,5 +688,79 @@ public class Main implements
 			this.loadGameState();
 			break;
 		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e)
+	{
+		int element;
+		int player;
+
+		Game.Data data = this.game.data;
+		bad: {
+			switch (e.getKeyChar() | 0x20) {
+			case 'w': element = 0; break;
+			case 'v': element = 1; break;
+			case 'a': element = 2; break;
+			case 'l': element = 3; break;
+			case 'd': element = 4; break;
+			default: break bad;
+			}
+
+			if (data.isHumanControlled(0) && !data.isPlayerReady(0)) {
+				player = 0;
+			} else if (data.isHumanControlled(1) && !data.isPlayerReady(1)) {
+				player = 1;
+			} else {
+				break bad;
+			}
+
+			if (data.getElementsLeft(player, element) == 0) {
+				break bad;
+			}
+
+			HumanPlayer.chosenElement[player] = element;
+			this.game.update();
+			this.updateButtons = true;
+			this.queueUpdate();
+			return;
+		}
+		Toolkit.getDefaultToolkit().beep();
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e)
+	{
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e)
+	{
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		this.movesPanel.requestFocusInWindow();
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e)
+	{
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e)
+	{
 	}
 }
