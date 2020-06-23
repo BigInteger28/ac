@@ -16,6 +16,9 @@ public class HideableButton extends JButton
 	{
 		if (this.isBorderPainted()) {
 			super.paintComponent(g);
+		} else {
+			g.setColor(this.getParent().getBackground());
+			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		}
 	}
 }
