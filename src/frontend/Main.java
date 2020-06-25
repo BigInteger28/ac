@@ -20,6 +20,7 @@ import resources.EngineSourceManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -77,7 +78,16 @@ public class Main implements
 		ErrorHandler.handler = new ErrorHandlerFrontendImpl();
 
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			String lafClassName = UIManager.getSystemLookAndFeelClassName();
+			if (lafClassName.endsWith("MetalLookAndFeel")) {
+				LookAndFeelInfo[] lafs = UIManager.getInstalledLookAndFeels();
+				for (LookAndFeelInfo laf : lafs) {
+					if (laf.getClassName().contains("GTK")) {
+						lafClassName = laf.getClassName();
+					}
+				}
+			}
+			UIManager.setLookAndFeel(lafClassName);
 		} catch (Exception e) {
 			ErrorHandler.handler.handleException(e);
 		}
